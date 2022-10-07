@@ -19,7 +19,7 @@ const userSchema = new Schema({
     stateOfResidence: {type: String},
     isVerified: {type: String, require: true},
     verificationId:  {type: String, require: true},
-    profilePicture: {type: String},
+    profilePicture: {type: String, default:null},
     governmentId: {type:Object},
     pronoun: {type: String, require: true},
     balanceAmount: Number,

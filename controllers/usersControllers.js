@@ -80,4 +80,44 @@ const signUp = async (req, res)=>{
 
 }
 
-module.exports = {getAllUsers, signIn, signUp}
+const updateUserTypeToSeller = async (req, res)=>{
+    const user = req.user;
+    await User.findById(user._id)
+    .then(userResponse =>{
+        userResponse.isSeller = true;
+        res.json(userResponse)
+    })
+    .catch(error => res.json({message: "An Error Occured", error: error}))
+}
+
+const deleteAccount = async (req, res)=>{
+    const user = req.user;
+    await User.findByIdAndRemove(user._id)
+    .then(userResponse =>{
+        res.json({message: "User Account Delete"})
+    })
+    .catch(error => res.json({message: "An Error Occured", error: error}))
+}
+
+const updateProfile = async (req, res)=>{
+    const user = req.user;
+    const updatedProfile = req.body
+    await User.findByIdAndUpdate(user._id, updatedProfile, {new: true})
+    .then(resp => res.json(resp))
+    .catch(error => res.json({message: "An Error Occured", error: error}))
+}
+
+const addToSaved = async (req, res)=>{
+    const user = req.user;
+    const listing = req.body.listing;
+    await User.findById(user._id)
+    .then(userResponse =>{
+        userResponse.savedListing.push(listing)
+        User.findByIdAndUpdate(user._id, userResponse, {new:true})
+        .then(resp=> res.json(resp))
+        .catch(error => res.json({message: "An Error Occured", error: error}))
+    })
+    .catch(error => res.json({message: "An Error Occured", error: error}))
+}
+
+module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved}
