@@ -16,7 +16,7 @@ const uploadAList = async (req, res)=>{
 }
 
 const deleteList = async (req, res)=>{
-    const id = req.params;
+    const {id} = req.params;
     await Listing.findById(id).populate("postedBy")
     .then(list =>{
         if(list.postedBy._id == req.user._id || req.user.isAdmin){
@@ -28,7 +28,7 @@ const deleteList = async (req, res)=>{
 }
 
 const updateList = async (req, res)=>{
-    const id = req.params;
+    const {id} = req.params;
     const toUpdate = req.body;
     await Listing.findByIdAndUpdate(id, toUpdate, {new:true})
     .then(resp => res.json(resp))
@@ -36,7 +36,7 @@ const updateList = async (req, res)=>{
 }
 
 const makeUnavailable = async (req, res)=>{
-    const id = req.params;
+    const {id} = req.params;
     await Listing.findById(id).populate("postedBy")
     .then(list =>{
         if(list.postedBy._id == req.user._id || req.user.isAdmin){
@@ -47,5 +47,7 @@ const makeUnavailable = async (req, res)=>{
         }
     })   
 }
+
+
 
 module.exports = {getAllListing, uploadAList, deleteList, updateList, makeUnavailable}
