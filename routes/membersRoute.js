@@ -1,4 +1,5 @@
 const { getMembers, addAMember, deleteMember } = require("../controllers/membersControllers");
+const requireLogin = require("../middlewares/requireLogin");
 
 const router = require("express").Router();
 

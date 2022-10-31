@@ -1,6 +1,6 @@
 const User = require("../models/users.model");
 const jwt = require("jsonwebtoken");
-require("dotenv").config()
+require("dotenv").config
 const jwt_secret = process.env.JWT_SECRET;
 const bcrypt = require('bcrypt')
 
@@ -31,7 +31,7 @@ const signIn = async (req, res)=>{
             .then(doMatch =>{
                 if(doMatch){
                     const token = jwt.sign({_id: user._id}, jwt_secret)
-                    res.json({token: token, message: "Signed In Successfully"})
+                    res.json({token: token, message: "Signed In Successfully", user: user})
                 }
                 else{
                     res.json({message: "Wrong Password"})
@@ -44,7 +44,10 @@ const signIn = async (req, res)=>{
 const signUp = async (req, res)=>{
     const userDetails = req.body;
     const {password} = req.body
-    await bcrypt.hash(password, 8)
+    User.findOne({email: userDetails.email})
+    .then(resp =>{
+        if(!resp){
+            bcrypt.hash(password, 8)
     .then(hashedPassword => {
         userDetails.password = hashedPassword;
         const newUser = new User(userDetails);
@@ -60,7 +63,7 @@ const signUp = async (req, res)=>{
                     .then(doMatch=>{
                         if(doMatch){
                             const token = jwt.sign({_id:user._id}, jwt_secret);
-                            res.json({token: token, message:"Successful"})
+                            res.json({token: token, message:"Successful", user: user})
                         }
                         else{
                             res.json({message: "Wrong Password"})
@@ -77,7 +80,12 @@ const signUp = async (req, res)=>{
         error: err, 
         message: "An Error Occured"
     }))
+    }
+    else{
+        res.json({message: "This email is attached to an account"})
+    }
 
+}).catch(err => res.json(err))
 }
 
 const updateUserTypeToSeller = async (req, res)=>{
