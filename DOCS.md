@@ -6,7 +6,28 @@ This API is provided for the Frontend developers to implement on the development
 - Uploading of Listings
 - e.t.c...
 
-Base URL: [https://kde-api.herokuapp.com/]https://kde-api.herokuapp.com/
+Base URL:xhttps://kde-api.herokuapp.com/
+
+USERS PROPERTY:
+- firstName
+- lastName
+- otherNames
+- sex
+- dob (Date of Birth)
+- email 
+- phoneNumber
+- password
+- isAdmin (A boolean to check if a user is an admin)
+- isSeller (A boolean to check if a user is a seller)
+- savedListing (An Array to contain the ID of every listing to save)
+- nationality
+- stateOfResidence
+- isVerified (A boolean to check if a user is verified)
+- verificationId (A url of an document, but will be received in form of a url)
+- profilePicture
+- governmentId
+- pronoun
+- balanceAmount
 
 Please Note: Always pass the authentication in headers, i.e token.
 
@@ -106,3 +127,55 @@ This route will get the details of the signed in user.
     route: GET:"/users/me"
     if successful, the updated user object will be returned;
     else a 400 error will be returned
+
+## Listing
+The route below this will be related to Listings
+
+Property of each List:
+- _id
+- category (This happen to be a model of a reference Id, one to many relationship on tables)
+- title (The title of a list)
+- location
+- postedBy (a user model with a reference ID)
+- features (An array of features of a list)
+- description (A description of the property)
+- images (An array of images)
+- videos (An array of Videos)
+- price (don't ask me!)
+
+### Get all listings from the database
+    GET: "/listings/all"
+    if successful; a list of all 
+
+### Uploading a list
+    POST: "/listings/upload-list/"
+    parameters:
+    - all above in the properties, except available
+     response:
+     if successful:
+     {
+        message: ...,
+        list: ...
+     }
+
+### Delete a list
+    DELETE: "/listings/id/" 
+
+    id: the id of the list to be deleted
+    response: 
+    {
+        message: "Listing Deleted"
+    }
+
+### Update a List
+    PATCH: "/listings/make-unavailable/id"
+
+    id: the id of the list to be updated;
+
+    response: list properties;
+
+### Make a list Unavailable
+    PATCH: "/listings/make-unavailable/id/
+    
+    response: list properties;
+

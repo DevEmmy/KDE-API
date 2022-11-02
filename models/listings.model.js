@@ -4,15 +4,16 @@ const { Schema } = mongoose;
 
 const listingSchema = new Schema({
     category: {type: Schema.Types.ObjectId, ref:"Category"},
-    title: {type: String, require:true},
-    location: {type: String, require:true},
+    title: {type: String, required:true},
+    location: {type: String, required:true},
     postedBy: {type: Schema.Types.ObjectId, ref:"User"},
     features: {type:Array},
-    description: {type: String, require:false},
-    images: {type: Array, require: true},
-    videos: {type: Array, require: true},
+    description: {type: String, required:false},
+    images: {type: Array, required: true},
+    videos: {type: Array, required: true},
     available: {type: Boolean, default: true},
     price: Number,
+    attachedDocument: {type:Array},
 })
 
 const Listing = mongoose.model("Listing", listingSchema);

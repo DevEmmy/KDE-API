@@ -5,7 +5,7 @@ const jwt_secret = process.env.JWT_SECRET;
 const bcrypt = require('bcrypt')
 
 const getAllUsers = async (req, res)=>{
-    if(req.user.isAdmin){
+    if(req.user?.isAdmin){
         await User.find()
         .then(resp=>{
             res.json({users: resp, message: "Successful"})
@@ -20,7 +20,7 @@ const getAllUsers = async (req, res)=>{
 }
 
 const getSignedInUser = async (req, res)=>{
-    await User.findOne(req.user._id)
+    await User.findOne(req.user?._id)
     .then(resp => res.json(resp))
     .catch(err => res.status(400).json(err))
 }
