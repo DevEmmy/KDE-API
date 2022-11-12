@@ -20,7 +20,7 @@ const getAllUsers = async (req, res)=>{
 }
 
 const getSignedInUser = async (req, res)=>{
-    await User.findOne({id:req.user?._id})
+    await User.findOne({_id:req.user?._id})
     .then(resp => res.json(resp))
     .catch(err => res.status(400).json(err))
 }
