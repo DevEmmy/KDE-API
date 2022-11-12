@@ -6,6 +6,7 @@ const usersRoute = require("./routes/usersRoute");
 const listRoute = require("./routes/listingsRoute")
 const transactionRoute = require("./routes/transactionsRoute")
 const memberRoute = require("./routes/membersRoute");
+const waitListRoute = require("./routes/waitListRoute");
 const bodyParser = require('body-parser')
 
 //initiate express
@@ -35,6 +36,7 @@ app.use("/users", usersRoute)
 app.use("/listings", listRoute)
 app.use("/transactions", transactionRoute)
 app.use("/members", memberRoute)
+app.use("/wait-list", waitListRoute)
 
 //run server
 app.listen(port, ()=>{
