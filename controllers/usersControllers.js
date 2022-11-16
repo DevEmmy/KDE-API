@@ -137,4 +137,11 @@ const addToSaved = async (req, res)=>{
     .catch(error => res.status(400).json({message: "An Error Occured", error: error}))
 }
 
-module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser}
+const getUserById = async (req, res)=>{
+    const {id} = req.params
+    await User.findById(id)
+    .then(resp => res.json(resp))
+    .catch(err => res.json(err))
+}
+
+module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById}

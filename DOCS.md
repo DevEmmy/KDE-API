@@ -133,7 +133,7 @@ The route below this will be related to Listings
 
 Property of each List:
 - _id
-- category (This happen to be a model of a reference Id, one to many relationship on tables)
+<!-- - category (This happen to be a model of a reference Id, one to many relationship on tables) -->
 - title (The title of a list)
 - location
 - postedBy (a user model with a reference ID)
@@ -142,6 +142,13 @@ Property of each List:
 - images (An array of images)
 - videos (An array of Videos)
 - price (don't ask me!)
+- year (year at which the list was created or renovated)
+- carCondition
+- engineType
+- colour
+- model (car model)
+- noOfBed
+- noOfBathroom
 
 ### Get all listings from the database
     GET: "/listings/all"
