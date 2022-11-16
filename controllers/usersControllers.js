@@ -2,7 +2,8 @@ const User = require("../models/users.model");
 const jwt = require("jsonwebtoken");
 require("dotenv").config
 const jwt_secret = process.env.JWT_SECRET;
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const { cloudinary } = require("./cloudinary");
 
 const getAllUsers = async (req, res)=>{
     if(req.user?.isAdmin){
@@ -119,9 +120,15 @@ const deleteAccount = async (req, res)=>{
 const updateProfile = async (req, res)=>{
     const user = req.user;
     const updatedProfile = req.body
-    await User.findByIdAndUpdate(user._id, updatedProfile, {new: true})
+    await cloudinary.uploader.upload(updatedProfile.cover)
+    .then((resp)=> {
+        updatedProfile.cover = resp.secure_url
+        updatedProfile.profilePicture = cloudinary.uploader.upload(updatedProfile.profilePicture).secure_url
+        User.findByIdAndUpdate(user._id, updatedProfile, {new: true})
     .then(resp => res.json(resp))
     .catch(error => res.status(400).json({message: "An Error Occured", error: error}))
+    })
+    .catch(error => res.status(401).json({message:"An Error Occured", error: error}))
 }
 
 const addToSaved = async (req, res)=>{

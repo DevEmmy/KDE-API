@@ -10,6 +10,7 @@ const getAllListing = async (req, res)=>{
 const uploadAList = async (req, res)=>{
     const list = req.body;
     list.postedBy = req.user;
+    
     await new Listing(list).save()
     .then(resp => res.json({message: "Successful", list: resp}))
     .catch(error => res.json({message: "An Error Occured", error: error}))
