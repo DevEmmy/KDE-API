@@ -4,8 +4,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    firstName: {type: String, required: true},
-    lastName:  {type: String, required: true},
+    firstName: {type: String, required: false},
+    lastName:  {type: String, required: false},
     otherNames: {type: String},
     about: String,
     cover: {type: String, default:"https://avatarfiles.alphacoders.com/865/86518.png"},
