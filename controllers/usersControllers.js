@@ -145,4 +145,32 @@ const getUserById = async (req, res)=>{
     .catch(err => res.json(err))
 }
 
-module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById}
+const upload = async (data)=>{
+    let url;
+    await cloudinary.uploader.upload(data)
+    .then(resp => {
+        url = resp.secure_url;
+    })
+    .catch(err => console.log(err))
+    return url;
+}
+
+const verifyUser = async (req, res)=>{
+    const user = req.user
+    const {verificationId, nationality, verifiedProfilePicture} = req.body
+    if(verificationId && verifiedProfilePicture && verifiedProfilePicture){
+        const verification ={nationality: nationality}
+        verification.verificationId = upload(verificationId)
+        verification.verifiedProfilePicture = upload(verifiedProfilePicture)
+        User.findByIdAndUpdate(user._id, verification, {new: true})
+        .then(resp =>{
+            res.status(200).json(resp)
+        })
+        .catch(err => res.status(400).json(err))
+    }
+    else{
+        res.status(400).json({message: "Verification ID and Profile Picture are required"})
+    }
+}
+
+module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser}

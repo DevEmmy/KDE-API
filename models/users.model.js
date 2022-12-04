@@ -26,10 +26,12 @@ const userSchema = new Schema({
     savedListing: {type: Schema.Types.ObjectId, ref: "Listing"},
     nationality: {type: String},
     stateOfResidence: {type: String},
+
     isVerified: {type: String, default:false},
     verificationId:  {type: String, default: null},
+    verifiedProfilePicture: {type: String, default: null},
+
     profilePicture: {type: String, default:"https://avatarfiles.alphacoders.com/865/86518.png"},
-    governmentId: {type:Object},
     pronoun: {type: String, default:null},
     balanceAmount: Number,
 },

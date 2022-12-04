@@ -9,6 +9,6 @@ router.post("/upload-list", requireLogin, uploadAList)
 router.delete("/delete/:id", requireLogin, deleteList)
 router.patch("update/:id", requireLogin, updateList)
 router.patch("/make-unavailable/:id", requireLogin, makeUnavailable)
-router.get('/user-listing', getUserListing)
+router.get('/user-listing',requireLogin, getUserListing)
 
 module.exports = router;
