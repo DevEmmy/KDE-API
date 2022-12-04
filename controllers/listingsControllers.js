@@ -32,9 +32,9 @@ const newA = async (images)=>{
 }
 
 const uploadAList = async (req, res)=>{
+    res.setTimeout(0)
     const list = req.body;
     list.postedBy = req.user;
-
     // console.log(newA(list.images))
     list.images = await newA(list.images)
     console.log(list.images)
