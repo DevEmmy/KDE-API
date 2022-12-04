@@ -1,5 +1,6 @@
 const User = require("../models/users.model");
-const Listing = require("../models/listings.model")
+const Listing = require("../models/listings.model");
+const { cloudinary } = require("./cloudinary");
 
 const getAllListing = async (req, res)=>{
     await Listing.find().populate("postedBy")
@@ -7,13 +8,47 @@ const getAllListing = async (req, res)=>{
     .catch(error => res.json({message: "An Error Occured", error: error}))
 }
 
+const getUserListing = async (req, res)=>{
+    const user = req.user;
+    await Listing.find({postedBy: user}).populate("postedBy")
+    .then(resp=> res.json(resp))
+    .catch(error => res.json({message: "An Error Occured", error: error}))
+}
+
+const newA = async (images)=>{
+    let i=0;
+    const ims = []
+    while (i<images.length){
+        console.log("working")
+        await cloudinary.uploader.upload(images[i].base64)
+        .then(resp =>{
+            ims.push(resp.secure_url)
+            console.log("done")
+            i++
+        })
+        .catch(err => console.log(err))
+    }
+    return ims
+}
+
 const uploadAList = async (req, res)=>{
     const list = req.body;
     list.postedBy = req.user;
-    
-    await new Listing(list).save()
+
+    // console.log(newA(list.images))
+    list.images = await newA(list.images)
+    console.log(list.images)
+    new Listing(list).save()
     .then(resp => res.json({message: "Successful", list: resp}))
-    .catch(error => res.json({message: "An Error Occured", error: error}))
+    .catch(error => res.json({message: "An Inner Error Occured", error: error}))
+
+    // await newA(list.images)
+    // .then((images)=>
+    //     {
+    //     list.images = images;
+       
+    // )
+    // .catch(error => res.json({message: "An Error Occured", error: error}))
 }
 
 const deleteList = async (req, res)=>{
@@ -51,4 +86,4 @@ const makeUnavailable = async (req, res)=>{
 
 
 
-module.exports = {getAllListing, uploadAList, deleteList, updateList, makeUnavailable}
+module.exports = {getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing}

@@ -15,7 +15,7 @@ const app = express();
 //activate cors
 app.use(
     cors({
-        origin: "https://king-david-elite.vercel.app"
+        origin: "*"
     })
 )
 
