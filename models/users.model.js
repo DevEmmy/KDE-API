@@ -27,6 +27,8 @@ const userSchema = new Schema({
     nationality: {type: String},
     stateOfResidence: {type: String},
 
+
+    // For verification
     isVerified: {type: String, default:false},
     verificationId:  {type: String, default: null},
     verifiedProfilePicture: {type: String, default: null},
