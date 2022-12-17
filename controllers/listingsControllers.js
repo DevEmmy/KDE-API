@@ -8,6 +8,13 @@ const getAllListing = async (req, res)=>{
     .catch(error => res.json({message: "An Error Occured", error: error}))
 }
 
+const getAList = async (req, res)=>{
+    const {id} = req.params;
+    await Listing.findById(id).populate("postedBy")
+    .then(resp => res.json(resp))
+    .catch(err => res.json(err))
+}
+
 const getUserListing = async (req, res)=>{
     const user = req.user;
     await Listing.find({postedBy: user}).populate("postedBy")
@@ -15,12 +22,12 @@ const getUserListing = async (req, res)=>{
     .catch(error => res.json({message: "An Error Occured", error: error}))
 }
 
-const newA = async (images)=>{
+const newA = async (images, option)=>{
     let i=0;
     const ims = []
     while (i<images.length){
         console.log("working")
-        await cloudinary.uploader.upload(images[i].base64)
+        await cloudinary.uploader.upload(images[i].base64, option)
         .then(resp =>{
             ims.push(resp.secure_url)
             console.log("done")
@@ -37,6 +44,10 @@ const uploadAList = async (req, res)=>{
     list.postedBy = req.user;
     // console.log(newA(list.images))
     list.images = await newA(list.images)
+    list.videos = await newA(list.videos, {
+        resource_type: "video",
+        format: "mp4"
+    })
     console.log(list.images)
     new Listing(list).save()
     .then(resp => res.json({message: "Successful", list: resp}))
@@ -86,4 +97,4 @@ const makeUnavailable = async (req, res)=>{
 
 
 
-module.exports = {getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing}
+module.exports = {getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing, getAList}

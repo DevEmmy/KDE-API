@@ -5,6 +5,16 @@ const jwt_secret = process.env.JWT_SECRET;
 const bcrypt = require('bcrypt');
 const { cloudinary } = require("./cloudinary");
 
+const upload = async (data)=>{
+    let url;
+    await cloudinary.uploader.upload(data)
+    .then(resp => {
+        url = resp.secure_url;
+    })
+    .catch(err => console.log(err))
+    return url;
+}
+
 const getAllUsers = async (req, res)=>{
     if(req.user?.isAdmin){
         await User.find()
@@ -120,6 +130,12 @@ const deleteAccount = async (req, res)=>{
 const updateProfile = async (req, res)=>{
     const user = req.user;
     const updatedProfile = req.body
+    if(updatedProfile.profilePicture){
+        updatedProfile.profilePicture = upload(updatedProfile.profilePicture)
+    }
+    if(updatedProfile.cover){
+        updatedProfile.cover = upload(updatedProfile.cover)
+    }
     await User.findByIdAndUpdate(user._id, updatedProfile, {new: true})
     .then(resp => res.json(resp))
     .catch(error => res.status(400).json({message: "An Error Occured", error: error}))
@@ -145,22 +161,16 @@ const getUserById = async (req, res)=>{
     .catch(err => res.json(err))
 }
 
-const upload = async (data)=>{
-    let url;
-    await cloudinary.uploader.upload(data)
-    .then(resp => {
-        url = resp.secure_url;
-    })
-    .catch(err => console.log(err))
-    return url;
-}
 
 const verifyUser = async (req, res)=>{
     const user = req.user
     const {verificationId, nationality, verifiedProfilePicture} = req.body
     if(verificationId && verifiedProfilePicture && verifiedProfilePicture){
         const verification ={nationality: nationality}
-        verification.verificationId = upload(verificationId)
+        verification.verificationId = {
+            front: upload(verificationId.front),
+            back: upload(verificationId.back),
+        }
         verification.verifiedProfilePicture = upload(verifiedProfilePicture)
         User.findByIdAndUpdate(user._id, verification, {new: true})
         .then(resp =>{

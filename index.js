@@ -21,8 +21,9 @@ app.use(
 
 //set port and db uri
 const port = process.env.PORT || 9099
-const uri = process.env.DB_URI 
+const uri =  "mongodb://127.0.0.1:27017/kde"
 
+// process.env.DB_URI
 // connect mongodb
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -40,5 +41,5 @@ app.use("/wait-list", waitListRoute)
 
 //run server
 app.listen(port, ()=>{
-    console.log(`Server running at http://localhost:${port}`)
+    console.log(`Server running on port ${port}`)
 })

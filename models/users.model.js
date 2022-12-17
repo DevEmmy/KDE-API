@@ -30,7 +30,8 @@ const userSchema = new Schema({
 
     // For verification
     isVerified: {type: String, default:false},
-    verificationId:  {type: String, default: null},
+    verificationType: {type: Number},
+    verificationId:  {type: Object, default: null},
     verifiedProfilePicture: {type: String, default: null},
 
     profilePicture: {type: String, default:"https://avatarfiles.alphacoders.com/865/86518.png"},
