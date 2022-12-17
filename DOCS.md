@@ -130,9 +130,11 @@ This route will get the details of the signed in user.
 
 ### Verify User
     PATCH: "/users/verify-user"
-    parameters: verificationId, nationality, verificationProfilePicture
+    parameters: verificationId, nationality, verificationProfilePicture, verificationType
     response format: json
     response: User Object
+
+    note: Pass the verificationId as an object of keys: front and back to hold the front view of the id and same for back.
 
 ## Listing
 The route below this will be related to Listings
