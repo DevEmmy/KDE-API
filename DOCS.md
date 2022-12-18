@@ -128,6 +128,12 @@ This route will get the details of the signed in user.
     if successful, the updated user object will be returned;
     else a 400 error will be returned
 
+### Get a User detail
+This route will get the details of a user, with its id.
+    route: GET:"/users/:id"
+    if successful, the updated user object will be returned;
+    else a 400 error will be returned
+
 ### Verify User
     PATCH: "/users/verify-user"
     parameters: verificationId, nationality, verificationProfilePicture, verificationType
