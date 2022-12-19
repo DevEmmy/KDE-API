@@ -37,6 +37,12 @@ const userSchema = new Schema({
     profilePicture: {type: String, default:"https://avatarfiles.alphacoders.com/865/86518.png"},
     pronoun: {type: String, default:null},
     balanceAmount: Number,
+    zipCode: Number,
+
+    // for bank details
+    accountNo: {type: Number, unique: true},
+    bankName: String,
+    accountName: {type: String}
 },
 {
     timestamps: true,

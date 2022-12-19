@@ -131,14 +131,16 @@ const updateProfile = async (req, res)=>{
     const user = req.user;
     const updatedProfile = req.body
     if(updatedProfile.profilePicture){
-        updatedProfile.profilePicture = upload(updatedProfile.profilePicture)
+        updatedProfile.profilePicture = await upload(updatedProfile.profilePicture)
     }
     if(updatedProfile.cover){
-        updatedProfile.cover = upload(updatedProfile.cover)
+        updatedProfile.cover = await upload(updatedProfile.cover)
     }
     await User.findByIdAndUpdate(user._id, updatedProfile, {new: true})
     .then(resp => res.json(resp))
-    .catch(error => res.status(400).json({message: "An Error Occured", error: error}))
+    .catch(error => {
+        res.status(400).json({message: "An Error Occured", error: error})
+    })
 }
 
 const addToSaved = async (req, res)=>{
@@ -183,4 +185,18 @@ const verifyUser = async (req, res)=>{
     }
 }
 
-module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser}
+const updateBankDetails = async (req, res)=>{
+    const bankDetails = req.body;
+    const user = req.user;
+    User.findByIdAndUpdate(user._id, user, {new: true})
+    .then(resp => res.json({
+        message: "Updated Successfully",
+        user: resp
+    }))
+    .catch(err =>{
+        res.status(400).json({message: "An error occurred", error: err});
+        console.log(err)
+    })
+}
+
+module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails}

@@ -142,6 +142,16 @@ This route will get the details of a user, with its id.
 
     note: Pass the verificationId as an object of keys: front and back to hold the front view of the id and same for back.
 
+### Add Bank Details
+    PATCH: "/users/bank-details",
+    parameters: accountNo, bankName, accountName
+    response format: json
+    reponse
+
+    ```message: "Updated Successfully",
+        user: "User Object"
+    ```
+
 ## Listing
 The route below this will be related to Listings
 
