@@ -229,6 +229,8 @@ Property of each List:
 
 ## Notifications
     The following are the properties of every notification.
+
+    title: title of the notification
     sender: a user object which sends the notification, and this might not be parsed from the client end
 
     message: the notification content

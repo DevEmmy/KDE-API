@@ -22,9 +22,9 @@ app.use(
 
 //set port and db uri
 const port = process.env.PORT || 9099
-const uri = "mongodb://127.0.0.1:27017/kde"
+const uri = process.env.DB_URI 
 
-// process.env.DB_URI 
+// "mongodb://127.0.0.1:27017/kde"
 // connect mongodb
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 
