@@ -166,9 +166,9 @@ const getUserById = async (req, res)=>{
 
 const verifyUser = async (req, res)=>{
     const user = req.user
-    const {verificationId, nationality, verifiedProfilePicture} = req.body
+    const {verificationId, nationality, verificationType, verifiedProfilePicture} = req.body
     if(verificationId && verifiedProfilePicture && verifiedProfilePicture){
-        const verification ={nationality: nationality}
+        const verification ={nationality: nationality, verificationType: verificationType}
         verification.verificationId = {
             front: upload(verificationId.front),
             back: upload(verificationId.back),
