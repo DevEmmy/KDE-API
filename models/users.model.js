@@ -7,7 +7,7 @@ const userSchema = new Schema({
     firstName: {type: String, required: false},
     lastName:  {type: String, required: false},
     otherNames: {type: String},
-    about: String,
+    about: {type: String, default: "Hello there, I am using King David Elites."},
     cover: {type: String, default:"https://avatarfiles.alphacoders.com/865/86518.png"},
     facebookUrl: String,
     instagramUrl: String,
@@ -22,7 +22,7 @@ const userSchema = new Schema({
     phoneNumber2: {type: String},
     password:  {type: String, required: true},
     isAdmin: {type:Boolean, default: false},
-    isSeller:  {type: Boolean, default: false},
+    
     savedListing: {type: Schema.Types.ObjectId, ref: "Listing"},
     nationality: {type: String},
     stateOfResidence: {type: String},
@@ -42,7 +42,8 @@ const userSchema = new Schema({
     // for bank details
     accountNo: {type: Number, unique: true},
     bankName: String,
-    accountName: {type: String}
+    accountName: {type: String},
+    userType: {type: Number, default: 0}
 },
 {
     timestamps: true,

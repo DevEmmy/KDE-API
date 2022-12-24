@@ -95,6 +95,17 @@ const makeUnavailable = async (req, res)=>{
     })   
 }
 
+const viewAList = async (req, res)=>{
+    const {id} = req.params;
+    const user = req.user
+    Listing.findById(id)
+    .then(list =>{
+        list.views.push(user._id)
+        Listing.findByIdAndUpdate(id, list, {new:true}).populate("postedBy").populate("views")
+    })
+    .catch(error => res.json({message: "An Error Occured", error: error}))
+}
 
 
-module.exports = {getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing, getAList}
+
+module.exports = {getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing, getAList, viewAList}

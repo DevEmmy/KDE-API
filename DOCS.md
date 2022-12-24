@@ -85,6 +85,12 @@ For the authentication, we've two api routes which will be for logging in and si
 
 ### Update a User type to Seller
 This will update the user accout type to seller and will have the priviledge to list.
+
+    To update a user's userType, they range from 0-2;
+    0 - Buyer
+    1 - Seller
+    2 - Hybrid (Unavailable for now)
+    
     route: PATCH: "/users/update-user-to-seller"
     if successful, a user object will be returned:
     {
@@ -92,7 +98,7 @@ This will update the user accout type to seller and will have the priviledge to 
         "email": "eola@gmail.com",
         "password": "$2b$08$YxzTpeXzCco/O5SUovq2OuR4U9AzRpa26JDr2BBt.RLfJiMZj6idy",
         "isAdmin": false,
-        "isSeller": false,
+        "userType": 1,
         "profilePicture": null,
         "createdAt": "2022-11-01T02:55:59.877Z",
         "updatedAt": "2022-11-01T02:55:59.877Z",
@@ -173,6 +179,7 @@ Property of each List:
 - model (car model)
 - noOfBed
 - noOfBathroom
+- views
 
 ### Get all listings from the database
     GET: "/listings/all"
@@ -213,3 +220,43 @@ Property of each List:
 ### Get a list of users listings
     GET: "/listings/user-listing"
     response: list of properties
+
+
+### View a list
+    GET: "/listings/view:id"
+    responnse: null
+
+
+## Notifications
+    The following are the properties of every notification.
+    sender: a user object which sends the notification, and this might not be parsed from the client end
+
+    message: the notification content
+
+    type: the type of the notification which is either 0 or 1, 0 for just information nd 1 for a linked type of notification
+
+    read: a boolean to tell if the notification is read or not
+
+    receiver: a user object which owns the notification
+
+    
+### Get all users notifications
+    GET: "/notifications/all"
+    response: an array of notifications
+
+### Read a notification
+    GET: "/notifications/read/:id"
+    parameter: id
+    response: the notification object
+
+### Send Notification
+    POST: "/notifications"
+    response: {
+        message: "Notification Sent"
+    }
+
+### Get number of unread notifications
+    GET: "/notifications/unread"
+    response: {
+        unread: 2
+    }

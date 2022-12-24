@@ -7,6 +7,7 @@ const listRoute = require("./routes/listingsRoute")
 const transactionRoute = require("./routes/transactionsRoute")
 const memberRoute = require("./routes/membersRoute");
 const waitListRoute = require("./routes/waitListRoute");
+const notificationRoute = require("./routes/notificationsRoute")
 const bodyParser = require('body-parser')
 
 //initiate express
@@ -21,9 +22,9 @@ app.use(
 
 //set port and db uri
 const port = process.env.PORT || 9099
-const uri = process.env.DB_URI 
+const uri = "mongodb://127.0.0.1:27017/kde"
 
-// "mongodb://127.0.0.1:27017/kde"
+// process.env.DB_URI 
 // connect mongodb
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -38,6 +39,7 @@ app.use("/listings", listRoute)
 app.use("/transactions", transactionRoute)
 app.use("/members", memberRoute)
 app.use("/wait-list", waitListRoute)
+app.use("/notifications", notificationRoute)
 
 //run server
 app.listen(port, ()=>{
