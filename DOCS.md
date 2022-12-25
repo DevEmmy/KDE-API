@@ -226,6 +226,17 @@ Property of each List:
     GET: "/listings/view:id"
     responnse: null
 
+### save a list
+    PATCH: "/listings/save/:id"
+    response:
+    ```
+        {
+            status: "Saved
+        }
+    ```json
+
+    the status can either be "Saved" or "Unsaved" and this route can be used to save and also unsave a list.
+
 
 ## Notifications
     The following are the properties of every notification.

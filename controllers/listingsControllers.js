@@ -39,7 +39,12 @@ const newA = async (images, option)=>{
 }
 
 const uploadAList = async (req, res)=>{
-    res.setTimeout(0)
+    res.setTimeout(10000000, () => {
+        let err = new Error('Service Unavailable');
+        err.status = 503;
+        console.log(err)
+    });
+
     const list = req.body;
     list.postedBy = req.user;
     // console.log(newA(list.images))
@@ -104,6 +109,48 @@ const viewAList = async (req, res)=>{
         Listing.findByIdAndUpdate(id, list, {new:true}).populate("postedBy").populate("views")
     })
     .catch(error => res.json({message: "An Error Occured", error: error}))
+}
+
+const saveList = async (req, res)=>{
+    const loggedUser = req.user
+    const {id} = req.params;
+    var listing = Listing.findById(id)
+    try{
+        if(listing.thoseWhoSaved.indexof(loggedUser._id) == -1){
+            listing.thoseWhoSaved.push(loggedUser._id)
+            Listing.findByIdAndUpdate(id, listing, {new:true})
+            .then(resp => {
+                User.findById(loggedUser._id)
+                .then(user => {
+                    user.saved.push(id)
+                    User.findByIdAndUpdate(id, user, {new:true})
+                    .then(resp =>{
+                        res.json({status: "Status"})
+                    })
+                })
+            })
+            .catch(error => res.json({message: "An Error Occured", error: error}))
+        }
+        else{
+            listing.thoseWhoSaved = listing.thoseWhoSaved.filter(id => String(id) != String(loggedUser._id))
+            Listing.findByIdAndUpdate(id, listing, {new:true})
+            .then(resp => {
+                User.findById(loggedUser._id)
+                .then(user => {
+                    user.saved = user.saved.filter(list => String(list) !== String(id))
+                    User.findByIdAndUpdate(id, user, {new:true})
+                    .then(resp =>{
+                        res.json({status: "Unsaved"})
+                    })
+                })
+            })
+            .catch(error => res.json({message: "An Error Occured", error: error}))
+        }
+        
+    }
+    catch(err){
+        res.status(400).json(err)
+    }
 }
 
 

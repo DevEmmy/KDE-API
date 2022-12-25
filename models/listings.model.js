@@ -23,7 +23,10 @@ const listingSchema = new Schema({
     noOfBathroom: Number,
     views: [
         {type: Schema.Types.ObjectId, ref:"User"},
-    ]
+    ],
+    thoseWhoSaved: [
+        {type: Schema.Types.ObjectId, ref:"User"},
+    ],
 },
 {
     timestamps: true

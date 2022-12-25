@@ -43,7 +43,8 @@ const userSchema = new Schema({
     accountNo: {type: Number, unique: true},
     bankName: String,
     accountName: {type: String},
-    userType: {type: Number, default: 0}
+    userType: {type: Number, default: 0},
+    saved: [{type: Schema.Types.ObjectId, ref: "Listing"}],
 },
 {
     timestamps: true,
