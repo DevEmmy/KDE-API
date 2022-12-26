@@ -66,5 +66,4 @@ const getUnreadNotification = async (req, res)=>{
 
 
 module.exports = {
-    sendNotification, getUsersNotification, readNotification, getUnreadNotification
-}
+    sendNotification, getUsersNotification, readNotification, getUnreadNotification, saveNotification}

@@ -158,6 +158,10 @@ This route will get the details of a user, with its id.
         user: "User Object"
     ```
 
+### View Profile
+    PATCH: "/users/view/:id"
+    
+
 ## Listing
 The route below this will be related to Listings
 
@@ -223,7 +227,7 @@ Property of each List:
 
 
 ### View a list
-    GET: "/listings/view:id"
+    PATCH: "/listings/view:id"
     responnse: null
 
 ### save a list

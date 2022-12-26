@@ -11,6 +11,7 @@ router.delete("/delete/:id", requireLogin, deleteList)
 router.patch("update/:id", requireLogin, updateList)
 router.patch("/make-unavailable/:id", requireLogin, makeUnavailable)
 router.get('/user-listing',requireLogin, getUserListing)
-router.get("/view/:id", requireLogin, viewAList)
+router.patch("/view/:id", requireLogin, viewAList)
+router.patch("/save/:id", requireLogin, viewAList)
 
 module.exports = router;

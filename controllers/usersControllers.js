@@ -4,6 +4,7 @@ require("dotenv").config
 const jwt_secret = process.env.JWT_SECRET;
 const bcrypt = require('bcrypt');
 const { cloudinary } = require("./cloudinary");
+const { saveNotification } = require("./notificationsControllers");
 
 const upload = async (data)=>{
     let url;
@@ -41,7 +42,7 @@ const signIn = async (req, res)=>{
     await User.findOne({email})
     .then(user=>{
         if(!user){
-            res.json({message: "There is no user with this message"})
+            res.json({message: "There is no user with this Email"})
         }
         else{
             bcrypt.compare(password, user.password)
@@ -199,4 +200,28 @@ const updateBankDetails = async (req, res)=>{
     })
 }
 
-module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails}
+const viewProfile = async (req, res)=>{
+    const loggedUser = req.user;
+    const {id} = req.params;
+    if(loggedUser._id !== id){
+        User.findById(id)
+        .then(user => {
+            user.viewed += 1
+            User.findByIdAndUpdate(id, user, {new: true})
+            .then(resp =>{
+                let notification = {
+                    sender: loggedUser,
+                    title: "Profile View",
+                    message: `Someone just viewed your profile. You now have ${user.viewed} viewers on your profile`,
+                    type: 0,
+                    receiver: id
+                }
+                saveNotification(notification, res)
+            })
+            .catch(err => res.json(err))
+        })
+        .catch(err => res.json(err))
+    }
+}
+
+module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile}
