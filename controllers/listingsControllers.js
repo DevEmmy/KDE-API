@@ -26,35 +26,44 @@ const getUserListing = async (req, res) => {
 const newA = async (images, option) => {
     let i = 0;
     const ims = []
+    console.log(images.length)
     while (i < images.length) {
         console.log("working")
         await cloudinary.uploader.upload(images[i].base64, option)
             .then(resp => {
                 ims.push(resp.secure_url)
                 console.log("done")
-                i++
             })
-            .catch(err => console.log(err))
+            .catch(err => console.log("err"))
+            i++
     }
     return ims
 }
 
 const uploadAList = async (req, res) => {
-    res.setTimeout(10000000, () => {
-        let err = new Error('Service Unavailable');
-        err.status = 503;
-        console.log(err)
-    });
+    // res.setTimeout(10000000, () => {
+    //     let err = new Error('Service Unavailable');
+    //     err.status = 503;
+    //     console.log(err)
+    // });
 
     const list = req.body;
     list.postedBy = req.user;
     // console.log(newA(list.images))
-    list.images = await newA(list.images)
-    list.videos = await newA(list.videos, {
+    console.log(list.images)
+
+    if(list.images.length > 0){
+        list.images = await newA(list.images)
+    }
+    if(list.videos.length > 0){
+        list.videos = await newA(list.videos, {
         resource_type: "video",
         format: "mp4"
     })
-    console.log(list.images)
+    }
+    
+    
+    // console.log(list.images)
     new Listing(list).save()
         .then(resp => res.json({ message: "Successful", list: resp }))
         .catch(error => res.json({ message: "An Inner Error Occured", error: error }))
@@ -189,5 +198,13 @@ const saveList = async (req, res) => {
 }
 
 
+const searchListing = async (req, res)=>{
+    const {title} = req.params
+    Listing.find({title: {$regex: new RegExp("^" + title + ".*", "i")}})
+    .populate("postedBy")
+        .then(resp => res.json(resp))
+        .catch(error => res.json({ message: "An Error Occured", error: error }))
+}
 
-module.exports = { getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing, getAList, viewAList }
+
+module.exports = { getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing, getAList, viewAList, searchListing }

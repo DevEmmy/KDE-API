@@ -241,6 +241,9 @@ Property of each List:
 
     the status can either be "Saved" or "Unsaved" and this route can be used to save and also unsave a list.
 
+### search a list
+    GET: "/listings/search/:title"
+
 
 ## Notifications
     The following are the properties of every notification.
