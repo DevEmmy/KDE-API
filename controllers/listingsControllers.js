@@ -50,7 +50,7 @@ const uploadAList = async (req, res) => {
     const list = req.body;
     list.postedBy = req.user;
     // console.log(newA(list.images))
-    console.log(list.images)
+    // console.log(list.images)
 
     if(list.images.length > 0){
         list.images = await newA(list.images)
