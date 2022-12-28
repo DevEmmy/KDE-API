@@ -199,11 +199,32 @@ const saveList = async (req, res) => {
 
 
 const searchListing = async (req, res)=>{
-    const {title} = req.params
-    Listing.find({title: {$regex: new RegExp("^" + title + ".*", "i")}})
+    const {title, price, noOfBed, location} = req.query
+
+    if(title){
+        Listing.find({title: {$regex: new RegExp("^" + title + ".*", "i")}})
     .populate("postedBy")
         .then(resp => res.json(resp))
         .catch(error => res.json({ message: "An Error Occured", error: error }))
+    }
+    else if(price){
+        Listing.find({price: {$regex: new RegExp("^" + price + ".*", "i")}})
+    .populate("postedBy")
+        .then(resp => res.json(resp))
+        .catch(error => res.json({ message: "An Error Occured", error: error }))
+    }
+    else if(noOfBed){
+        Listing.find({noOfBed: {$regex: new RegExp("^" + noOfBed + ".*", "i")}})
+    .populate("postedBy")
+        .then(resp => res.json(resp))
+        .catch(error => res.json({ message: "An Error Occured", error: error }))
+    }
+    else if(location){
+        Listing.find({location: {$regex: new RegExp("^" + location + ".*", "i")}})
+    .populate("postedBy")
+        .then(resp => res.json(resp))
+        .catch(error => res.json({ message: "An Error Occured", error: error }))
+    }
 }
 
 

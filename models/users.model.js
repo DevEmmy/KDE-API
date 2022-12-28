@@ -11,6 +11,7 @@ const userSchema = new Schema({
     cover: {type: String, default:"https://avatarfiles.alphacoders.com/865/86518.png"},
     facebookUrl: String,
     instagramUrl: String,
+    websiteUrl: String,
     address: String,
     country: String,
     state: String,
@@ -40,7 +41,7 @@ const userSchema = new Schema({
     zipCode: Number,
 
     // for bank details
-    accountNo: {type: Number, unique: true},
+    accountNo: {type: Number},
     bankName: String,
     accountName: {type: String},
     userType: {type: Number, default: 0},
