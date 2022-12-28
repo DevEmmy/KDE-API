@@ -41,7 +41,7 @@ const userSchema = new Schema({
     zipCode: Number,
 
     // for bank details
-    // accountNo: {type: Number},
+    accountNo: {type: Number},
     bankName: String,
     accountName: {type: String},
     userType: {type: Number, default: 0},
