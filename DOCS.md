@@ -222,7 +222,8 @@ Property of each List:
     response: list properties;
 
 ### Get a list of users listings
-    GET: "/listings/user-listing"
+    GET: "/listings/user-listing" (if logged in users)
+    else: "/listings/user-listing?id="user._id"
     response: list of properties
 
 

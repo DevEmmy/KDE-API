@@ -18,7 +18,8 @@ const getAList = async (req, res) => {
 
 const getUserListing = async (req, res) => {
     const user = req.user;
-    await Listing.find({ postedBy: user }).populate("postedBy")
+    const { id } = req.query;
+    await Listing.find({ postedBy: (id || user._id) }).populate("postedBy")
         .then(resp => res.json(resp))
         .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
@@ -81,10 +82,13 @@ const deleteList = async (req, res) => {
     const { id } = req.params;
     await Listing.findById(id).populate("postedBy")
         .then(list => {
-            if (list.postedBy._id == req.user._id || req.user.isAdmin) {
+            if (list.postedBy._id == (req.user._id || req.user.isAdmin)) {
                 Listing.findByIdAndDelete(id)
                     .then(resp => res.json({ message: "Listing Deleted" }))
                     .catch(error => res.json({ message: "An Error Occured", error: error }))
+            }
+            else{
+                res.status(403).json({message: "You can't perform this operation"})
             }
         })
 }
