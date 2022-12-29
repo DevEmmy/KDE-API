@@ -6,7 +6,7 @@ const jwt_secret = process.env.JWT_SECRET;
 const requireLogin = require("../middlewares/requireLogin");
 const { getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile } = require("../controllers/usersControllers");
 
-router.get("/all-users", requireLogin, getAllUsers)
+router.get("/all-users", getAllUsers)
 router.get("/me", requireLogin, getSignedInUser)
 router.get("/:id", getUserById)
 router.post("/sign-in", signIn)

@@ -17,7 +17,7 @@ const upload = async (data)=>{
 }
 
 const getAllUsers = async (req, res)=>{
-    if(req.user?.isAdmin){
+    // if(req.user?.isAdmin){
         await User.find()
         .then(resp=>{
             res.json({users: resp, message: "Successful"})
@@ -25,10 +25,10 @@ const getAllUsers = async (req, res)=>{
         .catch(err=>{
             res.json({message: "An Error Occured", error: err})
         })
-    }
-    else{
-        res.json({message: "You are not Admin"})
-    }
+    // }
+    // else{
+    //     res.json({message: "You are not Admin"})
+    // }
 }
 
 const getSignedInUser = async (req, res)=>{
@@ -160,7 +160,7 @@ const addToSaved = async (req, res)=>{
 const getUserById = async (req, res)=>{
     const {id} = req.params
     await User.findById(id)
-    .then(resp => res.json(resp))
+    .then(resp => {res.json(resp);})
     .catch(err => res.json(err))
 }
 

@@ -6,7 +6,7 @@ const listingSchema = new Schema({
     // category: {type: Schema.Types.ObjectId, ref:"Category"},
     title: {type: String, required:true},
     location: {type: String, required:true},
-    postedBy: {type: Schema.Types.ObjectId, ref:"User"},
+    postedBy: {type: Schema.Types.ObjectId, ref:"User", required: true},
     features: {type:Array},
     description: {type: String, required:false},
     images: {type: Array, required: false},
