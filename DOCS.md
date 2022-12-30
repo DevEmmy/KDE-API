@@ -187,7 +187,13 @@ Property of each List:
 
 ### Get all listings from the database
     GET: "/listings/all"
-    if successful; a list of all 
+    if successful:
+    ```
+    {
+        listings: []
+        noOfListings: 0
+    }
+    ```
 
 ### Uploading a list
     POST: "/listings/upload-list/"

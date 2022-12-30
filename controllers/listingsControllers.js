@@ -4,8 +4,15 @@ const { cloudinary } = require("./cloudinary");
 const { saveNotification } = require("./notificationsControllers")
 
 const getAllListing = async (req, res) => {
-    await Listing.find().populate("postedBy")
-        .then(resp => res.json(resp))
+    const {page} = req.query;
+    const limit = 10
+    const length = (await Listing.find()).length
+    await Listing.find().populate("postedBy").skip((page - 1) * limit)
+    .limit(limit)
+        .then(resp => res.json({
+            listings: resp,
+            noOfListings: length
+        }))
         .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
 
@@ -82,7 +89,7 @@ const deleteList = async (req, res) => {
     const { id } = req.params;
     await Listing.findById(id).populate("postedBy")
         .then(list => {
-            if (list.postedBy._id == (req.user._id || req.user.isAdmin)) {
+            if (String(list.postedBy._id) == (req.user._id || req.user.isAdmin)) {
                 Listing.findByIdAndDelete(id)
                     .then(resp => res.json({ message: "Listing Deleted" }))
                     .catch(error => res.json({ message: "An Error Occured", error: error }))
@@ -120,7 +127,9 @@ const viewAList = async (req, res) => {
     Listing.findById(id).populate("postedBy")
         .then(list => {
             list.views.push(user._id)
-            Listing.findByIdAndUpdate(id, list, { new: true }).populate("postedBy").populate("views")
+            if(String(list.postedBy._id) != user._id){
+                console.log(String(list.postedBy._id))
+               Listing.findByIdAndUpdate(id, list, { new: true }).populate("postedBy").populate("views")
                 .then(resp => {
                     let listType;
                     if (list.engineType != null) {
@@ -139,7 +148,9 @@ const viewAList = async (req, res) => {
                     }
                     saveNotification(notification, res)
                 })
-                .catch(error => res.json({ message: "An Error Occured", error: error }))
+                .catch(error => res.json({ message: "An Error Occured", error: error })) 
+            }
+            
         })
         .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
