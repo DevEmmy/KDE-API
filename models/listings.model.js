@@ -27,6 +27,7 @@ const listingSchema = new Schema({
     thoseWhoSaved: [
         {type: Schema.Types.ObjectId, ref:"User"},
     ],
+    type: {type: Number, default: 0},
 },
 {
     timestamps: true

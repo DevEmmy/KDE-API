@@ -187,6 +187,9 @@ Property of each List:
 
 ### Get all listings from the database
     GET: "/listings/all"
+    query: page & type
+    type: [0, 1]
+
     if successful:
     ```
     {

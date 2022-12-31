@@ -4,10 +4,10 @@ const { cloudinary } = require("./cloudinary");
 const { saveNotification } = require("./notificationsControllers")
 
 const getAllListing = async (req, res) => {
-    const {page} = req.query;
+    const {page, type} = req.query;
     const limit = 10
     const length = (await Listing.find()).length
-    await Listing.find().populate("postedBy").skip((page - 1) * limit)
+    await Listing.find({type: type}).populate("postedBy").skip(((page || 1) - 1) * limit)
     .limit(limit)
         .then(resp => res.json({
             listings: resp,
@@ -56,6 +56,12 @@ const uploadAList = async (req, res) => {
     // });
 
     const list = req.body;
+    if(list.colour){
+        list.type=1
+    }
+    else{
+        list.type=0
+    }
     list.postedBy = req.user;
     // console.log(newA(list.images))
     // console.log(list.images)
