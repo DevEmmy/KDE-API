@@ -6,7 +6,7 @@ const { saveNotification } = require("./notificationsControllers")
 const getAllListing = async (req, res) => {
     const {page, type} = req.query;
     const limit = 10
-    const length = (await Listing.find()).length
+    const length = (await Listing.find({type: type})).length
     await Listing.find({type: type}).populate("postedBy").skip(((page || 1) - 1) * limit)
     .limit(limit)
         .then(resp => res.json({
