@@ -25,6 +25,7 @@ const userSchema = new Schema({
     isAdmin: {type:Boolean, default: false},
     
     savedListing: {type: Schema.Types.ObjectId, ref: "Listing"},
+    pageViews: {type: Number, default: 0},
     nationality: {type: String},
     stateOfResidence: {type: String},
 

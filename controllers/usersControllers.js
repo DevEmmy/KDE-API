@@ -206,7 +206,7 @@ const viewProfile = async (req, res)=>{
     if(loggedUser._id !== id){
         User.findById(id)
         .then(user => {
-            user.viewed += 1
+            user.pageViews += 1
             User.findByIdAndUpdate(id, user, {new: true})
             .then(resp =>{
                 let notification = {
@@ -224,4 +224,16 @@ const viewProfile = async (req, res)=>{
     }
 }
 
-module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile}
+const viewProfilePage = async (req, res)=>{
+    const id = req.params.id;
+    User.findById(id)
+    .then(user => {
+        user.pageViews += 1;
+        User.findByIdAndUpdate(id, user, {new:true})
+        .then(resp => res.json({message: "You just view a profile"}))
+        .catch(err => res.json(err))
+    })
+    .catch(err => res.json(err))
+}
+
+module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile, viewProfilePage}
