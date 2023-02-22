@@ -203,20 +203,37 @@ const updateBankDetails = async (req, res)=>{
 const viewProfile = async (req, res)=>{
     const loggedUser = req.user;
     const {id} = req.params;
+    
     if(loggedUser._id !== id){
+        
         User.findById(id)
         .then(user => {
-            user.pageViews += 1
+            
+            user.pageViews.value += 1
+            console.log("hek")
+            let i =  user.pageViews.users.indexOf(loggedUser._id);
+            console.log(i)
+
+            if(i === -1){
+                user.pageViews.users.push(loggedUser._id);
+            }
+            else{
+                // user.pageViews.users.splice(i, 1);
+            }
+            console.log(user.pageViews.users.length)
+
             User.findByIdAndUpdate(id, user, {new: true})
             .then(resp =>{
+                
                 let notification = {
                     sender: loggedUser,
                     title: "Profile View",
-                    message: `Someone just viewed your profile. You now have ${user.viewed} viewers on your profile`,
+                    message: `Someone just viewed your profile. You now have ${user.pageViews.value} viewers on your profile`,
                     type: 0,
                     receiver: id
                 }
                 saveNotification(notification, res)
+                // res.json(resp.pageViews)
             })
             .catch(err => res.json(err))
         })
