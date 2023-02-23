@@ -4,6 +4,7 @@ require("dotenv").config()
 const transporter = nodemailer.createTransport({
     service:"gmail",
     host: 'smtp.zoho.com',
+    port: 456,
     secure: true,
     auth: {
       user: process.env.EMAIL_ADDRESS,
@@ -18,6 +19,7 @@ const sendMail = (receiver, sender, subject, html)=>{
         subject: subject,
         html: html
       };
+      console.log("sending...")
 
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
