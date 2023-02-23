@@ -4,7 +4,7 @@ require("dotenv").config()
 const transporter = nodemailer.createTransport({
     service:"gmail",
     host: 'smtp.zoho.com',
-    secure: false,
+    secure: true,
     auth: {
       user: process.env.EMAIL_ADDRESS,
       pass: process.env.EMAIL_TEST_PASSWORD
