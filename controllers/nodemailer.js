@@ -2,24 +2,21 @@ const nodemailer = require('nodemailer');
 require("dotenv").config()
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 432,
-    secure: true,
+    service:"gmail",
+    host: 'smtp.zoho.com',
+    secure: false,
     auth: {
-      user: 'kingdavidelites@gmail.com',
-      type: 'OAuth2',
-    user: 'eolaosebikan60@gmail.com',
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET
+      user: process.env.EMAIL_ADDRESS,
+      pass: process.env.EMAIL_TEST_PASSWORD
     }
   });
 
-const sendMail = (receiver)=>{
+const sendMail = (receiver, sender, subject, html)=>{
     const mailOptions = {
-        from: 'kingdavidelites@gmail.com',
+        from: `${sender}<${process.env.EMAIL_ADDRESS}>`,
         to: receiver,
-        subject: 'Hello from Nodemailer',
-        html: '<h1>Welcome</h1><p>This is a test email sent using Nodemailer</p>'
+        subject: subject,
+        html: html
       };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -30,6 +27,8 @@ const sendMail = (receiver)=>{
         }
     });
 }
+
+// sendMail("eolaosebikan60@gmail.com", "Emmanuel", "Test Mail", ``);
 
 module.exports = {
     sendMail

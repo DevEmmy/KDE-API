@@ -1,3 +1,4 @@
+const { news_letter } = require("../html_templates/html");
 const WaitList = require("../models/waitList.model");
 const { sendMail } = require("./nodemailer");
 
@@ -7,7 +8,7 @@ const inputDetails = async (req, res)=>{
     await new WaitList(details).save()
     .then(resp => {
         res.json({message: "Successful"})
-        sendMail(details.email)
+        sendMail(details.email, details.name, "Thanks for registering", news_letter)
     }
         )
     .catch(err => res.json({message: "An Error Occured"}))

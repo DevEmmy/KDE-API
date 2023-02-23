@@ -24,8 +24,12 @@ const userSchema = new Schema({
     password:  {type: String, required: true},
     isAdmin: {type:Boolean, default: false},
     
-    savedListing: {type: Schema.Types.ObjectId, ref: "Listing"},
+    savedListing: [{type: Schema.Types.ObjectId, ref: "Listing"}],
     pageViews: {
+        value: {type: Number, default: 0},
+        users: [{type: Schema.Types.ObjectId, ref: "User"}]
+    },
+    totalSaved: {
         value: {type: Number, default: 0},
         users: [{type: Schema.Types.ObjectId, ref: "User"}]
     },

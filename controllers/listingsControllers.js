@@ -161,7 +161,7 @@ const viewAList = async (req, res) => {
         .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
 
-const saveList = async (req, res) => {
+const saveAList = async (req, res) => {
     const loggedUser = req.user
     const { id } = req.params;
     var listing = Listing.findById(id)
@@ -218,6 +218,57 @@ const saveList = async (req, res) => {
     }
 }
 
+const saveList = async (req, res)=>{
+    const loggedUser = req.user;
+    const listId = req.params.id
+
+    Listing.findById(listId)
+    .then(listing => {
+        console.log(listing)
+        const index = listing.thoseWhoSaved.indexOf(loggedUser._id);
+        if(index == -1){
+            listing.thoseWhoSaved.push(loggedUser._id)
+        }
+        else{
+            listing.thoseWhoSaved.splice(index, 0)
+        }
+        Listing.findByIdAndUpdate(listId, listing, {new: true})
+
+        User.findById(loggedUser._id)
+        .then(user => {
+            console.log(user)
+            const i = user.savedListing.indexOf(listId)
+            if(i == -1){
+                user.savedListing.push(listId)
+            }
+            else{
+                user.savedListing.splice(i, 0)
+            }
+            User.findByIdAndUpdate(user._id, user, {new: true})
+        })
+
+        User.findById(listing.postedBy)
+        .then(user =>{
+            user.totalSaved.value += 1;
+            let listType;
+                    if (listing.engineType != null) {
+                        listType = "real-estate"
+                    }
+                    else {
+                        listType = "cars"
+                    }
+            let notification = {
+                sender: user,
+                title: "Your List was Saved",
+                message: `${user.firstName} saved your listing, ${listing.title}`,
+                type: 1,
+                link: `/${listType}/${listing._id}`,
+                receiver: listing.postedBy
+            }
+            saveNotification(notification, res)
+        } )
+    })
+}
 
 const searchListing = async (req, res)=>{
     const {title, price, noOfBed, location} = req.query
@@ -250,4 +301,4 @@ const searchListing = async (req, res)=>{
 }
 
 
-module.exports = { getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing, getAList, viewAList, searchListing }
+module.exports = { getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing, getAList, viewAList, searchListing, saveList }
