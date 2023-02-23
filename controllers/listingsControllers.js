@@ -224,7 +224,7 @@ const saveList = async (req, res)=>{
 
     Listing.findById(listId)
     .then(listing => {
-        console.log(listing)
+        
         const index = listing.thoseWhoSaved.indexOf(loggedUser._id);
         if(index == -1){
             listing.thoseWhoSaved.push(loggedUser._id)
@@ -236,7 +236,7 @@ const saveList = async (req, res)=>{
 
         User.findById(loggedUser._id)
         .then(user => {
-            console.log(user)
+            // console.log(user)
             const i = user.savedListing.indexOf(listId)
             if(i == -1){
                 user.savedListing.push(listId)
@@ -250,6 +250,15 @@ const saveList = async (req, res)=>{
         User.findById(listing.postedBy)
         .then(user =>{
             user.totalSaved.value += 1;
+            let index = user.totalSaved.users.indexOf(loggedUser._id)
+            if(index == -1){
+                user.totalSaved.users.push(loggedUser)
+            }
+            User.findByIdAndUpdate(user._id, user, {new: true})
+            .then(resp => {
+                console.log(resp)
+            })
+
             let listType;
                     if (listing.engineType != null) {
                         listType = "real-estate"
@@ -258,7 +267,7 @@ const saveList = async (req, res)=>{
                         listType = "cars"
                     }
             let notification = {
-                sender: user,
+                sender: loggedUser,
                 title: "Your List was Saved",
                 message: `${user.firstName} saved your listing, ${listing.title}`,
                 type: 1,

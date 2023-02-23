@@ -267,7 +267,7 @@ const generatePasswordResetToken = (email, res) => {
     User.findOneAndUpdate({ email }, user)
     .then(user => {
         // console.log(user.firstName)
-        sendMail(email, "King David Elite", "Your Password Reset Token", reset_html(user, token));
+        sendMail(email, "King David Elite", "Your Password Reset Token", reset_html(user, token), res);
    
     })
     // .catch(err => res.json(err))
@@ -289,7 +289,7 @@ const generatePasswordResetToken = (email, res) => {
 const forgottenPassword = async (req, res)=>{
     try{
         generatePasswordResetToken(req.body.email, res)
-        res.json({message: "Chcek your email for reset link"});
+        // res.json({message: "Chcek your email for reset link"});
     }
     catch(err){
         res.status(500).json(err)
