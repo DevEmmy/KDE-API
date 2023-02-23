@@ -19,9 +19,10 @@ const sendMail = (receiver, sender, subject, html)=>{
         subject: subject,
         html: html
       };
-      console.log("sending...")
+      
 
     transporter.sendMail(mailOptions, (error, info) => {
+      console.log("sending...")
         if (error) {
         console.log(error);
         } else {
