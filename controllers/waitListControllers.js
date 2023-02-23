@@ -7,8 +7,7 @@ const inputDetails = async (req, res)=>{
     const details = req.body;
     await new WaitList(details).save()
     .then(resp => {
-        res.json({message: "Successful"})
-        sendMail(details.email, details.name, "Thanks for registering", news_letter)
+        sendMail(details.email, details.name, "Thanks for registering", news_letter, res)
     }
         )
     .catch(err => res.json({message: "An Error Occured"}))

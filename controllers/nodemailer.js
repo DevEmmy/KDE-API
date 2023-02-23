@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
     }
   });
 
-const sendMail =  (receiver, sender, subject, html)=>{
+const sendMail = async (receiver, sender, subject, html, res)=>{
     const mailOptions = {
         from: `${sender}<${process.env.EMAIL_ADDRESS}>`,
         to: receiver,
@@ -21,12 +21,13 @@ const sendMail =  (receiver, sender, subject, html)=>{
       };
       
 
-     transporter.sendMail(mailOptions, (error, info) => {
+     await transporter.sendMail(mailOptions, (error, info) => {
       console.log("sending...")
         if (error) {
         console.log(error);
         } else {
         console.log('Email sent: ' + info.response);
+        res.json({message: "Successful"})
         }
     });
 }
