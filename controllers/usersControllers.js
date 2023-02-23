@@ -1,10 +1,12 @@
 const User = require("../models/users.model");
 const jwt = require("jsonwebtoken");
-require("dotenv").config
+require("dotenv").config()
 const jwt_secret = process.env.JWT_SECRET;
 const bcrypt = require('bcrypt');
 const { cloudinary } = require("./cloudinary");
 const { saveNotification } = require("./notificationsControllers");
+const { sendMail } = require("./nodemailer");
+const { reset_html } = require("../html_templates/html");
 
 const upload = async (data)=>{
     let url;
@@ -253,4 +255,73 @@ const viewProfilePage = async (req, res)=>{
     .catch(err => res.json(err))
 }
 
-module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile, viewProfilePage}
+const generatePasswordResetToken = (email, res) => {
+    const user = User.findOne({ email });
+    if (!user) {
+      throw new Error('User not found');
+    }
+  
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+    User.findOneAndUpdate({ email }, user)
+    .then(user => {
+        // console.log(user.firstName)
+        sendMail(email, "King David Elite", "Your Password Reset Token", reset_html(user, token));
+   
+    })
+    // .catch(err => res.json(err))
+  
+  
+    // const mailOptions = {
+    //   to: email,
+    //   from: process.env.GMAIL_USER,
+    //   subject: 'Your Password Reset Token',
+    //   text: `Hi ${user.name},\n\nYou are receiving this email because you (or someone else) has requested a password reset for your account.\n\nPlease click on the following link, or paste this into your browser to complete the process:\n\n${process.env.CLIENT_URL}/reset/${token}\n\nIf you did not request this, please ignore this email and your password will remain unchanged.\n`,
+    // };
+    
+     return {
+        message: "Check your mail for reset link"
+     }
+  };
+
+
+const forgottenPassword = async (req, res)=>{
+    try{
+        generatePasswordResetToken(req.body.email, res)
+        res.json({message: "Chcek your email for reset link"});
+    }
+    catch(err){
+        res.status(500).json(err)
+    }
+    
+}
+
+const resetPassword = async (token, password, res) => {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+  
+    if (!user) {
+      throw new Error('Password reset token is invalid or has expired');
+    }
+  
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    await User.findOne({resetPasswordToken: token})
+    .then(user => res.json(user))
+    .catch(err => res.json(err))
+  };
+
+
+const reset_password = async (req, res)=>{
+    const {token, password} = req.body;
+    resetPassword(token, password, res)
+}
+
+
+
+module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile, viewProfilePage, forgottenPassword, reset_password}

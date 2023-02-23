@@ -54,6 +54,10 @@ const userSchema = new Schema({
     accountName: {type: String},
     userType: {type: Number, default: 0},
     saved: [{type: Schema.Types.ObjectId, ref: "Listing"}],
+
+    //auth
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
 },
 {
     timestamps: true,
