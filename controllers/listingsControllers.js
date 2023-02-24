@@ -79,7 +79,13 @@ const uploadAList = async (req, res) => {
     
     // console.log(list.images)
     new Listing(list).save()
-        .then(resp => res.json({ message: "Successful", list: resp }))
+        .then(resp =>{ 
+            
+            let loggedUser = req.user
+            loggedUser.totalListing +=1;
+            User.findByIdAndUpdate(loggedUser._id, loggedUser, {new: true})
+            .then(user => res.json({ message: "Successful", list: resp }))
+        })
         .catch(error => res.json({ message: "An Inner Error Occured", error: error }))
 
     // await newA(list.images)
