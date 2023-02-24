@@ -322,6 +322,40 @@ const reset_password = async (req, res)=>{
     resetPassword(token, password, res)
 }
 
+const changeAccountType = async (req, res)=>{
+    const loggedUser = req.user;
+    const {accountType} = req.body
+    if(accountType){
+       loggedUser.accountType = accountType
+    await User.findByIdAndUpdate(loggedUser._id, loggedUser, {new: true})
+    .then(resp => res.json(
+        {message: "Updated Successfully",
+        user: resp
+    }))
+    .catch(err => res.json(err)) 
+    }
+    else{
+        res.status(400).json("Account Type wasn't parsed")
+    }
+}
+
+const selectSellerType = async (req, res)=>{
+        const loggedUser = req.user
+        const {sellerType} = req.body;
+        if(sellerType){
+            loggedUser.sellerType = sellerType
+         await User.findByIdAndUpdate(loggedUser._id, loggedUser, {new: true})
+         .then(resp => res.json(
+             {message: "Updated Successfully",
+             user: resp
+         }))
+         .catch(err => res.json(err)) 
+         }
+         else{
+             res.status(400).json("Account Type wasn't parsed")
+         }
+}
 
 
-module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile, viewProfilePage, forgottenPassword, reset_password}
+
+module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile, viewProfilePage, forgottenPassword, reset_password, changeAccountType, selectSellerType}

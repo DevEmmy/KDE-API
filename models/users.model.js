@@ -58,6 +58,13 @@ const userSchema = new Schema({
     //auth
     resetPasswordToken: String,
     resetPasswordExpires: Date,
+
+    //type of account
+    accountType: {type: Number, default: 0},
+    subscribed: {type: Boolean, default: false},
+    noOfSubscription: {type: Number, default: 0},
+    totalListing: {type: Number, default: 0},
+    sellerType: {type: Number, default: 0}
 },
 {
     timestamps: true,
