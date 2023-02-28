@@ -9,7 +9,7 @@ const memberRoute = require("./routes/membersRoute");
 const waitListRoute = require("./routes/waitListRoute");
 const notificationRoute = require("./routes/notificationsRoute")
 const bodyParser = require('body-parser');
-const conversationRoute = require("./routes/conversationsRoute")
+const conversationRoute = require("./routes/conversationRoute")
 const messagesRoute = require("./routes/messagesRoute");
 
 //initiate express

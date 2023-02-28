@@ -6,4 +6,4 @@ const router = require("express").Router();
 router.get("/:conversationId", requireLogin, getMessages )
 router.post("/send-message", requireLogin, sendMessage)
 
-module.exports = {}
+module.exports = router
