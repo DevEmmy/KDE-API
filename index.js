@@ -10,6 +10,7 @@ const waitListRoute = require("./routes/waitListRoute");
 const notificationRoute = require("./routes/notificationsRoute")
 const bodyParser = require('body-parser');
 const conversationRoute = require("./routes/conversationsRoute")
+const messagesRoute = require("./routes/messagesRoute");
 
 //initiate express
 const app = express();
@@ -41,7 +42,8 @@ app.use("/transactions", transactionRoute)
 app.use("/members", memberRoute)
 app.use("/wait-list", waitListRoute)
 app.use("/notifications", notificationRoute)
-app.use("/conversation", conversationRoute)
+app.use("/conversations", conversationRoute)
+app.use("/messages", messagesRoute)
 
 //run server
 app.listen(port, ()=>{
