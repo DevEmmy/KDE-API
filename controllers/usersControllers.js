@@ -170,14 +170,15 @@ const getUserById = async (req, res)=>{
 const verifyUser = async (req, res)=>{
     const user = req.user
     const {verificationId, nationality, verificationType, verifiedProfilePicture} = req.body
-    if(verificationId && verifiedProfilePicture && verifiedProfilePicture){
-        const verification ={nationality: nationality, verificationType: verificationType}
-        verification.verificationId = {
+    if(verificationId && verificationType && verifiedProfilePicture){
+        user.verificationId = {
             front: upload(verificationId.front),
             back: upload(verificationId.back),
         }
-        verification.verifiedProfilePicture = upload(verifiedProfilePicture)
-        User.findByIdAndUpdate(user._id, verification, {new: true})
+        user.verifiedProfilePicture = upload(verifiedProfilePicture)
+        user.nationality = nationality;
+        user.verificationType = verificationType
+        User.findByIdAndUpdate(user._id, user, {new: true})
         .then(resp =>{
             res.status(200).json(resp)
         })
