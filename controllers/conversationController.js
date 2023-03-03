@@ -12,13 +12,14 @@ const getUserConversations = async (req, res)=>{
 
 const createNewConversation = async (req, res)=>{
     const loggedUser = req.user;
+    console.log(loggedUser)
     const toChatId = req.params.id;
-    const convo = ConversationModel.findOne({members: [req.body.loggedUser._id, toChatId]})
+    const convo = ConversationModel.findOne({members: [loggedUser._id, toChatId]})
 
     await convo.then(resp => {
         if(!resp){
             const newConvo = new ConversationModel({
-                    members: [req.body.loggedUser._id, toChatId]
+                    members: [loggedUser._id, toChatId]
                 })
             
                 newConvo.save()

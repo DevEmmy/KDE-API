@@ -11,6 +11,8 @@ const notificationRoute = require("./routes/notificationsRoute")
 const bodyParser = require('body-parser');
 const conversationRoute = require("./routes/conversationRoute")
 const messagesRoute = require("./routes/messagesRoute");
+const http = require('http')
+const {Server}= require("socket.io")
 
 //initiate express
 const app = express();
@@ -21,6 +23,51 @@ app.use(
         origin: "*"
     })
 )
+
+const server = http.createServer(app)
+
+//Restarting
+const io = new Server(server, {
+    cors:{
+        origin: "*",
+        methods: ["GET", "POST", "PATCH","PUT", "DELETE"]
+    }
+})
+
+let users = []
+
+const addUser = (user, socketId)=>{
+    !users.some((user)=> user.user._id === user._id) && user && 
+    users.push({user, socketId})
+}
+
+const removerUser = (socketId)=>{
+    users = users.filter(user => user.socketId !== socketId)
+}
+
+const getUser =(userId)=>{
+    var index = users.filter(user=> user.user._id == userId)
+    // var user = users[index]
+    return index[index.length - 1]?.socketId
+}
+
+io.on("connection", (socket)=>{
+    console.log("A User has been connected " + socket.id)
+    
+
+    socket.on("sendMessage", (m)=>{
+        var socketId = getUser(m.receiver);
+        // console.log(socketId)
+        // console.log(users)
+        if(socketId){
+          io.to(socketId).emit("getMessage", {m})
+        }
+        // console.log("work abeg")
+      })
+})
+
+
+
 
 //set port and db uri
 const port = process.env.PORT || 9099
@@ -46,6 +93,6 @@ app.use("/conversations", conversationRoute)
 app.use("/messages", messagesRoute)
 
 //run server
-app.listen(port, ()=>{
+server.listen(port, ()=>{
     console.log(`Server running on port ${port}`)
 })
