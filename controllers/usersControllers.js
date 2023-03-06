@@ -171,9 +171,7 @@ const verifyUser = async (req, res)=>{
     const user = req.user
     const {verificationId, nationality, verificationType, verifiedProfilePicture} = req.body
     console.log({
-        verificationType,
         verifiedProfilePicture,
-        verificationId
     })
     if(verificationType && verifiedProfilePicture){
         user.verificationId = {
