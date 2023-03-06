@@ -38,7 +38,7 @@ const userSchema = new Schema({
 
 
     // For verification
-    isVerified: {type: String, default:false},
+    isVerified: {type: Boolean, default:false},
     verificationType: {type: Number},
     verificationId:  {type: Object, default: null},
     verifiedProfilePicture: {type: String, default: null},

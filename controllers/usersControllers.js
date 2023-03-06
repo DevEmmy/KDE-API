@@ -179,6 +179,7 @@ const verifyUser = async (req, res)=>{
         user.verifiedProfilePicture = upload(verifiedProfilePicture)
         user.nationality = nationality;
         user.verificationType = verificationType
+        user.isVerified = true
         User.findByIdAndUpdate(user._id, user, {new: true})
         .then(resp =>{
             res.status(200).json(resp)
