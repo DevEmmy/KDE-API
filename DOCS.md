@@ -142,7 +142,7 @@ This route will get the details of a user, with its id.
 
 ### Verify User
     PATCH: "/users/verify-user"
-    parameters: verificationId, nationality, verificationProfilePicture, verificationType
+    parameters: verificationId, nationality, verifiedProfilePicture, verificationType
     response format: json
     response: User Object
 
