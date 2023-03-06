@@ -138,6 +138,9 @@ const viewAList = async (req, res) => {
     const user = req.user
     Listing.findById(id).populate("postedBy")
         .then(list => {
+            
+            const index = list.views.indexOf(user._id);
+        if(index == -1){
             list.views.push(user._id)
             if(String(list.postedBy._id) != user._id){
                 console.log(String(list.postedBy._id))
@@ -162,7 +165,10 @@ const viewAList = async (req, res) => {
                 })
                 .catch(error => res.json({ message: "An Error Occured", error: error })) 
             }
-            
+        }
+        else{
+            list.views.splice(index, 0)
+        }   
         })
         .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
