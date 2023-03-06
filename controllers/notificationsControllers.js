@@ -43,7 +43,7 @@ const readNotification = async (req, res)=>{
     })
     .catch((error)=>{
         res.json({
-            error: error.message
+            error: error
         })
     })
 }
