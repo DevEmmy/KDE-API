@@ -170,9 +170,7 @@ const getUserById = async (req, res)=>{
 const verifyUser = async (req, res)=>{
     const user = req.user
     const {verificationId, nationality, verificationType, verifiedProfilePicture} = req.body
-    console.log({
-        verifiedProfilePicture,
-    })
+    
     if(verificationType && verifiedProfilePicture){
         user.verificationId = {
             front: upload(verificationId.front),
