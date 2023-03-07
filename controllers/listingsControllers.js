@@ -282,7 +282,7 @@ const saveList = async (req, res)=>{
                 link: `/${listType}/${listing._id}`,
                 receiver: listing.postedBy
             }
-            saveNotification(notification, res)
+            saveNotification(notification)
             res.json({status: 1})
             }
             else{
