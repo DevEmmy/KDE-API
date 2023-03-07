@@ -30,7 +30,7 @@ const sendNotification = async (req, res)=>{
 
 const getUsersNotification = async (req, res)=>{
     const user = req.user;
-    NotificationModel.find({receiver: user})
+    NotificationModel.find({receiver: user}).sort({"createdAt": -1})
     .then(response => {
         res.json(response)
     })
