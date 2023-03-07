@@ -236,8 +236,8 @@ const saveList = async (req, res)=>{
 
     Listing.findById(listId)
     .then(listing => {
-        
-        const index = listing.thoseWhoSaved.indexOf(loggedUser._id);
+        if(listing){
+            const index = listing.thoseWhoSaved.indexOf(loggedUser._id);
         if(index == -1){
             listing.thoseWhoSaved.push(loggedUser._id)
         }
@@ -297,7 +297,13 @@ const saveList = async (req, res)=>{
 
             
         } )
+        }
+        else{
+            res.status(400).json({message: "Property Not Found"})
+        }
     })
+    .catch(err => res.json(err))
+
 }
 
 const searchListing = async (req, res)=>{
