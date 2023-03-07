@@ -291,7 +291,6 @@ const saveList = async (req, res)=>{
             }
             else{
                 user.totalSaved.users.splice(index, 1)
-                console.log(user.totalSaved.users)
                 res.json({status:0})
             }
 
