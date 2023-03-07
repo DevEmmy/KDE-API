@@ -19,7 +19,7 @@ router.patch("/verify", requireLogin, verifyUser)
 router.patch("update/bank-details", requireLogin, updateBankDetails)
 router.patch("/view/:id", requireLogin, viewProfile)
 router.post("/forgotten-password", forgottenPassword)
-router.post("/reset_password", reset_password)
+router.post("/reset-password", reset_password)
 router.patch("/change-account-type",requireLogin, changeAccountType)
 router.patch("/select-seller-type", requireLogin, selectSellerType)
 
