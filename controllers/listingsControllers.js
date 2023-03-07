@@ -169,6 +169,10 @@ const viewAList = async (req, res) => {
         else{
             list.views.splice(index, 1)
             Listing.findByIdAndUpdate(id, list, { new: true }).populate("postedBy").populate("views")
+            .then(resp => {
+                res.json({message: "This list has been viewed"})
+            })
+            .catch(error => res.json({ message: "An Error Occured", error: error }))
         }   
         })
         .catch(error => res.json({ message: "An Error Occured", error: error }))
