@@ -264,6 +264,7 @@ const saveList = async (req, res)=>{
         User.findById(listing.postedBy)
         .then(user =>{
             user.totalSaved.value += 1;
+            console.log(user.totalSaved.users)
             let index = user.totalSaved.users.indexOf(loggedUser._id)
             if(index == -1){
                 user.totalSaved.users.push(loggedUser)
@@ -286,7 +287,7 @@ const saveList = async (req, res)=>{
             res.json({status: 1})
             }
             else{
-                user.totalSaved.splice(index, 0)
+                user.totalSaved.users.splice(index, 0)
                 res.json({status:0})
             }
 
