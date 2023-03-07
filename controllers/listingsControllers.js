@@ -167,7 +167,8 @@ const viewAList = async (req, res) => {
             }
         }
         else{
-            list.views.splice(index, 0)
+            list.views.splice(index, 1)
+            Listing.findByIdAndUpdate(id, list, { new: true }).populate("postedBy").populate("views")
         }   
         })
         .catch(error => res.json({ message: "An Error Occured", error: error }))
@@ -242,7 +243,7 @@ const saveList = async (req, res)=>{
             listing.thoseWhoSaved.push(loggedUser._id)
         }
         else{
-            listing.thoseWhoSaved.splice(index, 0)
+            listing.thoseWhoSaved.splice(index, 1)
         }
 
         Listing.findByIdAndUpdate(listId, listing, {new: true})
@@ -256,7 +257,7 @@ const saveList = async (req, res)=>{
                 user.savedListing.push(listId)
             }
             else{
-                user.savedListing.splice(i, 0)
+                user.savedListing.splice(i, 1)
             }
             User.findByIdAndUpdate(user._id, user, {new: true})
         })
@@ -264,8 +265,10 @@ const saveList = async (req, res)=>{
         User.findById(listing.postedBy)
         .then(user =>{
             user.totalSaved.value += 1;
-            console.log(user.totalSaved.users)
+
             let index = user.totalSaved.users.indexOf(loggedUser._id)
+            // console.log(loggedUser._id)
+            // console.log(user.totalSaved.users[index])
             if(index == -1){
                 user.totalSaved.users.push(loggedUser)
                 let listType;
@@ -287,13 +290,14 @@ const saveList = async (req, res)=>{
             res.json({status: 1})
             }
             else{
-                user.totalSaved.users.splice(index, 0)
+                user.totalSaved.users.splice(index, 1)
+                console.log(user.totalSaved.users)
                 res.json({status:0})
             }
 
             User.findByIdAndUpdate(user._id, user, {new: true})
             .then(resp => {
-                console.log(resp)
+                console.log(resp.totalSaved.users)
             })
 
             
