@@ -4,14 +4,20 @@ const saveNotification = (notification, res)=>{
     let newNotification = new NotificationModel(notification).save()
     newNotification
     .then((notification)=>{
-        res.status(200).json({
+        if(res){
+             res.status(200).json({
             message: "Notification Sent"
         })
+        }
+       
     })
     .catch((error)=>{
-        res.status(400).json({
+        if (res){
+             res.status(400).json({
             message: error.message
         })
+        }
+       
     }
     )
 }
