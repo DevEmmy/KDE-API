@@ -281,7 +281,7 @@ const saveList = async (req, res)=>{
             let notification = {
                 sender: loggedUser,
                 title: "Your List was Saved",
-                message: `${user.firstName} saved your listing, ${listing.title}`,
+                message: `${loggedUser.firstName} saved your listing, ${listing.title}`,
                 type: 1,
                 link: `/${listType}/${listing._id}`,
                 receiver: listing.postedBy
