@@ -355,7 +355,7 @@ const selectSellerType = async (req, res)=>{
          .catch(err => res.json(err)) 
          }
          else{
-             res.status(400).json("Account Type wasn't parsed")
+             res.status(400).json("Seller Type wasn't parsed")
          }
 }
 

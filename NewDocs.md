@@ -74,6 +74,16 @@ For the authentication, we've two api routes which will be for logging in and si
     if successful, the updated user object will be returned;
     else a 400 error will be returned
 
+- Get All Users
+    This endpoint is to get all users
+    method: GET
+    route: "/users/all-users"
+
+- Delete User Account
+    Obviously to delete the user account
+    method: DELETE
+    route: "/users/delete-account"
+
 -  Save a list
     This endpoint is to save a list Id into the user object.
         parameter: listing
@@ -103,7 +113,7 @@ For the authentication, we've two api routes which will be for logging in and si
     response format: json
     response: User Object
 
-    note: Pass the verificationId as an object of keys: front and back to hold the front view of the id and same for back.
+    note: Pass the verificationId as an object of keys(front and back to hold the front view of the id and same for back).
 
 - View Profile
     method: PATCH
@@ -132,3 +142,36 @@ For the authentication, we've two api routes which will be for logging in and si
         }
     ```
     response: User object get returned
+
+
+- Change account Type (Buyer: 0, Seller: 1)
+    method: PATCH
+    route: "/users/change-account-type"
+    parameters: 
+    ```
+        accountType: Number
+    ```
+    response:
+
+    ```
+        {
+            message: "Updated Successfully",
+            user: UserObject
+        }
+    ```
+
+- Change seller Type (Individual: 0, Community: 1)
+    method: PATCH
+    route: "/users/select-seller-type"
+    parameters: 
+    ```
+        sellerType: Number
+    ```
+    response:
+
+    ```
+        {
+            message: "Updated Successfully",
+            user: UserObject
+        }
+    ```
