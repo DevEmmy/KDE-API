@@ -18,10 +18,34 @@ const addCategory = async (req, res)=>{
     .catch(err => res.json(err))
 }
 
+const getById = async (req, res)=>{
+    const {id} = req.params
+    await Category.findById(id)
+    .then(resp => res.json(resp))
+    .catch(err => res.json(err))
+}
+
 const editCategory = async (req, res)=>{
-    
+    const content = req.body;
+    const id = req.params.id;
+    await Category.findOneAndUpdate(id, content, {new: true})
+    .then(resp => res.json(resp))
+    .catch(err => res.json(err))
+}
+
+const getAll = async (req, res)=>{
+    await Category.find()
+    .then(resp => res.json(resp))
+    .catch(err => res.json(err))
+}
+
+const deleteCategory = async (req, res)=>{
+    const id = req.params.id;
+    await Category.findByIdAndDelete(id)
+    .then(resp => res.json(resp))
+    .catch(err => res.json(err))
 }
 
 module.exports = {
-
+    addCategory, editCategory, getAll, deleteCategory, getById
 }

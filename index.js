@@ -12,6 +12,7 @@ const bodyParser = require('body-parser');
 const conversationRoute = require("./routes/conversationRoute")
 const messagesRoute = require("./routes/messagesRoute");
 const http = require('http')
+const categoryRoute = require("./routes/categoryRoute")
 const {Server}= require("socket.io")
 
 //initiate express
@@ -91,6 +92,7 @@ app.use("/wait-list", waitListRoute)
 app.use("/notifications", notificationRoute)
 app.use("/conversations", conversationRoute)
 app.use("/messages", messagesRoute)
+app.use("/categories", categoryRoute)
 
 //run server
 server.listen(port, ()=>{
