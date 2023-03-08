@@ -10,6 +10,7 @@ const getMembers = async (req, res)=>{
 const addAMember = async (req, res)=>{
     const user = req.user;
     const member = req.body;
+    member.whatsapp = "https://wa.me/" + member.whatsapp
     if(user.isAdmin){
         await new Member.save(member)
         .then(resp => res.json(resp))
