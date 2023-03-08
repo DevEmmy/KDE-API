@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const listingSchema = new Schema({
-    // category: {type: Schema.Types.ObjectId, ref:"Category"},
+    category: {type: Schema.Types.ObjectId, ref:"Category"},
     title: {type: String, required:true},
     location: {type: String, required:true},
     postedBy: {type: Schema.Types.ObjectId, ref:"User", required: true},
@@ -27,7 +27,6 @@ const listingSchema = new Schema({
     thoseWhoSaved: [
         {type: Schema.Types.ObjectId, ref:"User"},
     ],
-    type: {type: Number, default: 0},
 },
 {
     timestamps: true

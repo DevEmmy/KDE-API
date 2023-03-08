@@ -64,6 +64,71 @@ For the authentication, we've two api routes which will be for logging in and si
     if the user inputs an incorrect password, a 403 status code is returned with an error message of "Wrong Password" as message
 
 ## User Endpoints
+Properties:
+```
+    {
+    firstName: {type: String, required: false},
+    lastName:  {type: String, required: false},
+    otherNames: {type: String},
+    about: {type: String, default: "Hello there, I am using King David Elites."},
+    cover: {type: String, default:"https://avatarfiles.alphacoders.com/865/86518.png"},
+    facebookUrl: String,
+    instagramUrl: String,
+    websiteUrl: String,
+    address: String,
+    country: String,
+    state: String,
+    city: String,
+    sex: String,
+    dob: {type: String},
+    email: {type: String, required: true},
+    phoneNumber1: {type: String},
+    phoneNumber2: {type: String},
+    password:  {type: String, required: true},
+    isAdmin: {type:Boolean, default: false},
+    
+    savedListing: [{type: Schema.Types.ObjectId, ref: "Listing"}],
+    pageViews: {
+        value: {type: Number, default: 0},
+        users: [{type: Schema.Types.ObjectId, ref: "User"}]
+    },
+    totalSaved: {
+        value: {type: Number, default: 0},
+        users: [{type: Schema.Types.ObjectId, ref: "User"}]
+    },
+    nationality: {type: String},
+    stateOfResidence: {type: String},
+
+
+    // For verification
+    isVerified: {type: Boolean, default:false},
+    verificationType: {type: Number},
+    verificationId:  {type: Object, default: null},
+    verifiedProfilePicture: {type: String, default: null},
+
+    profilePicture: {type: String, default:"https://avatarfiles.alphacoders.com/865/86518.png"},
+    pronoun: {type: String, default:null},
+    balanceAmount: Number,
+    zipCode: Number,
+
+    // for bank details
+    accountNo: {type: Number},
+    bankName: String,
+    accountName: {type: String},
+    userType: {type: Number, default: 0},
+
+    //auth
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+
+    //type of account
+    accountType: {type: Number, default: 0},
+    subscribed: {type: Boolean, default: false},
+    noOfSubscription: {type: Number, default: 0},
+    totalListing: {type: Number, default: 0},
+    sellerType: {type: Number, default: 0}
+}
+```
 
 - Update User Account
     This will update the user account profile.
@@ -175,3 +240,148 @@ For the authentication, we've two api routes which will be for logging in and si
             user: UserObject
         }
     ```
+
+## Listings
+
+Properties:
+    category: {type: Schema.Types.ObjectId, ref:"Category"},
+    title: {type: String, required:true},
+    location: {type: String, required:true},
+    postedBy: {type: Schema.Types.ObjectId, ref:"User", required: true},
+    features: {type:Array},
+    description: {type: String, required:false},
+    images: {type: Array, required: false},
+    videos: {type: Array, required: false},
+    available: {type: Boolean, default: true},
+    price: Number,
+    attachedDocument: {type:Array},
+    year: {type: Number},
+    carCondition: String,
+    engineType: String,
+    colour: String,
+    model: String,
+    noOfBed: Number,
+    noOfBathroom: Number,
+    views: [
+        {type: Schema.Types.ObjectId, ref:"User"},
+    ],
+    thoseWhoSaved: [
+        {type: Schema.Types.ObjectId, ref:"User"},
+    ],
+
+- Get all Listings
+    methods: GET
+    route: "/listings/all"
+    response: Array of lists
+
+- Get Listing By Id
+    method: GET
+    route: "/listings/each/:id"
+
+- Get LoggedIn User
+    method: GET
+    route: "/listings/user-listing"
+    response: Array of lists
+
+- Create List
+    method: POST
+    route: "/listings/upload-list"
+    requirements: 
+    - minimum of 4 images
+    - videos
+    response: 
+    ```
+    {
+        message: ...,
+        list: ...
+     }
+    ```
+
+- Delete a List
+    method: DELETE
+    route: "/listings/:id/" 
+    parameter:
+    - id: the id of the list to be deleted
+    response: 
+    ```
+    {
+        message: "Listing Deleted"
+    }
+    ```
+
+- Update a List
+    method: PATCH
+    route: "/listings/updated/:id"
+    parameter: id
+    response: updated list
+
+- Make List Unavailable
+    method: PATCH
+    route: "/listings/make-unavailable/:id/"
+    parameter: id
+    response: updated list
+
+- View a List
+    method: PATCH
+    route: "/listings/view:id"
+    response:
+    ```
+    {status: 1}
+    ```
+
+    Note: The User who posted the List will get Notified.
+
+- Save a List
+    method: PATCH
+    route: "/listings/save/:id"
+    response:
+    ```
+        {
+            status: 1
+        }
+    ```json
+
+    the status can either be "1" or "0" and this route can be used to save and also unsave a list.
+
+- Search a List
+
+
+## Notification
+    The following are the properties of every notification.
+
+    title: title of the notification
+    sender: a user object which sends the notification, and this might not be parsed from the client end
+
+    message: the notification content
+
+    type: the type of the notification which is either 0 or 1, 0 for just information nd 1 for a linked type of notification
+
+    read: a boolean to tell if the notification is read or not
+
+    receiver: a user object which owns the notification
+
+- Get all Users Notification
+    method: GET
+    route: "/notifications/all"
+    response: An array of notifications
+
+- Read a Notification
+    method: GET
+    route: "/notifications/read/:id"
+    parameter: id
+    response: the notification object
+
+- Send Notification
+    method: POST
+    route: "/notifications/"
+    payload: 
+    {
+        title, message, sender, type, link, read, receiver
+    }
+
+- Get Number of Unread Notification
+    method: GET
+    route: "/notifications/unread"
+    response: {
+        unread: 2
+    }

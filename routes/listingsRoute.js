@@ -4,15 +4,15 @@ const requireLogin = require("../middlewares/requireLogin");
 const User = require("../models/users.model");
 require("dotenv").config()
 
-router.get("/all", getAllListing)
-router.get("/each/:id", getAList)
-router.post("/upload-list", requireLogin, uploadAList)
-router.delete("/delete/:id", requireLogin, deleteList)
-router.patch("update/:id", requireLogin, updateList)
-router.patch("/make-unavailable/:id", requireLogin, makeUnavailable)
-router.get('/user-listing',requireLogin, getUserListing)
-router.patch("/view/:id", requireLogin, viewAList)
-router.patch("/save/:id", requireLogin, saveList)
-router.get("/search", searchListing)
+router.get("/all", getAllListing)//added
+router.get("/each/:id", getAList)//added
+router.post("/upload-list", requireLogin, uploadAList)//added
+router.delete("/delete/:id", requireLogin, deleteList)//added
+router.patch("update/:id", requireLogin, updateList)//added
+router.patch("/make-unavailable/:id", requireLogin, makeUnavailable)//added
+router.get('/user-listing',requireLogin, getUserListing) //added
+router.patch("/view/:id", requireLogin, viewAList) // added
+router.patch("/save/:id", requireLogin, saveList) // added
+router.get("/search", searchListing) // to be updated
 
 module.exports = router;

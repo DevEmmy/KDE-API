@@ -161,7 +161,8 @@ const viewAList = async (req, res) => {
                         link: `/${listType}/${list._id}`,
                         receiver: list.postedBy
                     }
-                    saveNotification(notification, res)
+                    saveNotification(notification)
+                    res.json({status: 1})
                 })
                 .catch(error => res.json({ message: "An Error Occured", error: error })) 
             }

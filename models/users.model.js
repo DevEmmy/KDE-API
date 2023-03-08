@@ -53,7 +53,6 @@ const userSchema = new Schema({
     bankName: String,
     accountName: {type: String},
     userType: {type: Number, default: 0},
-    saved: [{type: Schema.Types.ObjectId, ref: "Listing"}],
 
     //auth
     resetPasswordToken: String,
