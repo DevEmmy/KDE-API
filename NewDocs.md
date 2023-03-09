@@ -134,9 +134,8 @@ Properties:
 
     //type of account
     accountType: {
-        0 for nothing has been added
-        1 for Buyer,
-        2 for Seller
+        0 for Buyer,
+        1 for Seller
     }
     subscribed: Flag indicating in user has subscribed 
     noOfSubscription: Number of times at which a user has subscribed
