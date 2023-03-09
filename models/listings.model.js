@@ -21,6 +21,7 @@ const listingSchema = new Schema({
     model: String,
     noOfBed: Number,
     noOfBathroom: Number,
+    locationISO: string,
     views: [
         {type: Schema.Types.ObjectId, ref:"User"},
     ],

@@ -35,6 +35,7 @@ const userSchema = new Schema({
     },
     nationality: {type: String},
     stateOfResidence: {type: String},
+    
 
 
     // For verification

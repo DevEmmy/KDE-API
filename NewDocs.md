@@ -67,47 +67,58 @@ For the authentication, we've two api routes which will be for logging in and si
 Properties:
 ```
     {
-    firstName: {type: String, required: false},
-    lastName:  {type: String, required: false},
-    otherNames: {type: String},
-    about: {type: String, default: "Hello there, I am using King David Elites."},
-    cover: {type: String, default:"https://avatarfiles.alphacoders.com/865/86518.png"},
+    firstName: User's first Name
+    lastName: User's last Name
+    otherNames: User's other names
+    about: An About overview of a user, although it has a default value
+    cover: User's cover picture
     facebookUrl: String,
     instagramUrl: String,
     websiteUrl: String,
-    address: String,
-    country: String,
-    state: String,
-    city: String,
-    sex: String,
-    dob: {type: String},
-    email: {type: String, required: true},
-    phoneNumber1: {type: String},
-    phoneNumber2: {type: String},
-    password:  {type: String, required: true},
-    isAdmin: {type:Boolean, default: false},
+    address: Residential Address
+    country: Country at which user resides
+    state: State at which user resides
+    city: City at which user resides 
+    sex: obviously gender,
+    dob: Date of Birth,
+    email: User's email
+    phoneNumber1: User's Primary phone Number
+    phoneNumber2: User's Secondary phone number
+    password:  User's Password
+    isAdmin: Flag to check is user is an Admin
     
-    savedListing: [{type: Schema.Types.ObjectId, ref: "Listing"}],
-    pageViews: {
-        value: {type: Number, default: 0},
-        users: [{type: Schema.Types.ObjectId, ref: "User"}]
+    savedListing: An array of Listing Ids at which user have saved
+
+    pageViews: 
+    {
+        value: the number of people who have viewed user's profile
+        users: an array of User objects who viewed user's profile
     },
+
     totalSaved: {
-        value: {type: Number, default: 0},
-        users: [{type: Schema.Types.ObjectId, ref: "User"}]
+        value: the number of people who have saved one of user's list
+        users: an array of User objects who have saved one of user's list
     },
-    nationality: {type: String},
-    stateOfResidence: {type: String},
 
 
+    
     // For verification
-    isVerified: {type: Boolean, default:false},
-    verificationType: {type: Number},
-    verificationId:  {type: Object, default: null},
-    verifiedProfilePicture: {type: String, default: null},
+    nationality: User's nationality
+    isVerified: true or false value
+    verificationType: {
 
-    profilePicture: {type: String, default:"https://avatarfiles.alphacoders.com/865/86518.png"},
-    pronoun: {type: String, default:null},
+    }
+    verificationId:  {
+        front: front page of ID,
+        back: back page of ID
+    }
+    verifiedProfilePicture: user's passport
+
+    profilePicture: User's profile Picture
+
+    pronoun: User's Pronoun
+
+    // I am unsure about these for now
     balanceAmount: Number,
     zipCode: Number,
 
@@ -115,18 +126,25 @@ Properties:
     accountNo: {type: Number},
     bankName: String,
     accountName: {type: String},
-    userType: {type: Number, default: 0},
+    
 
     //auth
     resetPasswordToken: String,
     resetPasswordExpires: Date,
 
     //type of account
-    accountType: {type: Number, default: 0},
-    subscribed: {type: Boolean, default: false},
-    noOfSubscription: {type: Number, default: 0},
-    totalListing: {type: Number, default: 0},
-    sellerType: {type: Number, default: 0}
+    accountType: {
+        0 for nothing has been added
+        1 for Buyer,
+        2 for Seller
+    }
+    subscribed: Flag indicating in user has subscribed 
+    noOfSubscription: Number of times at which a user has subscribed
+    totalListing: Total Number of Lists a User has made
+    sellerType: {
+        0 for inidividual
+        1 for company
+    }
 }
 ```
 
