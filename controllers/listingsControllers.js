@@ -5,17 +5,21 @@ const { saveNotification } = require("./notificationsControllers");
 const Category = require("../models/categories.model");
 
 const getAllListing = async (req, res) => {
-    const {page, category} = req.query;
+    let {page, category} = req.query;
     const limit = 10
-    category = await Category.find({slug: category})
+    category = await Category.findOne({slug: category})
     const length = (await Listing.find({category: category._id})).length
+
     await Listing.find({category: category._id}).populate("postedBy").skip(((page || 1) - 1) * limit)
     .limit(limit)
-        .then(resp => res.json({
+    .then(resp =>{
+            console.log(resp)
+             res.json({
             listings: resp,
             noOfListings: length
-        }))
-        .catch(error => res.json({ message: "An Error Occured", error: error }))
+        })}
+        )
+    .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
 
 const getAList = async (req, res) => {

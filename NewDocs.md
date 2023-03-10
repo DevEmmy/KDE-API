@@ -294,8 +294,8 @@ Properties:
 
 - Get all Listings
     - methods: GET
-    - queries: page & categorySlug
-    - route: "/listings/all/page?=0&category?=real-estate"
+    - queries: page & category(slug)
+    - route: "/listings/all?page=1&category=real-estate"
     - response: Array of lists
 
 

@@ -9,6 +9,38 @@ function slugify(str) {
     return str;
   }
 
+  const categories = [
+    {
+        title: "Real Estate",
+        isAdminAllowed: false,
+    },
+    {
+        title: "cars",
+        isAdminAllowed: false,
+    },
+    {
+        title: "Collectibles",
+        isAdminAllowed: true,
+    }
+  ]
+
+  const addAllCategories = async (req, res)=>{
+    try{
+        for(var i = 0; i < categories.length; i++){
+            const content = categories[i]
+            content.slug = slugify(content.title);
+            const newCategory = new Category(content)
+            let category = await newCategory.save()
+            console.log(category)
+        }
+        res.json("Done")
+    }
+    catch(err){
+        res.json(err)
+    }
+        
+  }
+
 const addCategory = async (req, res)=>{
     const content = req.body;
     content.slug = slugify(content.title);
@@ -56,5 +88,5 @@ const deleteCategory = async (req, res)=>{
 }
 
 module.exports = {
-    addCategory, editCategory, getAll, deleteCategory, getById
+    addCategory, editCategory, getAll, deleteCategory, getById, addAllCategories
 }
