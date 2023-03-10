@@ -479,4 +479,20 @@ Properties:
 
 ### Messages
     - Properties:
-    
+    ```
+        {
+            conversationId,
+            _id,
+            sender,
+            messageContent
+        }
+    ```
+
+    - Get all messages in a conversation
+        method: GET
+        route: "/messages/:conversationId"
+
+    - Send Message
+        method: POST
+        route: "/messages/send-message"
+        - NOTE: the conversationId is necessary
