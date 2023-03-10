@@ -496,3 +496,20 @@ Properties:
         method: POST
         route: "/messages/send-message"
         - NOTE: the conversationId is necessary
+
+## Members
+    - Properties:
+    ```
+        {
+            firstName: {type: String, require: true},
+            lastName:  {type: String, require: true},
+            whatsapp: String,
+            twitter: String,
+            linkedIn: String,
+            role: String,
+        }
+    ```
+
+    - Get all members
+        - route: "/members/all-members"
+        method: GET

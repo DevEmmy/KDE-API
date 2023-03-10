@@ -13,6 +13,7 @@ const conversationRoute = require("./routes/conversationRoute")
 const messagesRoute = require("./routes/messagesRoute");
 const http = require('http')
 const categoryRoute = require("./routes/categoryRoute")
+const blogRoute = require("./routes/blogRoute")
 const {Server}= require("socket.io")
 
 //initiate express
@@ -72,9 +73,9 @@ io.on("connection", (socket)=>{
 
 //set port and db uri
 const port = process.env.PORT || 9099
-const uri = process.env.DB_URI 
+const uri = "mongodb://127.0.0.1:27017/kde"
 
-// "mongodb://127.0.0.1:27017/kde"
+// process.env.DB_URI 
 // connect mongodb
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -93,6 +94,7 @@ app.use("/notifications", notificationRoute)
 app.use("/conversations", conversationRoute)
 app.use("/messages", messagesRoute)
 app.use("/categories", categoryRoute)
+app.use("/blogs", blogRoute)
 
 //run server
 server.listen(port, ()=>{
