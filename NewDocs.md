@@ -18,9 +18,10 @@ For the authentication, we've two api routes which will be for logging in and si
     - lastName
     - email
     - password
-    method: POST
-    route: "/users/sign-up/sign
-    if successful, you'd get a JSON object, like:
+    - method: POST
+    - route: "/users/sign-up/sign
+    - if successful, you'd get a JSON object,
+    - like:
     ```{
         "token": "eyJh...",
         "message": "Successful",
@@ -38,13 +39,14 @@ For the authentication, we've two api routes which will be for logging in and si
     }```
 
 - Login
-    method: POST
-    route: "/users/sign-in" 
-    parameters: 
+    - method: POST
+    - route: "/users/sign-in" 
+    - parameters: 
     - email
     - password
 
-    if successful, you'd get a JSON object, like:
+    - if successful, you'd get a JSON object, - 
+    - like:
     ```{
         "token": "eyJh...",
         "message": "Successful",
@@ -61,7 +63,8 @@ For the authentication, we've two api routes which will be for logging in and si
         }
     }```
 
-    if the user inputs an incorrect password, a 403 status code is returned with an error message of "Wrong Password" as message
+    - if the user inputs an incorrect password, a 403 status code is returned with an error message of "Wrong Password" as message
+
 
 ## User Endpoints
 Properties:
@@ -148,92 +151,92 @@ Properties:
 ```
 
 - Update User Account
-    This will update the user account profile.
-    method:  PATCH
-    route: "/users/update"
-    body: based on what should be updated
+    - This will update the user account profile.
+    - method:  PATCH
+    - route: "/users/update"
+    - body: based on what should be updated
 
-    if successful, the updated user object will be returned;
-    else a 400 error will be returned
+    - if successful, the updated user object will be returned;
+    - else a 400 error will be returned
 
 - Get All Users
-    This endpoint is to get all users
-    method: GET
-    route: "/users/all-users"
+    - This endpoint is to get all users
+    - method: GET
+    - route: "/users/all-users"
 
 - Delete User Account
-    Obviously to delete the user account
-    method: DELETE
-    route: "/users/delete-account"
+    - Obviously to delete the user account
+    - method: DELETE
+    - route: "/users/delete-account"
 
 -  Save a list
-    This endpoint is to save a list Id into the user object.
-        parameter: listing
-        method: PUT
-        route: "/users/add-to-saved/"
-        if successful, the updated user object will be returned;
+    - This endpoint is to save a list Id into the user object.
+        - parameter: listing
+        - method: PUT
+        - route: "/users/add-to-saved/"
+        - if successful, the updated user object will be returned;
         else a 400 error will be returned
 
 - Get signed in User details
-    This route will get the details of the signed in user.
-    method: Get
-    route: "/users/me"
-    if successful, the updated user object will be returned;
-    else a 400 error will be returned
+    - This route will get the details of the - signed in user.
+    - method: Get
+    - route: "/users/me"
+    - if successful, the updated user object will be returned;
+    - else a 400 error will be returned
 
 - Get a User detail
-    This route will get the details of a user, with its id.
-    method: GET
-    route: "/users/:id"
-    if successful, the user object will be returned;
-    else a 400 error will be returned
+    - This route will get the details of a user, with its id.
+    - method: GET
+    - route: "/users/:id"
+    - if successful, the user object will be returned;
+    - else a 400 error will be returned
 
 - Verify User
-    method: PATCH
-    route: "/users/verify"
-    parameters: verificationId, nationality, verifiedProfilePicture, verificationType
-    response format: json
-    response: User Object
+    - method: PATCH
+    - route: "/users/verify"
+    - parameters: verificationId, nationality, - verifiedProfilePicture, verificationType
+    - response format: json
+    - response: User Object
 
-    note: Pass the verificationId as an object of keys(front and back to hold the front view of the id and same for back).
+    - note: Pass the verificationId as an object of keys(front and back to hold the front view of the id and same for back).
 
 - View Profile
-    method: PATCH
-    route: "/users/view/:id"
+    - method: PATCH
+    - route: "/users/view/:id"
     
 - Forgotten Password
-    method: POST
-    route: "/users/forgotten-password"
-    body:
+    - method: POST
+    - route: "/users/forgotten-password"
+    - body:
     ```
         {
             email: "joe@mail.com"
         }
     ```
-    reponse: "Check your mail"
+    - response: "Check your mail"
     ** A reset link will be sent to the provided email
 
 - Reset Password
-    method: post
-    route: "/users/reset-password"
-    body:
+    - method: post
+    - route: "/users/reset-password"
+    - body:
     ```
         {
             password,
             token
         }
     ```
-    response: User object get returned
+    - response: User object get returned
 
 
 - Change account Type (Buyer: 0, Seller: 1)
-    method: PATCH
-    route: "/users/change-account-type"
-    parameters: 
+    - method: PATCH
+    - route: "/users/change-account-type"
+    - parameters: 
     ```
         accountType: Number
     ```
-    response:
+    - response:
 
     ```
         {
@@ -243,13 +246,13 @@ Properties:
     ```
 
 - Change seller Type (Individual: 0, Community: 1)
-    method: PATCH
-    route: "/users/select-seller-type"
-    parameters: 
+    - method: PATCH
+    - route: "/users/select-seller-type"
+    - parameters: 
     ```
         sellerType: Number
     ```
-    response:
+    - response:
 
     ```
         {
@@ -260,7 +263,8 @@ Properties:
 
 ## Listings
 
-Properties:
+- Properties:
+    ```
     category: {type: Schema.Types.ObjectId, ref:"Category"},
     title: {type: String, required:true},
     location: {type: String, required:true},
@@ -279,34 +283,40 @@ Properties:
     model: String,
     noOfBed: Number,
     noOfBathroom: Number,
+    locationISO: string,
     views: [
         {type: Schema.Types.ObjectId, ref:"User"},
     ],
     thoseWhoSaved: [
         {type: Schema.Types.ObjectId, ref:"User"},
     ],
+    ```
 
 - Get all Listings
-    methods: GET
-    route: "/listings/all"
-    response: Array of lists
+    - methods: GET
+    - queries: page & categorySlug
+    - route: "/listings/all/page?=0&category?=real-estate"
+    - response: Array of lists
+
 
 - Get Listing By Id
-    method: GET
-    route: "/listings/each/:id"
+    - method: GET
+    - route: "/listings/each/:id"
 
 - Get LoggedIn User
-    method: GET
-    route: "/listings/user-listing"
-    response: Array of lists
+    - method: GET
+    - route: "/listings/user-listing"
+    - response: Array of lists
 
 - Create List
-    method: POST
-    route: "/listings/upload-list"
-    requirements: 
-    - minimum of 4 images
-    - videos
-    response: 
+    - method: POST
+    - route: "/listings/upload-list"
+    - requirements: 
+        - category Id
+        - minimum of 4 images
+        - videos
+        - others
+    - response: 
     ```
     {
         message: ...,
@@ -315,11 +325,11 @@ Properties:
     ```
 
 - Delete a List
-    method: DELETE
-    route: "/listings/:id/" 
-    parameter:
-    - id: the id of the list to be deleted
-    response: 
+    - method: DELETE
+    - route: "/listings/:id/" 
+    - parameter:
+        - id: the id of the list to be deleted
+        - response: 
     ```
     {
         message: "Listing Deleted"
@@ -327,21 +337,21 @@ Properties:
     ```
 
 - Update a List
-    method: PATCH
-    route: "/listings/updated/:id"
-    parameter: id
-    response: updated list
+    - method: PATCH
+    - route: "/listings/updated/:id"
+    - parameter: id
+    - response: updated list
 
 - Make List Unavailable
-    method: PATCH
-    route: "/listings/make-unavailable/:id/"
-    parameter: id
-    response: updated list
+    - method: PATCH
+    - route: "/listings/make-unavailable/:id/"
+    - parameter: id
+    - response: updated list
 
 - View a List
-    method: PATCH
-    route: "/listings/view:id"
-    response:
+    - method: PATCH
+    - route: "/listings/view:id"
+    - response:
     ```
     {status: 1}
     ```
@@ -363,10 +373,40 @@ Properties:
 - Search a List
 
 
+## Category
+    - properties:
+    ```
+        {
+            title: Title to be viewed on client,
+            slug: To be used in routing
+        }
+    ```
+
+    - Get all Categories
+        - route: "/categories/all"
+        - method: GET
+        - response: Array of Categories
+
+    - To Create New Category
+        - route: "/categories/new"
+        - method: POST
+
+    - To delete Category
+        - route: "/categories/:id"
+        - method: DELETE
+        
+    - To Updated
+        - route: "/categories/:id"
+        - method: PATCH
+    
+    - Get Category By ID
+        - route: "/categories/:id"
+        - method: GET
+
 ## Notification
     The following are the properties of every notification.
 
-    title: title of the notification
+    ```{title: title of the notification
     sender: a user object which sends the notification, and this might not be parsed from the client end
 
     message: the notification content
@@ -375,30 +415,68 @@ Properties:
 
     read: a boolean to tell if the notification is read or not
 
-    receiver: a user object which owns the notification
+    receiver: a user object which owns the notification}
+    ```
 
-- Get all Users Notification
-    method: GET
-    route: "/notifications/all"
-    response: An array of notifications
+    - Get all Users Notification
+        - method: GET
+        - route: "/notifications/all"
+        - response: An array of notifications
 
-- Read a Notification
-    method: GET
-    route: "/notifications/read/:id"
-    parameter: id
-    response: the notification object
+    - Read a Notification
+        - method: GET
+        - route: "/notifications/read/:id"
+        - parameter: id
+        - response: the notification object
 
-- Send Notification
-    method: POST
-    route: "/notifications/"
-    payload: 
-    {
-        title, message, sender, type, link, read, receiver
-    }
+    - Send Notification
+        - method: POST
+        - route: "/notifications/"
+        - payload: 
+        ```{
+            title, message, sender, type, link, read, receiver
+        }```
 
-- Get Number of Unread Notification
-    method: GET
-    route: "/notifications/unread"
-    response: {
-        unread: 2
-    }
+    - Get Number of Unread Notification
+        - method: GET
+        - route: "/notifications/unread"
+        - response: {
+            unread: 2
+        }
+
+
+
+
+## How Messages Work
+- A Conversation needs to be initiated which will contain two people to be involved.
+
+- So this conversation Id will be used as a reference to send messages to.
+
+### Conversation
+    - properties:
+    ```
+        {
+            messages: Array of members,
+            _id
+        }
+    ```
+    - Get all Conversations
+        - method: GET
+        - route: "/conversations/user-conversations"
+
+    - Create a New Conversation
+        - Note: This will check if such exist, if it does, it'd return its object, else, it'd create a new one
+        - method: POST
+        - route: "/conversations/new-conversation/:id"
+        - parameter:
+            - id represents the id of the other user to chat with
+
+    - Get a particular conversation object
+        - method: GET
+        - route: "/conversations/:id"
+        - parameter:
+            - id represents the conversation's id
+
+### Messages
+    - Properties:
+    

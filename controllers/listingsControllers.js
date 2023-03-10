@@ -1,13 +1,15 @@
 const User = require("../models/users.model");
 const Listing = require("../models/listings.model");
 const { cloudinary } = require("./cloudinary");
-const { saveNotification } = require("./notificationsControllers")
+const { saveNotification } = require("./notificationsControllers");
+const Category = require("../models/categories.model");
 
 const getAllListing = async (req, res) => {
-    const {page, type} = req.query;
+    const {page, category} = req.query;
     const limit = 10
-    const length = (await Listing.find({type: type})).length
-    await Listing.find({type: type}).populate("postedBy").skip(((page || 1) - 1) * limit)
+    category = await Category.find({slug: category})
+    const length = (await Listing.find({category: category._id})).length
+    await Listing.find({category: category._id}).populate("postedBy").skip(((page || 1) - 1) * limit)
     .limit(limit)
         .then(resp => res.json({
             listings: resp,
@@ -55,46 +57,36 @@ const uploadAList = async (req, res) => {
     //     console.log(err)
     // });
 
-    const list = req.body;
-    if(list.colour){
-        list.type=1
-    }
-    else{
-        list.type=0
-    }
-    list.postedBy = req.user;
-    // console.log(newA(list.images))
-    // console.log(list.images)
+    //category id should be parsed in the payload
 
-    if(list.images.length > 0){
-        list.images = await newA(list.images)
-    }
-    if(list.videos.length > 0){
-        list.videos = await newA(list.videos, {
-        resource_type: "video",
-        format: "mp4"
-    })
-    }
+    const list = req.body;
+    list.postedBy = req.user;
+    try{
+        list.category = Category.findById(list.category)
+
+        if(list.images.length > 0){
+            list.images = await newA(list.images)
+        }
+        if(list.videos.length > 0){
+            list.videos = await newA(list.videos, {
+            resource_type: "video",
+            format: "mp4"
+        })
+        }
     
-    
-    // console.log(list.images)
     new Listing(list).save()
         .then(resp =>{ 
-            
             let loggedUser = req.user
             loggedUser.totalListing +=1;
             User.findByIdAndUpdate(loggedUser._id, loggedUser, {new: true})
             .then(user => res.json({ message: "Successful", list: resp }))
         })
         .catch(error => res.json({ message: "An Inner Error Occured", error: error }))
-
-    // await newA(list.images)
-    // .then((images)=>
-    //     {
-    //     list.images = images;
-
-    // )
-    // .catch(error => res.json({message: "An Error Occured", error: error}))
+    }
+    catch(error){
+        res.status(400).json(error)
+    }
+    
 }
 
 const deleteList = async (req, res) => {
@@ -144,21 +136,15 @@ const viewAList = async (req, res) => {
             list.views.push(user._id)
             if(String(list.postedBy._id) != user._id){
                 console.log(String(list.postedBy._id))
-               Listing.findByIdAndUpdate(id, list, { new: true }).populate("postedBy").populate("views")
+               Listing.findByIdAndUpdate(id, list, { new: true }).populate("postedBy").populate("category").populate("views")
                 .then(resp => {
-                    let listType;
-                    if (list.engineType != null) {
-                        listType = "real-estate"
-                    }
-                    else {
-                        listType = "cars"
-                    }
+                    
                     let notification = {
                         sender: user,
                         title: "Your List was viewed",
                         message: `${user.firstName} viewed your listing, ${list.title}`,
                         type: 1,
-                        link: `/${listType}/${list._id}`,
+                        link: `/${resp.category.slug}/${list._id}`,
                         receiver: list.postedBy
                     }
                     saveNotification(notification)
@@ -179,68 +165,12 @@ const viewAList = async (req, res) => {
         .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
 
-const saveAList = async (req, res) => {
-    const loggedUser = req.user
-    const { id } = req.params;
-    var listing = Listing.findById(id)
-    try {
-        if (listing.thoseWhoSaved.indexof(loggedUser._id) == -1) {
-            listing.thoseWhoSaved.push(loggedUser._id)
-            Listing.findByIdAndUpdate(id, listing, { new: true })
-                .then(resp => {
-                    User.findById(loggedUser._id)
-                        .then(user => {
-                            user.saved.push(id)
-                            User.findByIdAndUpdate(id, user, { new: true })
-                                .then(resp => {
-                                    let listType;
-                            if (list.engineType != null) {
-                                listType = "real-estate"
-                            }
-                            else {
-                                listType = "cars"
-                            }
-                            let notification = {
-                                sender: user,
-                                title: "Your List was Saved",
-                                message: `${user.firstName} saved your listing, ${list.title}`,
-                                type: 1,
-                                link: `/${listType}/${list._id}`,
-                                receiver: list.postedBy
-                            }
-                            saveNotification(notification, res)
-                                })
-                        })
-                })
-                .catch(error => res.json({ message: "An Error Occured", error: error }))
-        }
-        else {
-            listing.thoseWhoSaved = listing.thoseWhoSaved.filter(id => String(id) != String(loggedUser._id))
-            Listing.findByIdAndUpdate(id, listing, { new: true })
-                .then(resp => {
-                    User.findById(loggedUser._id)
-                        .then(user => {
-                            user.saved = user.saved.filter(list => String(list) !== String(id))
-                            User.findByIdAndUpdate(id, user, { new: true })
-                                .then(resp => {
-                                    res.json({ status: "Unsaved" })
-                                })
-                        })
-                })
-                .catch(error => res.json({ message: "An Error Occured", error: error }))
-        }
-
-    }
-    catch (err) {
-        res.status(400).json(err)
-    }
-}
 
 const saveList = async (req, res)=>{
     const loggedUser = req.user;
     const listId = req.params.id
 
-    Listing.findById(listId)
+    Listing.findById(listId).populate("category")
     .then(listing => {
         if(listing){
             const index = listing.thoseWhoSaved.indexOf(loggedUser._id);
@@ -276,19 +206,13 @@ const saveList = async (req, res)=>{
             // console.log(user.totalSaved.users[index])
             if(index == -1){
                 user.totalSaved.users.push(loggedUser)
-                let listType;
-                    if (listing.engineType != null) {
-                        listType = "real-estate"
-                    }
-                    else {
-                        listType = "cars"
-                    }
+                
             let notification = {
                 sender: loggedUser,
                 title: "Your List was Saved",
                 message: `${loggedUser.firstName} saved your listing, ${listing.title}`,
                 type: 1,
-                link: `/${listType}/${listing._id}`,
+                link: `/${listing.category.slug}/${listing._id}`,
                 receiver: listing.postedBy
             }
             saveNotification(notification)

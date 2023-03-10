@@ -34,9 +34,18 @@ const editCategory = async (req, res)=>{
 }
 
 const getAll = async (req, res)=>{
-    await Category.find()
+    const user = req.user;
+    if(!user.isAdmin){
+        await Category.find({isAdminAllowed: false})
     .then(resp => res.json(resp))
     .catch(err => res.json(err))
+    }
+    else{
+        await Category.find()
+    .then(resp => res.json(resp))
+    .catch(err => res.json(err))
+    }
+    
 }
 
 const deleteCategory = async (req, res)=>{
