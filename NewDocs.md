@@ -513,3 +513,42 @@ Properties:
     - Get all members
         - route: "/members/all-members"
         method: GET
+
+## Blog
+    - Properties:
+    ```
+        {
+            title: String,
+            content: String,
+            coverImg: String,
+            slug: String,
+            author: User's Id of who created Blog
+            category: Category's Id of what the blog speaks about
+        }
+    ```
+
+    - GET All Blogs
+        - method: GET
+        - route: "/blogs/all"
+        - response: Array of Blog
+
+    - Get Blog by Slug
+        - route: "/blogs/:slug"
+        - parameter: slug
+        - method: GET
+        - response: Blog object
+
+    - Create Blog
+        - route: "/blogs/"
+        - method: POST
+        - response: Blog's Object
+
+    - Delete Blog
+        - route: "/blogs/:slug"
+        - method: DELETE
+        - response: "Deleted Successfully'
+
+    - Updated Blog
+        - route: "/blogs/:slug"
+        - method: PATCH
+        - response: "Updated Successfully'
