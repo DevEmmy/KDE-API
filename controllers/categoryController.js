@@ -12,14 +12,17 @@ function slugify(str) {
   const categories = [
     {
         title: "Real Estate",
+        slug: "real-estate",
         isAdminAllowed: false,
     },
     {
-        title: "cars",
+        title: "Cars",
+        slug: "cars",
         isAdminAllowed: false,
     },
     {
         title: "Collectibles",
+        slug:"collectibles",
         isAdminAllowed: true,
     }
   ]

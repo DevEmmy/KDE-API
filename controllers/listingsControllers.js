@@ -78,7 +78,7 @@ const uploadAList = async (req, res) => {
             format: "mp4"
         })
         }
-    
+        console.log(list)
         let resp = await new Listing(list).save()
         let loggedUser = req.user
         loggedUser.totalListing +=1;
