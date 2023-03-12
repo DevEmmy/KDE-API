@@ -79,7 +79,7 @@ const uploadAList = async (req, res) => {
         })
         }
     
-        let resp = new Listing(list).save()
+        let resp = await new Listing(list).save()
         let loggedUser = req.user
         loggedUser.totalListing +=1;
         let newUser = await User.findByIdAndUpdate(loggedUser._id, loggedUser, {new: true})
