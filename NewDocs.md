@@ -312,7 +312,7 @@ Properties:
     - method: POST
     - route: "/listings/upload-list"
     - requirements: 
-        - category Id
+        - category: slug
         - minimum of 4 images
         - videos
         - others

@@ -67,7 +67,7 @@ const uploadAList = async (req, res) => {
     
     list.postedBy = req.user;
     try{
-        list.category = await Category.findById(list.category)
+        list.category = await Category.findOne({slug: list.category})
 
         if(list.images.length > 0){
             list.images = await newA(list.images)
