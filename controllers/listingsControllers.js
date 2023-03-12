@@ -64,9 +64,10 @@ const uploadAList = async (req, res) => {
     //category id should be parsed in the payload
 
     const list = req.body;
+    
     list.postedBy = req.user;
     try{
-        list.category = Category.findById(list.category)
+        list.category = await Category.findById(list.category)
 
         if(list.images.length > 0){
             list.images = await newA(list.images)
@@ -78,14 +79,14 @@ const uploadAList = async (req, res) => {
         })
         }
     
-    new Listing(list).save()
-        .then(resp =>{ 
-            let loggedUser = req.user
-            loggedUser.totalListing +=1;
-            User.findByIdAndUpdate(loggedUser._id, loggedUser, {new: true})
-            .then(user => res.json({ message: "Successful", list: resp }))
+        let resp = new Listing(list).save()
+        let loggedUser = req.user
+        loggedUser.totalListing +=1;
+        let newUser = await User.findByIdAndUpdate(loggedUser._id, loggedUser, {new: true})
+        res.json({
+            message: "Successful",
+            list: resp
         })
-        .catch(error => res.json({ message: "An Inner Error Occured", error: error }))
     }
     catch(error){
         res.status(400).json(error)
