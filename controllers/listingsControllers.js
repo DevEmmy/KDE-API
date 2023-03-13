@@ -7,7 +7,7 @@ const Category = require("../models/categories.model");
 const getAllListing = async (req, res) => {
     let {page, category} = req.query;
     const limit = 10
-    category = await Category.findOne({slug: category})
+    category = await Category.findOne({slug: category}).populate("category").populate("postedBy")
     const length = (await Listing.find({category: category._id})).length
 
     await Listing.find({category: category._id}).populate("postedBy").skip(((page || 1) - 1) * limit)
@@ -24,7 +24,7 @@ const getAllListing = async (req, res) => {
 
 const getAList = async (req, res) => {
     const { id } = req.params;
-    await Listing.findById(id).populate("postedBy")
+    await Listing.findById(id).populate("postedBy").populate("category")
         .then(resp => res.json(resp))
         .catch(err => res.json(err))
 }
@@ -32,7 +32,7 @@ const getAList = async (req, res) => {
 const getUserListing = async (req, res) => {
     const user = req.user;
     const { id } = req.query;
-    await Listing.find({ postedBy: (id || user._id) }).populate("postedBy")
+    await Listing.find({ postedBy: (id || user._id) }).populate("postedBy").populate("category")
         .then(resp => res.json(resp))
         .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
@@ -112,7 +112,7 @@ const deleteList = async (req, res) => {
 const updateList = async (req, res) => {
     const { id } = req.params;
     const toUpdate = req.body;
-    await Listing.findByIdAndUpdate(id, toUpdate, { new: true })
+    await Listing.findByIdAndUpdate(id, toUpdate, { new: true }).populate("category")
         .then(resp => res.json(resp))
         .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
