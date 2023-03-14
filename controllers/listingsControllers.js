@@ -4,10 +4,15 @@ const { cloudinary } = require("./cloudinary");
 const { saveNotification } = require("./notificationsControllers");
 const Category = require("../models/categories.model");
 
+const obj = {
+    path: "list.postedBy",
+    options: "postedBy"
+}
+
 const getAllListing = async (req, res) => {
     let {page, category} = req.query;
     const limit = 10
-    category = await Category.findOne({slug: category}).populate("postedBy")
+    category = await Category.findOne({slug: category})
     const length = (await Listing.find({category: category._id})).length
 
     await Listing.find({category: category._id}).populate("postedBy").skip(((page || 1) - 1) * limit)
@@ -24,7 +29,7 @@ const getAllListing = async (req, res) => {
 
 const getAList = async (req, res) => {
     const { id } = req.params;
-    await Listing.findById(id).populate("postedBy").populate("category")
+    await Listing.findById(id)
         .then(resp => res.json(resp))
         .catch(err => res.json(err))
 }
@@ -32,7 +37,7 @@ const getAList = async (req, res) => {
 const getUserListing = async (req, res) => {
     const user = req.user;
     const { id } = req.query;
-    await Listing.find({ postedBy: (id || user._id) }).populate("postedBy")
+    await Listing.find({ postedBy: (id || user._id) })
         .then(resp => res.json(resp))
         .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
@@ -96,7 +101,7 @@ const uploadAList = async (req, res) => {
 
 const deleteList = async (req, res) => {
     const { id } = req.params;
-    await Listing.findById(id).populate("postedBy")
+    await Listing.findById(id)
         .then(list => {
             if (String(list.postedBy._id) == (req.user._id || req.user.isAdmin)) {
                 Listing.findByIdAndDelete(id)
@@ -133,7 +138,7 @@ const makeUnavailable = async (req, res) => {
 const viewAList = async (req, res) => {
     const { id } = req.params;
     const user = req.user
-    Listing.findById(id).populate("postedBy")
+    Listing.findById(id)
         .then(list => {
             
             const index = list.views.indexOf(user._id);
@@ -175,7 +180,7 @@ const saveList = async (req, res)=>{
     const loggedUser = req.user;
     const listId = req.params.id
 
-    Listing.findById(listId).populate("category")
+    Listing.findById(listId)
     .then(listing => {
         if(listing){
             const index = listing.thoseWhoSaved.indexOf(loggedUser._id);
