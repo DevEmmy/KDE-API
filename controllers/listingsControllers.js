@@ -4,18 +4,13 @@ const { cloudinary } = require("./cloudinary");
 const { saveNotification } = require("./notificationsControllers");
 const Category = require("../models/categories.model");
 
-const obj = {
-    path: "list.postedBy",
-    options: "postedBy"
-}
-
 const getAllListing = async (req, res) => {
     let {page, category} = req.query;
     const limit = 10
     category = await Category.findOne({slug: category})
     const length = (await Listing.find({category: category._id})).length
 
-    await Listing.find({category: category._id}).populate("postedBy").skip(((page || 1) - 1) * limit)
+    await Listing.find({category: category._id}).populate("postedBy").populate("category").skip(((page || 1) - 1) * limit)
     .limit(limit)
     .then(resp =>{
             console.log(resp)
@@ -29,7 +24,7 @@ const getAllListing = async (req, res) => {
 
 const getAList = async (req, res) => {
     const { id } = req.params;
-    await Listing.findById(id)
+    await Listing.findById(id).populate("postedBy").populate("category")
         .then(resp => res.json(resp))
         .catch(err => res.json(err))
 }
@@ -37,7 +32,7 @@ const getAList = async (req, res) => {
 const getUserListing = async (req, res) => {
     const user = req.user;
     const { id } = req.query;
-    await Listing.find({ postedBy: (id || user._id) })
+    await Listing.find({ postedBy: (id || user._id) }).populate("postedBy").populate("category")
         .then(resp => res.json(resp))
         .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
@@ -101,7 +96,7 @@ const uploadAList = async (req, res) => {
 
 const deleteList = async (req, res) => {
     const { id } = req.params;
-    await Listing.findById(id)
+    await Listing.findById(id).populate("postedBy")
         .then(list => {
             if (String(list.postedBy._id) == (req.user._id || req.user.isAdmin)) {
                 Listing.findByIdAndDelete(id)
@@ -117,7 +112,7 @@ const deleteList = async (req, res) => {
 const updateList = async (req, res) => {
     const { id } = req.params;
     const toUpdate = req.body;
-    await Listing.findByIdAndUpdate(id, toUpdate, { new: true })
+    await Listing.findByIdAndUpdate(id, toUpdate, { new: true }).populate("category")
         .then(resp => res.json(resp))
         .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
@@ -138,7 +133,7 @@ const makeUnavailable = async (req, res) => {
 const viewAList = async (req, res) => {
     const { id } = req.params;
     const user = req.user
-    Listing.findById(id)
+    Listing.findById(id).populate("postedBy")
         .then(list => {
             
             const index = list.views.indexOf(user._id);
@@ -180,7 +175,7 @@ const saveList = async (req, res)=>{
     const loggedUser = req.user;
     const listId = req.params.id
 
-    Listing.findById(listId)
+    Listing.findById(listId).populate("category")
     .then(listing => {
         if(listing){
             const index = listing.thoseWhoSaved.indexOf(loggedUser._id);
