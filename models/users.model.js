@@ -64,7 +64,9 @@ const userSchema = new Schema({
     subscribed: {type: Boolean, default: false},
     noOfSubscription: {type: Number, default: 0},
     totalListing: {type: Number, default: 0},
-    sellerType: {type: Number, default: 0}
+    sellerType: {type: Number, default: 0},
+
+    locationISO: {type: String}
 },
 {
     timestamps: true,
