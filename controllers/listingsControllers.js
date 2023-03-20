@@ -176,7 +176,7 @@ const saveList = async (req, res) => {
     const loggedUser = req.user;
     const listId = req.params.id
 
-    Listing.findById(listId).populate("category")
+    await Listing.findById(listId).populate("category")
         .then(async (listing) => {
             if (listing) {
                 const index = listing.thoseWhoSaved.indexOf(loggedUser._id);
@@ -187,7 +187,8 @@ const saveList = async (req, res) => {
                     listing.thoseWhoSaved.splice(index, 1)
                 }
 
-                await Listing.findByIdAndUpdate(listId, listing, { new: true });
+                await Listing.findByIdAndUpdate(listId, listing, { new: true })
+                .then(resp => console.log(resp));
 
                 await User.findById(loggedUser._id)
                     .then(user => {
@@ -201,21 +202,24 @@ const saveList = async (req, res) => {
                             user.savedListing.splice(i, 1)
                         }
                         User.findByIdAndUpdate(user._id, user, { new: true })
+                        .then(resp => console.log(resp));
                     });
 
                 await User.findById(listing.postedBy)
                     .then(user => {
-                        user.totalSaved.value += 1;
+                        
 
                         let index = user.totalSaved.users.indexOf(loggedUser._id)
+
                         // console.log(loggedUser._id)
                         // console.log(user.totalSaved.users[index])
                         if (index == -1) {
                             user.totalSaved.users.push(loggedUser)
+                            user.totalSaved.value += 1;
 
                             let notification = {
                                 sender: loggedUser,
-                                title: "Your List was Saved",
+                                title: "Your listing was Saved",
                                 message: `${loggedUser.firstName} saved your listing, ${listing.title}`,
                                 type: 1,
                                 link: `/${listing.category.slug}/${listing._id}`,
