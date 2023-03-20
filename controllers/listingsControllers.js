@@ -173,80 +173,138 @@ const viewAList = async (req, res) => {
 
 
 const saveList = async (req, res) => {
-    const loggedUser = req.user;
+    let loggedUser = req.user;
     const listId = req.params.id
 
-    await Listing.findById(listId).populate("category")
-        .then(async (listing) => {
-            if (listing) {
-                const index = listing.thoseWhoSaved.indexOf(loggedUser._id);
-                if (index == -1) {
-                    listing.thoseWhoSaved.push(loggedUser._id)
-                }
-                else {
-                    listing.thoseWhoSaved.splice(index, 1)
-                }
+    // await Listing.findById(listId).populate("category")
+    //     .then(async (listing) => {
+    //         if (listing) {
+    //             const index = listing.thoseWhoSaved.indexOf(loggedUser._id);
+    //             if (index == -1) {
+    //                 listing.thoseWhoSaved.push(loggedUser._id)
+    //             }
+    //             else {
+    //                 listing.thoseWhoSaved.splice(index, 1)
+    //             }
 
-                await Listing.findByIdAndUpdate(listId, listing, { new: true })
-                .then(resp => console.log(resp));
+    //             const resp1 = await Listing.findByIdAndUpdate(listId, listing, { new: true })
+    //             console.log(resp1.thoseWhoSaved)
+                
 
-                await User.findById(loggedUser._id)
-                    .then(user => {
-                        // console.log(user)
-                        const i = user.savedListing.indexOf(listId)
-                        if (i == -1) {
+    //             await User.findById(loggedUser._id)
+    //                 .then(user => {
+    //                     // console.log(user)
+    //                     const i = user.savedListing.indexOf(listId)
+    //                     if (i == -1) {
 
-                            user.savedListing.push(listId)
-                        }
-                        else {
-                            user.savedListing.splice(i, 1)
-                        }
-                        User.findByIdAndUpdate(user._id, user, { new: true })
-                        .then(resp => console.log(resp));
-                    });
+    //                         user.savedListing.push(listId)
+    //                     }
+    //                     else {
+    //                         user.savedListing.splice(i, 1)
+    //                     }
+    //                     User.findByIdAndUpdate(user._id, user, { new: true })
+    //                     .then(resp => console.log(resp));
+    //                 });
 
-                await User.findById(listing.postedBy)
-                    .then(user => {
+    //             await User.findById(listing.postedBy)
+    //                 .then(user => {
                         
 
-                        let index = user.totalSaved.users.indexOf(loggedUser._id)
+    //                     let index = user.totalSaved.users.indexOf(loggedUser._id)
 
-                        // console.log(loggedUser._id)
-                        // console.log(user.totalSaved.users[index])
-                        if (index == -1) {
-                            user.totalSaved.users.push(loggedUser)
-                            user.totalSaved.value += 1;
+    //                     // console.log(loggedUser._id)
+    //                     // console.log(user.totalSaved.users[index])
+    //                     if (index == -1) {
+    //                         user.totalSaved.users.push(loggedUser)
+    //                         user.totalSaved.value += 1;
 
-                            let notification = {
-                                sender: loggedUser,
-                                title: "Your listing was Saved",
-                                message: `${loggedUser.firstName} saved your listing, ${listing.title}`,
-                                type: 1,
-                                link: `/${listing.category.slug}/${listing._id}`,
-                                receiver: listing.postedBy
-                            }
-                            saveNotification(notification)
-                            res.json({ status: 1 })
-                        }
-                        else {
-                            user.totalSaved.users.splice(index, 1)
-                            res.json({ status: 0 })
-                        }
+    //                         let notification = {
+    //                             sender: loggedUser,
+    //                             title: "Your listing was Saved",
+    //                             message: `${loggedUser.firstName} saved your listing, ${listing.title}`,
+    //                             type: 1,
+    //                             link: `/${listing.category.slug}/${listing._id}`,
+    //                             receiver: listing.postedBy
+    //                         }
+    //                         saveNotification(notification)
+    //                         res.json({ status: 1 })
+    //                     }
+    //                     else {
+    //                         user.totalSaved.users.splice(index, 1)
+    //                         res.json({ status: 0 })
+    //                     }
 
-                        User.findByIdAndUpdate(user._id, user, { new: true })
-                            .then(resp => {
-                                console.log(resp.totalSaved.users)
-                            })
+    //                     User.findByIdAndUpdate(user._id, user, { new: true })
+    //                         .then(resp => {
+    //                             console.log(resp.totalSaved.users)
+    //                         })
 
 
-                    })
+    //                 })
+    //         }
+
+    //         else {
+    //             res.status(400).json({ message: "Property Not Found" })
+    //         }
+    //     })
+    //     .catch(err => res.json(err))
+
+    let listing = await Listing.findById(listId).populate("category")
+    if(listing){
+        let loggedUserIndex = listing.thoseWhoSaved.indexOf(loggedUser._id)
+        if(loggedUserIndex === -1){
+            listing.thoseWhoSaved.push(loggedUser._id)
+        }
+        else {
+            listing.thoseWhoSaved.splice(index, 1)
+        }
+        const resp1 = await Listing.findByIdAndUpdate(listId, listing, { new: true })
+        console.log({thoseWhoSaved: resp1.thoseWhoSaved})
+
+        let i = loggedUser.savedListing.indexOf(listId)
+        if (i == -1) {
+            loggedUser.savedListing.push(listId)
+        }
+        else {
+            loggedUser.savedListing.splice(i, 1)
+        }
+        
+        loggedUser = await User.findByIdAndUpdate(loggedUser._id, loggedUser, { new: true })
+        console.log({user: loggedUser.savedListing})
+
+        let user = await User.find(listing.postedBy)
+        let index = user.totalSaved.users.indexOf(loggedUser._id)
+        let status = 0;
+
+        if (index == -1) {
+            user.totalSaved.users.push(loggedUser)
+            user.totalSaved.value += 1;
+        
+            let notification = {
+                sender: loggedUser,
+                title: "Your listing was Saved",
+                message: `${loggedUser.firstName} saved your listing, ${listing.title}`,
+                type: 1,
+                link: `/${listing.category.slug}/${listing._id}`,
+                receiver: user._id
             }
+            saveNotification(notification)
+            status = 1;
+        }
+        else {
+            user.totalSaved.users.splice(index, 1)
+            status = 0;
+        }
+        
 
-            else {
-                res.status(400).json({ message: "Property Not Found" })
-            }
-        })
-        .catch(err => res.json(err))
+        user = User.findByIdAndUpdate(user._id, user, { new: true })
+        console.log(user.totalSaved)
+        res.json({status})
+
+    }
+    else{
+
+    }
 
 }
 
