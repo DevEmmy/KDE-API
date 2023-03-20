@@ -256,10 +256,10 @@ const saveList = async (req, res) => {
             listing.thoseWhoSaved.push(loggedUser._id)
         }
         else {
-            listing.thoseWhoSaved.splice(index, 1)
+            listing.thoseWhoSaved.splice(loggedUserIndex, 1)
         }
         const resp1 = await Listing.findByIdAndUpdate(listId, listing, { new: true })
-        console.log({thoseWhoSaved: resp1.thoseWhoSaved})
+        // console.log({thoseWhoSaved: resp1.thoseWhoSaved})
 
         let i = loggedUser.savedListing.indexOf(listId)
         if (i == -1) {
@@ -270,9 +270,10 @@ const saveList = async (req, res) => {
         }
         
         loggedUser = await User.findByIdAndUpdate(loggedUser._id, loggedUser, { new: true })
-        console.log({user: loggedUser.savedListing})
+        // console.log({user: loggedUser.savedListing})
 
-        let user = await User.find(listing.postedBy)
+        let user = await User.findById(listing.postedBy._id)
+        // console.log(user.firstName)
         let index = user.totalSaved.users.indexOf(loggedUser._id)
         let status = 0;
 
@@ -297,8 +298,8 @@ const saveList = async (req, res) => {
         }
         
 
-        user = User.findByIdAndUpdate(user._id, user, { new: true })
-        console.log(user.totalSaved)
+        user = await User.findByIdAndUpdate(user._id, user, { new: true })
+        // console.log(user)
         res.json({status})
 
     }
