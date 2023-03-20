@@ -22,6 +22,7 @@ const listingSchema = new Schema({
     noOfBed: Number,
     noOfBathroom: Number,
     locationISO: String,
+    forRent: {type: Boolean, default: false},
     views: [
         {type: Schema.Types.ObjectId, ref:"User"},
     ],
