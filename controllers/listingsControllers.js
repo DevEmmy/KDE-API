@@ -193,6 +193,7 @@ const saveList = async (req, res) => {
         let index = user.totalSaved.users.indexOf(loggedUser._id)
         let status = 0;
         console.log(index)
+        console.log(loggedUser._id)
         console.log(user.totalSaved)
 
         if (index == -1) {
