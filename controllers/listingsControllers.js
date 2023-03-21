@@ -166,10 +166,12 @@ const saveList = async (req, res) => {
     const listId = req.params.id
 
     let listing = await Listing.findById(listId).populate("category")
+
     if(listing){
         let loggedUserIndex = listing.thoseWhoSaved.indexOf(loggedUser._id)
         if(loggedUserIndex === -1){
             listing.thoseWhoSaved.push(loggedUser._id)
+            console.log("saved1")
         }
         else {
             listing.thoseWhoSaved.splice(loggedUserIndex, 1)
@@ -180,6 +182,7 @@ const saveList = async (req, res) => {
         let i = loggedUser.savedListing.indexOf(listId)
         if (i == -1) {
             loggedUser.savedListing.push(listId)
+            console.log("saved2")
         }
         else {
             loggedUser.savedListing.splice(i, 1)
@@ -193,12 +196,13 @@ const saveList = async (req, res) => {
         let index = user.totalSaved.users.indexOf(loggedUser._id)
         let status = 0;
         console.log(index)
-        console.log(loggedUser._id)
-        console.log(user.totalSaved)
+        // console.log(loggedUser._id)
+        // console.log(user.totalSaved)
 
         if (index == -1) {
             user.totalSaved.users.push(loggedUser._id)
             user.totalSaved.value += 1;
+            console.log("saved3")
         
             let notification = {
                 sender: loggedUser,
