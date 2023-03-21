@@ -5,12 +5,12 @@ const { saveNotification } = require("./notificationsControllers");
 const Category = require("../models/categories.model");
 
 const getAllListing = async (req, res) => {
-    let { page, category } = req.query;
+    let { page, category, forRent } = req.query;
     const limit = 10
     category = await Category.findOne({ slug: category })
     const length = (await Listing.find({ category: category._id })).length
 
-    await Listing.find({ category: category._id }).populate("postedBy").populate("category").skip(((page || 1) - 1) * limit)
+    await Listing.find({ category: category._id, forRent: forRent || false }).populate("postedBy").populate("category").skip(((page || 1) - 1) * limit)
         .limit(limit)
         .then(resp => {
             console.log(resp)
