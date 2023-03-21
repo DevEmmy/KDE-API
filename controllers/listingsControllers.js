@@ -197,7 +197,7 @@ const saveList = async (req, res) => {
         console.log(user.totalSaved)
 
         if (index == -1) {
-            user.totalSaved.users.push(loggedUser)
+            user.totalSaved.users.push(loggedUser._id)
             user.totalSaved.value += 1;
         
             let notification = {
@@ -219,7 +219,7 @@ const saveList = async (req, res) => {
 
         user = await User.findByIdAndUpdate(user._id, user, { new: true })
         // console.log(user)
-        res.json({status, loggedUser})
+        res.json({status})
 
     }
     else{
