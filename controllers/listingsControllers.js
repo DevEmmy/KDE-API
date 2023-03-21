@@ -192,6 +192,8 @@ const saveList = async (req, res) => {
         // console.log(user.firstName)
         let index = user.totalSaved.users.indexOf(loggedUser._id)
         let status = 0;
+        console.log(index)
+        console.log(user.totalSaved)
 
         if (index == -1) {
             user.totalSaved.users.push(loggedUser)
@@ -226,33 +228,59 @@ const saveList = async (req, res) => {
 }
 
 const searchListing = async (req, res) => {
-    const { title, price, noOfBed, location } = req.query
+    const { price, location, noOfBed, forRent, color, features, title, model, year, condition, category} = req.query
 
+    let realEstateQuery = {
+        price: price ? { $lte : price } : { $gte : price},
+        noOfBed: noOfBed,
+        forRent: forRent,
+        location: location
+    }
 
-    if (title) {
-        Listing.find({ title: { $regex: new RegExp("^" + title + ".*", "i") } })
-            .populate("postedBy")
-            .then(resp => res.json(resp))
-            .catch(error => res.json({ message: "An Error Occured", error: error }))
+    let carsQuery = {
+        title: title,
+        model: model,
+        year: year,
+        condition: condition
     }
-    else if (price) {
-        Listing.find({ price: { $gte: 0, $lte: price } })
-            .populate("postedBy")
-            .then(resp => res.json(resp))
-            .catch(error => res.json({ message: "An Error Occured", error: error }))
+
+    let totalQuery = {...realEstateQuery, ...carsQuery}
+    totalQuery = Object.fromEntries(
+        Object.entries(totalQuery).filter(([key, value]) => value !== undefined)
+      );
+
+    try{
+        console.log(totalQuery)
+        let listings = await Listing.find(totalQuery).populate("postedBy").populate("category")
+        res.json(listings)
     }
-    else if (noOfBed) {
-        Listing.find({ noOfBed: { $gte: 0, $lte: noOfBed } })
-            .populate("postedBy")
-            .then(resp => res.json(resp))
-            .catch(error => res.json({ message: "An Error Occured", error: error }))
+    catch(err){
+        res.status(400).json(err.message)
     }
-    else if (location) {
-        Listing.find({ location: { $regex: new RegExp("^" + location + ".*", "i") } })
-            .populate("postedBy")
-            .then(resp => res.json(resp))
-            .catch(error => res.json({ message: "An Error Occured", error: error }))
-    }
+    // if (title) {
+    //     Listing.find({ title: { $regex: new RegExp("^" + title + ".*", "i") } })
+    //         .populate("postedBy")
+    //         .then(resp => res.json(resp))
+    //         .catch(error => res.json({ message: "An Error Occured", error: error }))
+    // }
+    // else if (price) {
+    //     Listing.find({ price: { $gte: 0, $lte: price } })
+    //         .populate("postedBy")
+    //         .then(resp => res.json(resp))
+    //         .catch(error => res.json({ message: "An Error Occured", error: error }))
+    // }
+    // else if (noOfBed) {
+    //     Listing.find({ noOfBed: { $gte: 0, $lte: noOfBed } })
+    //         .populate("postedBy")
+    //         .then(resp => res.json(resp))
+    //         .catch(error => res.json({ message: "An Error Occured", error: error }))
+    // }
+    // else if (location) {
+    //     Listing.find({ location: { $regex: new RegExp("^" + location + ".*", "i") } })
+    //         .populate("postedBy")
+    //         .then(resp => res.json(resp))
+    //         .catch(error => res.json({ message: "An Error Occured", error: error }))
+    // }
 }
 
 const getRentals = async (req, res)=>{
