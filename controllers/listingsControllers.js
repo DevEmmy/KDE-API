@@ -255,5 +255,16 @@ const searchListing = async (req, res) => {
     }
 }
 
+const getRentals = async (req, res)=>{
+    let loggedUser = req.user;
+    try{
+        let listing = await Listing.find({forRent: true}).populate("postedBy").populate("category")
+        res.json(listing)
+    }
+    catch(err){
+        throw new Error(err.message)
+    }
+}
 
-module.exports = { getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing, getAList, viewAList, searchListing, saveList }
+
+module.exports = { getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing, getAList, viewAList, searchListing, saveList, getRentals }

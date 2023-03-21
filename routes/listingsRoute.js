@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing, getAList, viewAList, searchListing, saveList } = require("../controllers/listingsControllers");
+const { getAllListing, uploadAList, deleteList, updateList, makeUnavailable, getUserListing, getAList, viewAList, searchListing, saveList, getRentals } = require("../controllers/listingsControllers");
 const requireLogin = require("../middlewares/requireLogin");
 const User = require("../models/users.model");
 require("dotenv").config()
@@ -14,5 +14,6 @@ router.get('/user-listing',requireLogin, getUserListing) //added
 router.patch("/view/:id", requireLogin, viewAList) // added
 router.patch("/save/:id", requireLogin, saveList) // added
 router.get("/search", searchListing) // to be updated
+router.get("/rentals", requireLogin, getRentals)
 
 module.exports = router;
