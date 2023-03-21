@@ -219,7 +219,7 @@ const saveList = async (req, res) => {
 
         user = await User.findByIdAndUpdate(user._id, user, { new: true })
         // console.log(user)
-        res.json({status})
+        res.json({status, loggedUser})
 
     }
     else{
