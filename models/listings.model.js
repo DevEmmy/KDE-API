@@ -8,6 +8,7 @@ const listingSchema = new Schema({
     location: {type: String, required:true},
     postedBy: {type: Schema.Types.ObjectId, ref:"User", required: true},
     features: {type:Array},
+    collectibleFeatures: {type: Object},
     description: {type: String, required:false},
     images: {type: Array, required: false},
     videos: {type: Array, required: false},
