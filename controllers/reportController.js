@@ -7,9 +7,23 @@ const getAllReports = async (req, res)=>{
     }
     catch(err)
     {
-        res.json(err);
+        res.status(400).json(err);
     }
     
 }
 
-module.exports = {}
+const postReport = async (req, res)=>{
+    const report = req.body;
+    try{
+        let response = new Report(report)
+        await response.save()
+        res.json("Successfully created report")
+    }
+    catch(err){
+        res.status(400).json(err.message)
+    }
+}
+
+module.exports = {
+    getAllReports, postReport
+}

@@ -180,6 +180,7 @@ const verifyUser = async (req, res)=>{
         user.nationality = nationality;
         user.verificationType = verificationType
         user.isVerified = true
+        user.accountType = 1
         User.findByIdAndUpdate(user._id, user, {new: true})
         .then(resp =>{
             res.status(200).json(resp)
