@@ -30,7 +30,12 @@ const sendNotification = async (req, res)=>{
 
 const getUsersNotification = async (req, res)=>{
     const user = req.user;
+    let {page} = req.query;
+    
+    const limit = 10
     NotificationModel.find({receiver: user}).sort({"createdAt": -1})
+    .skip(((page || 1) - 1) * limit)
+    .limit(limit)
     .then(response => {
         res.json(response)
     })
