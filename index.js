@@ -98,7 +98,7 @@ app.use("/messages", messagesRoute)
 app.use("/categories", categoryRoute)
 app.use("/blogs", blogRoute)
 app.use("/carts", cartRoute)
-app.use("reports", reportRouter)
+app.use("reports", reportRoute)
 
 //run server
 server.listen(port, ()=>{
