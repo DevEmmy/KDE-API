@@ -21,9 +21,47 @@ const createCart = async (req, res)=>{
 }
 
 const addToCart = async (req, res)=>{
-    
+    let {collectibleId} = req.body
+    let {cartId} = req.params
+
+    try{
+        let cart = await Cart.findById(cartId)
+    cart.collectibles.push(collectibleId)
+    cart = await Cart.findByIdAndUpdate(cartId, cart, {new: true}).populate("collectibles")
+    res.json(cart)
+    }
+    catch(err){
+        res.status(400).json(err.message)
+    }
+}
+
+const deleteFromCart = async (req, res)=>{
+    let {cartId} = req.params;
+    let {collectibleId} = req.body
+
+    try {
+        let cart = await Cart.findById(cartId)
+        let index = cart.collectibles.indexOf(collectibleId)
+        cart.collectibles.splice(index, 1)
+        cart = await Cart.findByIdAndUpdate(cartId, cart, {new: true}).populate("collectibles")
+        res.json(cart)
+    } catch (error) {
+        res.status(400).json(err.message)
+    }
+}
+
+const getAllCart = async (req, res)=>{
+    const loggedUser = req.user;
+
+    try{
+        let carts = await Cart.find({user: loggedUser})
+        res.json(carts)
+    }
+    catch(err){
+        res.status(400).json(err.message)
+    }
 }
 
 module.exports = {
-    createCart
+    createCart, addToCart, deleteFromCart, getAllCart
 }
