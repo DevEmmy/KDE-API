@@ -4,7 +4,7 @@ const requireLogin = require("../middlewares/requireLogin")
 
 router.get("/all", requireLogin, getAllCart)
 router.get("/", requireLogin, createCart)
-router.patch('/add/:cartId', requireLogin, addToCart)
-router.patch("/remove/:cartId", requireLogin, deleteFromCart)
+router.patch('/add/', requireLogin, addToCart)
+router.patch("/remove/", requireLogin, deleteFromCart)
 
 module.exports = router
