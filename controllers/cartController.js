@@ -22,10 +22,10 @@ const createCart = async (req, res)=>{
 
 const addToCart = async (req, res)=>{
     let {collectibleId} = req.body
-    let {cartId} = req.params
+    const loggedUser = req.user
 
     try{
-        let cart = await Cart.findById(cartId)
+        let cart = await Cart.findOne({user: loggedUser._id})
     cart.collectibles.push(collectibleId)
     cart = await Cart.findByIdAndUpdate(cartId, cart, {new: true}).populate("collectibles")
     res.json(cart)
@@ -36,11 +36,11 @@ const addToCart = async (req, res)=>{
 }
 
 const deleteFromCart = async (req, res)=>{
-    let {cartId} = req.params;
     let {collectibleId} = req.body
+    const loggedUser = req.user
 
     try {
-        let cart = await Cart.findById(cartId)
+        let cart = await Cart.findOne({user: loggedUser._id})
         let index = cart.collectibles.indexOf(collectibleId)
         cart.collectibles.splice(index, 1)
         cart = await Cart.findByIdAndUpdate(cartId, cart, {new: true}).populate("collectibles")
