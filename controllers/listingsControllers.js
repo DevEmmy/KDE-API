@@ -13,7 +13,7 @@ const getAllListing = async (req, res) => {
     await Listing.find({ category: category._id, forRent: forRent || false }).populate("postedBy").populate("category").skip(((page || 1) - 1) * limit)
         .limit(limit)
         .then(resp => {
-            console.log(resp)
+            // console.log(resp)
             res.json({
                 listings: resp,
                 noOfListings: length
