@@ -6,7 +6,7 @@ const Category = require("../models/categories.model");
 
 const getAllListing = async (req, res) => {
     let { page, category, forRent } = req.query;
-    const limit = 6
+    const limit = 3
     category = await Category.findOne({ slug: category })
     const length = (await Listing.find({ category: category._id })).length
 
