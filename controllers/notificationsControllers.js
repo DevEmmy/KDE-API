@@ -33,11 +33,15 @@ const getUsersNotification = async (req, res)=>{
     let {page} = req.query;
     
     const limit = 10
-    NotificationModel.find({receiver: user}).sort({"createdAt": -1})
+    const noOfNotifications = await NotificationModel.find({receiver: user})
+    await NotificationModel.find({receiver: user}).sort({"createdAt": -1})
     .skip(((page || 1) - 1) * limit)
     .limit(limit)
     .then(response => {
-        res.json(response)
+        res.json({
+            notifications: response,
+            noOfNotifications: noOfNotifications
+        })
     })
     .catch((error)=>{
         res.json({
