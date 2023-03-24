@@ -16,6 +16,7 @@ const categoryRoute = require("./routes/categoryRoute")
 const blogRoute = require("./routes/blogRoute")
 const cartRoute = require("./routes/cartRoute")
 const reportRoute = require("./routes/reportRoute")
+const accountRoute = require("./routes/accountRoute")
 const {Server}= require("socket.io")
 
 //initiate express
@@ -98,7 +99,8 @@ app.use("/messages", messagesRoute)
 app.use("/categories", categoryRoute)
 app.use("/blogs", blogRoute)
 app.use("/carts", cartRoute)
-app.use("reports", reportRoute)
+app.use("/reports", reportRoute)
+app.use("/accounts", accountRoute)
 
 //run server
 server.listen(port, ()=>{
