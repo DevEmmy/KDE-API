@@ -7,6 +7,7 @@ const { cloudinary } = require("./cloudinary");
 const { saveNotification } = require("./notificationsControllers");
 const { sendMail } = require("./nodemailer");
 const { reset_html } = require("../html_templates/html");
+const Account = "../models/account.model"
 
 const upload = async (data)=>{
     let url;
@@ -139,11 +140,34 @@ const updateProfile = async (req, res)=>{
     if(updatedProfile.cover){
         updatedProfile.cover = await upload(updatedProfile.cover)
     }
-    await User.findByIdAndUpdate(user._id, updatedProfile, {new: true})
-    .then(resp => res.json(resp))
-    .catch(error => {
+
+    try{
+        let details = {
+            number: updatedProfile.phoneNumber1,
+            firstName: updatedProfile.firstName,
+            lastName: updatedProfile.lastName,
+            middleName: updatedProfile.middleName,
+            gender: updatedProfile.sex,
+            address: updatedProfile.address,
+            email: updatedProfile.email,
+            city: updatedProfile.city,
+            state: updatedProfile.state,
+            country: updatedProfile.country,
+            title: updatedProfile.title,
+            userId: user._id
+        }
+        let account = await Account.findOne({user: user})
+        if(!account){
+            let newAccount = await createAccount(details)
+            console.log(newAccount)
+        }
+        
+        let response = await User.findByIdAndUpdate(user._id, updatedProfile, {new: true})
+        res.json(response)
+    }
+    catch(error){
         res.status(400).json({message: "An Error Occured", error: error})
-    })
+    }
 }
 
 const addToSaved = async (req, res)=>{
