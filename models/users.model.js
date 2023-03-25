@@ -45,7 +45,7 @@ const userSchema = new Schema({
     verifiedProfilePicture: {type: String, default: null},
 
     profilePicture: {type: String, default:"https://avatarfiles.alphacoders.com/865/86518.png"},
-    pronoun: {type: String, default:null},
+    gender: {type: String, default:null},
     balanceAmount: Number,
     zipCode: Number,
 
