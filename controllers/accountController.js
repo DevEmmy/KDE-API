@@ -4,6 +4,7 @@ const axios = require("axios")
 const md5 = require('md5');
 const Account = require("../models/account.model")
 const Encryption = require('node_triple_des');
+const { createTransaction } = require('./transactionsControllers');
 
 const apiKey = process.env.API_KEY
 const clientSecret = process.env.CLIENT_SECRET
@@ -203,7 +204,7 @@ const transferFund = async (req, res)=>{
     const transferDetails = req.body
 
     const loggedUserBankAccount = await AccountDetails.findOne({user: loggedUser._id})
-    const receiverBankAccount =await AccountDetails.findOne({user: transferDetails.receiver})
+    const receiverBankAccount =await AccountDetails.findOne({user: transferDetails.receiver}).populate("user")
 
 
     const details = {
@@ -242,6 +243,24 @@ const transferFund = async (req, res)=>{
 
     try{
         let response = await axios.post(`${bankUri}/transact`, details, {headers: setConfig(requestRef)})
+
+        const transaction1 = {
+            message: `Transer of ${"NGN" + this.amount} to ${receiverBankAccount.account_name} - ${receiverBankAccount.account_number}`,
+            amount: transferDetails.amount,
+            credit: false,
+            user: loggedUser
+        }
+
+        await createTransaction(transaction1)
+
+        const transaction2 = {
+            message: `Received  ${"NGN" + this.amount} from ${loggedUserBankAccount.account_name}`,
+            amount: transferDetails.amount,
+            credit: true,
+            user: transferDetails.receiver
+        }
+        await createTransaction(transaction2)
+
         res.json(response.data)
     }
     catch(err)
@@ -293,6 +312,15 @@ const withdrawFund = async (req, res)=>{
 
     try{
         let response = await axios.post(`${bankUri}/transact`, details, {headers: setConfig(requestRef)})
+
+        const transaction1 = {
+            message: `Withdrawal of ${"NGN" + this.amount} to your Bank Account`,
+            amount: amount,
+            credit: false,
+            user: loggedUser
+        }
+
+        await createTransaction(transaction1)
         res.json(response.data)
     }
     catch(err)

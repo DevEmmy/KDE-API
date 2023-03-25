@@ -1,10 +1,14 @@
 const User = require("../models/users.model")
 const Transaction = require("../models/transaction.model")
 
+const createTransaction = async (transaction)=>{
+    const response = await new Transaction(transaction).save()
+    console.log("Transaction SUccessful")
+}
 
 const getAllTransactions = async (req, res)=>{
     const user = req.user;
-    Transaction.find({user: user}).populate("subjectUser")
+    await Transaction.find({user: user})
     .then(resp => res.json(resp))
     .catch(error => res.json({message: "An Error Occured", error: error}))
 }
@@ -12,7 +16,7 @@ const getAllTransactions = async (req, res)=>{
 const postTransaction = async (req, res)=>{
     const transaction = req.body;
     transaction.user = req.user;
-    new Transaction(transaction).save()
+    await new Transaction(transaction).save()
     .then(resp => res.json(resp))
     .catch(error => res.json({message: "An Error Occured", error: error}))
 }
@@ -29,4 +33,4 @@ const deleteTransaction = async (req, res)=>{
     })   
 }
 
-module.exports = {getAllTransactions, postTransaction, deleteTransaction}
+module.exports = {getAllTransactions, postTransaction, deleteTransaction, createTransaction}

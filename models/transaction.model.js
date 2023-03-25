@@ -4,10 +4,9 @@ const { Schema } = mongoose;
 
 const transactionSchema = new Schema({
     user: {type: Schema.Types.ObjectId, ref:"User"},
-    accountBalance: {type: Number},
-    subjectAmount: {type:Number},
+    amount: {type:Number},
     credit: {type:Boolean, default: false},
-    subjectUser:{type: Schema.Types.ObjectId, ref:"User"},
+    message: String
 },{
     timestamps: true,
 })
