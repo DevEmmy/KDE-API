@@ -202,8 +202,8 @@ const transferFund = async (req, res)=>{
     const requestRef = uuidv4()
     const transferDetails = req.body
 
-    const loggedUserBankAccount = AccountDetails.findOne({user: loggedUser._id})
-    const receiverBankAccount = AccountDetails.findOne({user: transferDetails.receiver})
+    const loggedUserBankAccount = await AccountDetails.findOne({user: loggedUser._id})
+    const receiverBankAccount =await AccountDetails.findOne({user: transferDetails.receiver})
 
 
     const details = {
@@ -211,7 +211,7 @@ const transferFund = async (req, res)=>{
         "request_type": "transfer_funds",
         "auth": {
             "type": "bank.account",
-            "secure": "{{encrypted_source_account_number}}",
+            "secure": encrypt(loggedUserBankAccount.account_number),
             "auth_provider": "Fidelity",
             "route_mode": null
         },
@@ -250,8 +250,69 @@ const transferFund = async (req, res)=>{
     }
 }
 
+const withdrawFund = async (req, res)=>{
+    const loggedUser = req.user;
+    const requestRef = uuidv4()
+    const {amount} = req.body
+
+    const loggedUserBankAccount = await AccountDetails.findOne({user: loggedUser._id})
+
+    const details = {
+        "request_ref": requestRef,
+        "request_type": "transfer_funds",
+        "auth": {
+            "type": "bank.account",
+            "secure": encrypt(loggedUserBankAccount.account_number),
+            "auth_provider": "Fidelity",
+            "route_mode": null
+        },
+        "transaction": {
+            "mock_mode": "Live",
+            "transaction_ref": uuidv4(),
+            "transaction_desc": "A random transaction",
+            "transaction_ref_parent": null,
+            "amount": amount,
+            "customer": {
+                "customer_ref": loggedUserBankAccount._id,
+                "firstname": loggedUser.firstName,
+                "surname": loggedUser.lastName,
+                "email": loggedUser,
+                "mobile_no": loggedUser.phoneNumber1
+            },
+            "meta": {
+                "a_key": "a_meta_value_1",
+                "b_key": "a_meta_value_2"
+            },
+            "details": {
+                "destination_account": loggedUser.accountNo,
+                "destination_bank_code": getBankCode(loggedUser.bankName),
+                "otp_override": true
+            }
+        }
+    }
+
+    try{
+        let response = await axios.post(`${bankUri}/transact`, details, {headers: setConfig(requestRef)})
+        res.json(response.data)
+    }
+    catch(err)
+    {
+        res.status(400).json(err)
+    }
+}
+
+const getAccount = async(req, res)=>{
+    const loggedUser = req.user
+    try{
+        let loggedUserBankAccount = await Account.findOne({user: loggedUser._id})
+    res.json(loggedUserBankAccount)
+    }
+    catch(err){
+        res.status(400).json(err)
+    }
+}
 
 
 module.exports = {
-    createAccount, testCreateAccount, getBalance, transferFund
+    createAccount, testCreateAccount, getBalance, transferFund, withdrawFund, getAccount
 }
