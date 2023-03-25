@@ -67,6 +67,12 @@ const uploadAList = async (req, res) => {
     const list = req.body;
 
     list.postedBy = req.user;
+    list.collectibleFeatures = {
+        "color": "red",
+        "length": "2 Inches",
+        "nature": "Fresh",
+        "fav": "Johnny"
+    }
     try {
         list.category = await Category.findOne({ slug: list.category })
 
