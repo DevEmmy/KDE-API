@@ -26,6 +26,16 @@ const encrypt = (item)=>{
     return response
 }
 
+const getBankCode = async (bankName)=>{
+    const response = await fetch(`https://api.paystack.co/bank?country=nigeria`);
+    const data = await response.json();
+    const bank = data.data.find((bank) => bank.name.toLowerCase() === bankName.toLowerCase());
+    if (!bank) {
+      throw new Error(`Bank not found: ${bankName}`);
+    }
+    return bank.code;
+  }
+
 const createAccount  = async (details)=>{
     console.log(bankUri)
     const requestRef = uuidv4()
@@ -79,6 +89,7 @@ const createAccount  = async (details)=>{
             'account_reference': data.account_reference,
             'account_name': data.account_name,
             'bank_name': data.bank_name,
+            'bank_code': data.bank_code,
             'user': String(details.userId),
         }
 
@@ -185,7 +196,62 @@ const getBalance = async (req, res)=>{
     }
 }
 
+const transferFund = async (req, res)=>{
+    
+    const loggedUser = req.user;
+    const requestRef = uuidv4()
+    const transferDetails = req.body
+
+    const loggedUserBankAccount = AccountDetails.findOne({user: loggedUser._id})
+    const receiverBankAccount = AccountDetails.findOne({user: transferDetails.receiver})
+
+
+    const details = {
+        "request_ref": requestRef,
+        "request_type": "transfer_funds",
+        "auth": {
+            "type": "bank.account",
+            "secure": "{{encrypted_source_account_number}}",
+            "auth_provider": "Fidelity",
+            "route_mode": null
+        },
+        "transaction": {
+            "mock_mode": "Live",
+            "transaction_ref": uuidv4(),
+            "transaction_desc": "A random transaction",
+            "transaction_ref_parent": null,
+            "amount": transferDetails.amount,
+            "customer": {
+                "customer_ref": loggedUserBankAccount._id,
+                "firstname": loggedUser.firstName,
+                "surname": loggedUser.lastName,
+                "email": loggedUser,
+                "mobile_no": loggedUser.phoneNumber1
+            },
+            "meta": {
+                "a_key": "a_meta_value_1",
+                "b_key": "a_meta_value_2"
+            },
+            "details": {
+                "destination_account": receiverBankAccount.account_number,
+                "destination_bank_code": receiverBankAccount.bank_code,
+                "otp_override": true
+            }
+        }
+    }
+
+    try{
+        let response = await axios.post(`${bankUri}/transact`, details, {headers: setConfig(requestRef)})
+        res.json(response.data)
+    }
+    catch(err)
+    {
+        res.status(400).json(err)
+    }
+}
+
+
 
 module.exports = {
-    createAccount, testCreateAccount, getBalance
+    createAccount, testCreateAccount, getBalance, transferFund
 }

@@ -5,6 +5,7 @@ const accountSchema = new Schema({
     user: {type: Schema.Types.ObjectId, ref:"User", nullable: false, unique: true, require: true},
     account_number: Number,
     account_name: String,
+    bank_code: String,
     account_reference: Number,
     bank_name: {type:String, default: "Fidelity Bank Limited"},
 })

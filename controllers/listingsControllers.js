@@ -8,7 +8,7 @@ const getAllListing = async (req, res) => {
     let { page, category, forRent } = req.query;
     const limit = 3
     category = await Category.findOne({ slug: category })
-    const length = (await Listing.find({ category: category._id })).length
+    const length = (await Listing.find({ category: category._id,forRent: forRent || false })).length
 
     await Listing.find({ category: category._id, forRent: forRent || false }).populate("postedBy").populate("category").skip(((page || 1) - 1) * limit)
         .limit(limit)
