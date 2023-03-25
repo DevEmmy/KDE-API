@@ -197,6 +197,57 @@ const getBalance = async (req, res)=>{
     }
 }
 
+const initiateTransaction = async (request)=>{
+    let user = request.user
+    const requestRef = uuidv4()
+    const transferDetails = request
+    const loggedUserBankAccount = await AccountDetails.findOne({user: user._id})
+
+    const details = {
+        "request_ref": requestRef,
+        "request_type": "transfer_funds",
+        "auth": {
+            "type": "bank.account",
+            "secure": encrypt(loggedUserBankAccount.account_number),
+            "auth_provider": "Fidelity",
+            "route_mode": null
+        },
+        "transaction": {
+            "mock_mode": "Live",
+            "transaction_ref": uuidv4(),
+            "transaction_desc": "A random transaction",
+            "transaction_ref_parent": null,
+            "amount": request.amount,
+            "customer": {
+                "customer_ref": loggedUserBankAccount._id,
+                "firstname": user.firstName,
+                "surname": user.lastName,
+                "email": user.email,
+                "mobile_no": user.phoneNumber1
+            },
+            "meta": {
+                "a_key": "a_meta_value_1",
+                "b_key": "a_meta_value_2"
+            },
+            "details": {
+                "destination_account": request.destination_account,
+                "destination_bank_code": getBankCode(request.destination),
+                "otp_override": true
+            }
+        }
+    }
+
+    try{
+        let response = await axios.post(`${bankUri}/transact`, details, {headers: setConfig(requestRef)})
+        return response.data
+    }
+    catch(err)
+    {
+        console.log(err)
+    }
+};
+
+
 const transferFund = async (req, res)=>{
     
     const loggedUser = req.user;
@@ -333,7 +384,7 @@ const getAccount = async(req, res)=>{
     const loggedUser = req.user
     try{
         let loggedUserBankAccount = await Account.findOne({user: loggedUser._id})
-    res.json(loggedUserBankAccount)
+        res.json(loggedUserBankAccount)
     }
     catch(err){
         res.status(400).json(err)
@@ -342,5 +393,5 @@ const getAccount = async(req, res)=>{
 
 
 module.exports = {
-    createAccount, testCreateAccount, getBalance, transferFund, withdrawFund, getAccount
+    createAccount, testCreateAccount, getBalance, transferFund, withdrawFund, getAccount, initiateTransaction
 }

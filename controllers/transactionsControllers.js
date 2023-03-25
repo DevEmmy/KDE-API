@@ -1,9 +1,12 @@
 const User = require("../models/users.model")
 const Transaction = require("../models/transaction.model")
+const { initiateTransaction } = require("./accountController")
+const { createLuxuryService } = require("./luxuryController")
+require("dotenv").config
 
 const createTransaction = async (transaction)=>{
     const response = await new Transaction(transaction).save()
-    console.log("Transaction SUccessful")
+    console.log("Transaction Su ccessful")
 }
 
 const getAllTransactions = async (req, res)=>{
@@ -33,4 +36,26 @@ const deleteTransaction = async (req, res)=>{
     })   
 }
 
-module.exports = {getAllTransactions, postTransaction, deleteTransaction, createTransaction}
+const kde_account = process.env.KDE_ACCOUNT;
+const kde_bank = process.env.KDE_BANK
+
+const makeALuxuryPurchase = async (req, res)=>{
+    let loggedUser = req.user;
+    let luxury = req.body;
+
+    const request={
+        user: loggedUser,
+        amount: luxury.price,
+        destination_account: kde_account,
+        destination_bank_code: kde_bank
+    }
+
+    let response = await initiateTransaction(request);
+    if(response.status !== "Failed"){
+        await createLuxuryService(luxury)
+        res.json({message: "Transaction Successful"})
+    }
+    res.json({message: "Transaction Failed"})
+}
+
+module.exports = {getAllTransactions, postTransaction, deleteTransaction, createTransaction, makeALuxuryPurchase}
