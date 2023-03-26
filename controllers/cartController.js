@@ -6,7 +6,10 @@ const createCart = async (req, res)=>{
         let cart = await Cart.findOne({user: loggedUser}).populate({
             path: "collectibles",
             populate: {
-                path: "category"
+                path: "category",
+                populate:{
+                    path: "postedBy"
+                }
             }
         })
         if(cart){
