@@ -55,6 +55,14 @@ const makeALuxuryPurchase = async (req, res)=>{
     if(response.status !== "Failed"){
         await createLuxuryService(luxury)
         // const response 
+        let transaction = {
+            user: loggedUser,
+            amount: luxury.price,
+            credit: false,
+            message: `You Applied for a Luxury Service - ${luxury.serviceType} for ${luxury.servicePlan} plan`
+        }
+        transaction = await createTransaction(transaction)
+        console.log(transaction)
         res.json({message: "Transaction Successful"})
     }
     res.json({message: "Transaction Failed"})

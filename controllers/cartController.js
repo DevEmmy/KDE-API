@@ -6,13 +6,8 @@ const createCart = async (req, res)=>{
         let cart = await Cart.findOne({user: loggedUser}).populate({
             path: "collectibles",
             populate: {
-                path: "category",
-            }
-        })
-        .populate({
-            path: "collectibles",
-            populate:{
-                path: "postedBy"
+                path: "itemData",
+                populate: ["category", "postedBy"]
             }
         })
 
@@ -38,9 +33,26 @@ const addToCart = async (req, res)=>{
 
     try{
         let cart = await Cart.findOne({user: loggedUser._id})
-    cart.collectibles.push(collectibleId)
-    cart.total += price
-    cart = await Cart.findByIdAndUpdate(cart._id, cart, {new: true}).populate("collectibles").populate("collectibles.category")
+
+        let index = cart.collectibles.findIndex(item => String(item._id) === String(collectibleId))
+
+        if(index !== -1 ){
+            cart.collectibles[index].quantity += 1;
+        }
+        else{
+            cart.collectibles.push({
+                itemData: collectibleId,
+            })
+        }
+
+        let total = 0
+        let cartLength = cart.collectibles.length
+
+        for (let i = 0; i < cartLength; i++){
+            cart.total += cart.collectibles[i].quantity * cart.collectibles[i].itemData.price;
+        }
+
+    cart = await Cart.findByIdAndUpdate(cart._id, cart, {new: true})
     res.json(cart)
     }
     catch(err){
