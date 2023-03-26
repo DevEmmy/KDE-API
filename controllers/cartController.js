@@ -34,7 +34,7 @@ const addToCart = async (req, res)=>{
     try{
         let cart = await Cart.findOne({user: loggedUser._id})
 
-        let index = cart.collectibles.findIndex(item => String(item._id) === String(collectibleId))
+        let index = cart.collectibles.findIndex(item => String(item.itemData._id) === String(collectibleId))
 
         if(index !== -1 ){
             cart.collectibles[index].quantity += 1;
