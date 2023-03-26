@@ -3,7 +3,12 @@ const Cart = require("../models/cart.model");
 const createCart = async (req, res)=>{
     let loggedUser = req.user;
     try {
-        let cart = await Cart.findOne({user: loggedUser}).populate()
+        let cart = await Cart.findOne({user: loggedUser}).populate({
+            path: "collectibles",
+            populate: {
+                path: "category"
+            }
+        })
         if(cart){
             res.json(cart)
         }
