@@ -1,5 +1,32 @@
 const Cart = require("../models/cart.model");
 
+const initiateCart = async (loggedUser)=>{
+    let loggedUser = loggedUser;
+    try {
+        let cart = await Cart.findOne({user: loggedUser}).populate({
+            path: "collectibles",
+            populate: {
+                path: "itemData",
+                populate: ["category", "postedBy"]
+            }
+        })
+
+        if(cart){
+            res.json(cart)
+        }
+        else{
+            cart = {
+                user: loggedUser
+            }
+            let newCart = new Cart(cart)
+            cart = await newCart.save();
+            console.log(cart)
+        }
+    } catch (error) {
+        console.error(error.message)
+    }
+}
+
 const createCart = async (req, res)=>{
     let loggedUser = req.user;
     try {
@@ -96,5 +123,5 @@ const getAllCart = async (req, res)=>{
 }
 
 module.exports = {
-    createCart, addToCart, deleteFromCart, getAllCart
+    createCart, addToCart, deleteFromCart, getAllCart, initiateCart
 }

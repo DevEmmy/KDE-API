@@ -7,6 +7,7 @@ const { cloudinary } = require("./cloudinary");
 const { saveNotification } = require("./notificationsControllers");
 const { sendMail } = require("./nodemailer");
 const { reset_html } = require("../html_templates/html");
+const { initiateCart } = require("./cartController");
 const Account = "../models/account.model"
 
 const upload = async (data)=>{
@@ -49,9 +50,10 @@ const signIn = async (req, res)=>{
         }
         else{
             bcrypt.compare(password, user.password)
-            .then(doMatch =>{
+            .then(async doMatch =>{
                 if(doMatch){
                     const token = jwt.sign({_id: user._id}, jwt_secret)
+                    await initiateCart(user)
                     res.json({token: token, message: "Signed In Successfully", user: user})
                 }
                 else{
@@ -82,9 +84,10 @@ const signUp = async (req, res)=>{
                 }
                 else{
                     bcrypt.compare(password, user.password)
-                    .then(doMatch=>{
+                    .then(async doMatch=>{
                         if(doMatch){
                             const token = jwt.sign({_id:user._id}, jwt_secret);
+                            await initiateCart(user)
                             res.json({token: token, message:"Successful", user: user})
                         }
                         else{
