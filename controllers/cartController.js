@@ -12,7 +12,7 @@ const initiateCart = async (loggedUser)=>{
         })
 
         if(cart){
-            res.json(cart)
+            console.log(cart)
         }
         else{
             cart = {
