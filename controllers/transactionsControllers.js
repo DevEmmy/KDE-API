@@ -7,7 +7,7 @@ require("dotenv").config
 
 const createTransaction = async (transaction)=>{
     const response = await new Transaction(transaction).save()
-    console.log("Transaction Su ccessful")
+    return response
 }
 
 const getAllTransactions = async (req, res)=>{
