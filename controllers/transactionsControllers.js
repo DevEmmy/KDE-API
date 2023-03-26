@@ -2,6 +2,7 @@ const User = require("../models/users.model")
 const Transaction = require("../models/transaction.model")
 const { initiateTransaction } = require("./accountController")
 const { createLuxuryService } = require("./luxuryController")
+const Cart = require("../models/cart.model")
 require("dotenv").config
 
 const createTransaction = async (transaction)=>{
@@ -56,6 +57,20 @@ const makeALuxuryPurchase = async (req, res)=>{
         res.json({message: "Transaction Successful"})
     }
     res.json({message: "Transaction Failed"})
+}
+
+const checkOutCart = async (req, res)=>{
+    const user = req.user;
+    const cart = await Cart.findOne({user: user})
+
+    const request={
+        user: user,
+        amount: cart.total,
+        destination_account: kde_account,
+        destination_bank_code: kde_bank
+    }
+
+
 }
 
 module.exports = {getAllTransactions, postTransaction, deleteTransaction, createTransaction, makeALuxuryPurchase}

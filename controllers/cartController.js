@@ -56,7 +56,7 @@ const getAllCart = async (req, res)=>{
     const loggedUser = req.user;
 
     try{
-        let carts = await Cart.find({user: loggedUser}).populate("collectibles").populate("categories").populate("collectibles.categories")
+        let carts = await Cart.find({user: loggedUser}).populate("collectibles").populate("category").populate("collectibles.category")
         res.json(carts)
     }
     catch(err){
