@@ -7,11 +7,15 @@ const createCart = async (req, res)=>{
             path: "collectibles",
             populate: {
                 path: "category",
-                populate:{
-                    path: "postedBy"
-                }
             }
         })
+        .populate({
+            path: "collectibles",
+            populate:{
+                path: "postedBy"
+            }
+        })
+
         if(cart){
             res.json(cart)
         }
