@@ -82,9 +82,6 @@ const addToCart = async (req, res)=>{
         let cartLength = cart.collectibles.length
         console.log(cartLength)
 
-        for (let i = 0; i < cartLength; i++){
-            cart.total += cart.collectibles[i].quantity * cart.collectibles[i].itemData.price;
-        }
 
     cart = await Cart.findByIdAndUpdate(cart._id, cart, {new: true})
     res.json(cart)
@@ -119,9 +116,6 @@ const deleteFromCart = async (req, res)=>{
         let cartLength = cart.collectibles.length
         console.log(cartLength)
 
-        for (let i = 0; i < cartLength; i++){
-            cart.total += cart.collectibles[i].quantity * cart.collectibles[i].itemData.price;
-        }
 
     cart = await Cart.findByIdAndUpdate(cart._id, cart, {new: true})
     res.json(cart)
