@@ -1,7 +1,7 @@
 const Cart = require("../models/cart.model");
 
 const initiateCart = async (loggedUser)=>{
-    let loggedUser = loggedUser;
+    // let loggedUser = loggedUser;
     try {
         let cart = await Cart.findOne({user: loggedUser}).populate({
             path: "collectibles",
