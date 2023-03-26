@@ -54,6 +54,7 @@ const makeALuxuryPurchase = async (req, res)=>{
     let response = await initiateTransaction(request);
     if(response.status !== "Failed"){
         await createLuxuryService(luxury)
+        // const response 
         res.json({message: "Transaction Successful"})
     }
     res.json({message: "Transaction Failed"})

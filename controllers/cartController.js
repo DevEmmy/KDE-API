@@ -3,7 +3,7 @@ const Cart = require("../models/cart.model");
 const createCart = async (req, res)=>{
     let loggedUser = req.user;
     try {
-        let cart = await Cart.findOne({user: loggedUser}).populate("collectibles").populate("category").populate("collectibles.category");
+        let cart = await Cart.findOne({user: loggedUser}).populate("collectibles").populate("collectibles.category");
         if(cart){
             res.json(cart)
         }
@@ -45,7 +45,7 @@ const deleteFromCart = async (req, res)=>{
         let index = cart.collectibles.indexOf(collectibleId)
         cart.total -= price
         cart.collectibles.splice(index, 1)
-        cart = await Cart.findByIdAndUpdate(cart._id, cart, {new: true}).populate("collectibles").populate("category").populate("collectibles.category")
+        cart = await Cart.findByIdAndUpdate(cart._id, cart, {new: true}).populate("collectibles").populate("collectibles.category")
         res.json(cart)
     } catch (error) {
         res.status(400).json(err.message)
@@ -56,7 +56,7 @@ const getAllCart = async (req, res)=>{
     const loggedUser = req.user;
 
     try{
-        let carts = await Cart.find({user: loggedUser}).populate("collectibles").populate("category").populate("collectibles.category")
+        let carts = await Cart.find({user: loggedUser}).populate("collectibles").populate("collectibles.category")
         res.json(carts)
     }
     catch(err){
