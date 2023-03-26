@@ -32,7 +32,13 @@ const addToCart = async (req, res)=>{
     const loggedUser = req.user
 
     try{
-        let cart = await Cart.findOne({user: loggedUser._id})
+        let cart = await Cart.findOne({user: loggedUser._id}).populate({
+            path: "collectibles",
+            populate: {
+                path: "itemData",
+                populate: ["category", "postedBy"]
+            }
+        })
 
         let index = cart.collectibles.findIndex(item => String(item.itemData._id) === String(collectibleId))
 
