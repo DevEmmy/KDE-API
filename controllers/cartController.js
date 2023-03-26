@@ -79,8 +79,8 @@ const addToCart = async (req, res)=>{
             })
         }
 
-
         let cartLength = cart.collectibles.length
+        console.log(cartLength)
 
         for (let i = 0; i < cartLength; i++){
             cart.total += cart.collectibles[i].quantity * cart.collectibles[i].itemData.price;
@@ -98,14 +98,35 @@ const deleteFromCart = async (req, res)=>{
     let {collectibleId, price} = req.body
     const loggedUser = req.user
 
-    try {
-        let cart = await Cart.findOne({user: loggedUser._id})
-        let index = cart.collectibles.indexOf(collectibleId)
-        cart.total -= price
-        cart.collectibles.splice(index, 1)
-        cart = await Cart.findByIdAndUpdate(cart._id, cart, {new: true}).populate("collectibles").populate("collectibles.category")
-        res.json(cart)
-    } catch (error) {
+    try{
+        let cart = await Cart.findOne({user: loggedUser._id}).populate({
+            path: "collectibles",
+            populate: {
+                path: "itemData",
+                populate: ["category", "postedBy"]
+            }
+        })
+
+        let index = cart.collectibles.findIndex(item => String(item.itemData._id) === String(collectibleId))
+
+        if(index !== -1 ){
+            cart.collectibles[index].quantity -= 1;
+        }
+        else{
+            
+        }
+
+        let cartLength = cart.collectibles.length
+        console.log(cartLength)
+
+        for (let i = 0; i < cartLength; i++){
+            cart.total += cart.collectibles[i].quantity * cart.collectibles[i].itemData.price;
+        }
+
+    cart = await Cart.findByIdAndUpdate(cart._id, cart, {new: true})
+    res.json(cart)
+    }
+    catch(err){
         res.status(400).json(err.message)
     }
 }
