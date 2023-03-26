@@ -143,6 +143,46 @@ const getAllCart = async (req, res)=>{
     }
 }
 
+const clearCart = async (req, res)=>{
+    const loggedUser = req.user
+    try{
+        let cart = {}
+        cart.collectibles = []
+        let carts = await Cart.findOneAndUpdate({user: loggedUser}, cart, {new: true})
+        res.json(carts)
+    }
+    catch(err){
+        res.status(400).json(err.message)
+    }
+
+}
+
+const deleteMultiple = async (req, res)=>{
+    const loggedUser = req.user
+    const {collectibleId} = req.body
+
+    try{
+        
+        let cart = await Cart.findOne({user: loggedUser._id}).populate({
+            path: "collectibles",
+            populate: {
+                path: "itemData",
+                populate: ["category", "postedBy"]
+            }
+        })
+
+        let index = cart.collectibles.findIndex(item => String(item.itemData._id) === String(collectibleId))
+
+        cart.collectibles.splice(index, 1)
+        cart = await Cart.findByIdAndUpdate(cart._id, cart, {new: true})
+        res.json(cart)
+    }
+    catch(err){
+        res.status(400).json(err.message)
+    }
+
+}
+
 module.exports = {
-    createCart, addToCart, deleteFromCart, getAllCart, initiateCart
+    createCart, addToCart, deleteFromCart, getAllCart, initiateCart, clearCart, deleteMultiple
 }
