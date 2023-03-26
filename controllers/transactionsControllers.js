@@ -86,9 +86,9 @@ const checkOutCart = async (req, res)=>{
         // const response 
         let transaction = {
             user: loggedUser,
-            amount: luxury.price,
+            amount: cart.total,
             credit: false,
-            message: `You Applied for a Luxury Service - ${luxury.serviceType} for ${luxury.servicePlan} plan`
+            message: `You Purchased Some Collectibles`
         }
         transaction = await createTransaction(transaction)
         console.log(transaction)
@@ -97,4 +97,4 @@ const checkOutCart = async (req, res)=>{
     res.json({message: "Transaction Failed"})
 }
 
-module.exports = {getAllTransactions, postTransaction, deleteTransaction, createTransaction, makeALuxuryPurchase}
+module.exports = {getAllTransactions, postTransaction, deleteTransaction, createTransaction, makeALuxuryPurchase, checkOutCart}
