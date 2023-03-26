@@ -28,7 +28,7 @@ const createCart = async (req, res)=>{
 }
 
 const addToCart = async (req, res)=>{
-    let {collectibleId, price} = req.body
+    let {collectibleId} = req.body
     const loggedUser = req.user
 
     try{
@@ -42,10 +42,11 @@ const addToCart = async (req, res)=>{
         else{
             cart.collectibles.push({
                 itemData: collectibleId,
+                quantity: 1
             })
         }
 
-        let total = 0
+
         let cartLength = cart.collectibles.length
 
         for (let i = 0; i < cartLength; i++){

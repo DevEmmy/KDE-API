@@ -68,6 +68,7 @@ const makeALuxuryPurchase = async (req, res)=>{
     res.json({message: "Transaction Failed"})
 }
 
+
 const checkOutCart = async (req, res)=>{
     const user = req.user;
     const cart = await Cart.findOne({user: user})
