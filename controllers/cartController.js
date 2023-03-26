@@ -28,7 +28,7 @@ const addToCart = async (req, res)=>{
         let cart = await Cart.findOne({user: loggedUser._id})
     cart.collectibles.push(collectibleId)
     cart.total += price
-    cart = await Cart.findByIdAndUpdate(cart._id, cart, {new: true}).populate("collectibles").populate("category")
+    cart = await Cart.findByIdAndUpdate(cart._id, cart, {new: true}).populate("collectibles").populate("collectibles.category")
     res.json(cart)
     }
     catch(err){
