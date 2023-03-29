@@ -40,7 +40,7 @@ const getUsersNotification = async (req, res)=>{
     .then(response => {
         res.json({
             notifications: response,
-            noOfNotifications: noOfNotifications
+            noOfNotifications: noOfNotifications.length
         })
     })
     .catch((error)=>{
