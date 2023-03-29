@@ -22,9 +22,21 @@ const setConfig = (requestRef)=>{
 }
 
 
-const encrypt = (item)=>{
-    let response = Encryption.encrypt(clientSecret, item)
-    return response
+// const encrypt = (item)=>{
+//     let response = Encryption.encrypt(clientSecret, item)
+//     return response
+// }
+
+const crypto = require('crypto');
+function encrypt(sharedKey, plainText) {
+    const bufferedKey = Buffer.from(sharedKey, 'utf16le');
+    const key = crypto.createHash('md5').update(bufferedKey).digest();
+    const newKey = Buffer.concat([key, key.slice(0, 8)]);
+    const IV = Buffer.alloc(8, '\0');
+    const cipher = crypto.createCipheriv('des-ede3-cbc', newKey, IV).setAutoPadding(true);
+    let value = (cipher.update(plainText, 'utf8', 'base64') + cipher.final('base64'))
+    console.log(value)
+    return value
 }
 
 const getBankCode = async (bankName)=>{
@@ -108,13 +120,13 @@ const createAccount  = async (details)=>{
 
 const testCreateAccount = async (req, res)=>{
     let details = {
-        number: 2349042388583,
-        firstName: "James",
+        number: 2347042719024,
+        firstName: "Emmy",
         lastName: "Olaosebikan",
-        middleName: "Oluwasegun",
+        middleName: "Patrick",
         gender: "M",
         address: "No 21",
-        email: "emmy@mail.com",
+        email: "eolaosebikan60@gmail.com",
         city: "Abeokuta",
         state: "Ogun State",
         country: "Nigeria",
@@ -133,13 +145,13 @@ const testCreateAccount = async (req, res)=>{
 const getBalance = async (req, res)=>{
     // const loggedUser = req.user;
     let loggedUser = {
-        phoneNumber1: 2349042388583,
-        firstName: "James",
+        number: 2347042719024,
+        firstName: "Emmy",
         lastName: "Olaosebikan",
-        middleName: "Oluwasegun",
+        middleName: "Patrick",
         gender: "M",
         address: "No 21",
-        email: "emmy@mail.com",
+        email: "eolaosebikan60@gmail.com",
         city: "Abeokuta",
         state: "Ogun State",
         country: "Nigeria",
@@ -150,10 +162,11 @@ const getBalance = async (req, res)=>{
 
     // const accountDetails = await Account.findOne({user: loggedUser})
     let accountDetails = {
-        "account_number": "4432660852",
-        "account_reference": "0e90d4e2-4905-42fe-afea-9833c8b53fae",
-        "account_name": "James Olaosebikan",
+        "account_number": "0882353744",
+        "account_reference": "b392271e-3e0c-4862-8f96-108cdbfb3f9f",
+        "account_name": "Emmy Olaosebikan",
         "bank_name": "Fidelity",
+        "bank_code": "070",
         "user": "undefined"
       }
 
@@ -162,7 +175,7 @@ const getBalance = async (req, res)=>{
         "request_type": "get_balance",
         "auth": {
             "type": "bank.account",
-            "secure": encrypt(accountDetails.account_number),
+            "secure": encrypt( clientSecret,accountDetails.account_number),
             "auth_provider": "Fidelity",
             "route_mode": null
         },
@@ -171,7 +184,6 @@ const getBalance = async (req, res)=>{
             "transaction_ref": uuidv4(),
             "transaction_desc": "Checking for bank account",
             "transaction_ref_parent": null,
-            "amount": 0,
             "customer": {
                 "customer_ref": accountDetails.account_reference,
                 "firstname": loggedUser.firstName,

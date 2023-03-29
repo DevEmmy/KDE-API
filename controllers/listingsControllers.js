@@ -175,6 +175,8 @@ const saveList = async (req, res) => {
 
     if(listing){
         let loggedUserIndex = listing.thoseWhoSaved.indexOf(loggedUser._id)
+        console.log(listing.thoseWhoSaved)
+        console.log(loggedUserIndex)
         if(loggedUserIndex === -1){
             listing.thoseWhoSaved.push(loggedUser._id)
             console.log("saved1")
@@ -199,8 +201,9 @@ const saveList = async (req, res) => {
 
         let user = await User.findById(listing.postedBy._id)
         // console.log(user.firstName)
-        let index = user.totalSaved.users.indexOf(loggedUser._id)
+        let index = user.totalSaved.users.indexOf(String(loggedUser._id))
         let status = 0;
+        console.log(user.totalSaved.users)
         console.log(index)
         // console.log(loggedUser._id)
         // console.log(user.totalSaved)
@@ -237,6 +240,7 @@ const saveList = async (req, res) => {
     }
 
 }
+
 
 const searchListing = async (req, res) => {
     const { price, location, noOfBed, forRent, color, features, title, model, year, condition, category} = req.query
