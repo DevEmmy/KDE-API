@@ -159,11 +159,11 @@ const updateProfile = async (req, res)=>{
             title: updatedProfile.title,
             userId: user._id
         }
-        let account = await Account.findOne({user: user})
-        if(!account){
-            let newAccount = await createAccount(details)
-            console.log(newAccount)
-        }
+        // let account = await Account.findOne({user: user})
+        // if(!account){
+        //     let newAccount = await createAccount(details)
+        //     console.log(newAccount)
+        // }
         
         let response = await User.findByIdAndUpdate(user._id, updatedProfile, {new: true})
         res.json(response)
