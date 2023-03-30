@@ -247,10 +247,10 @@ const searchListing = async (req, res) => {
 
     let realEstateQuery = {
         price: price ? { $lte : price } : { $gte : "0"},
-        noOfBed: noOfBed ? { $lte : Number(noOfBed) } : { $gte : 0},
+        noOfBed: noOfBed,
         forRent: forRent,
         location: location,
-        noOfBathroom: noOfBathroom ? { $lte : Number(noOfBathroom) } : { $gte : 0},
+        noOfBathroom: noOfBathroom 
     }
 
     let carsQuery = {
