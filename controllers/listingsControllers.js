@@ -243,7 +243,7 @@ const saveList = async (req, res) => {
 
 
 const searchListing = async (req, res) => {
-    const { price, location, noOfBed, forRent, color, features, noOfBathroom, title, model, year, condition, category} = req.query
+    const { price, location, noOfBed, forRent, color, features, noOfBathroom, title, model, year, condition, category} = req.body
 
     let realEstateQuery = {
         price: price ? { $lte : price } : { $gte : "0"},
