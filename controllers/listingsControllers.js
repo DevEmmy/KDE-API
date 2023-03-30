@@ -246,7 +246,7 @@ const searchListing = async (req, res) => {
     const { price, location, noOfBed, forRent, color, features, noOfBathroom, title, model, year, condition, category} = req.query
 
     let realEstateQuery = {
-        price: price ? { $lte : price } : { $gte : 0},
+        price: price ? { $lte : price } : { $gte : "0"},
         noOfBed: noOfBed ? { $lte : Number(noOfBed) } : { $gte : 0},
         forRent: forRent,
         location: location,
