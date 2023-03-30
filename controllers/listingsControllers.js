@@ -243,13 +243,14 @@ const saveList = async (req, res) => {
 
 
 const searchListing = async (req, res) => {
-    const { price, location, noOfBed, forRent, color, features, title, model, year, condition, category} = req.query
+    const { price, location, noOfBed, forRent, color, features, noOfBathroom, title, model, year, condition, category} = req.query
 
     let realEstateQuery = {
-        price: price ? { $lte : price } : { $gte : price},
-        noOfBed: noOfBed,
+        price: price ? { $lte : price } : { $gte : 0},
+        noOfBed: noOfBed ? { $lte : Number(noOfBed) } : { $gte : 0},
         forRent: forRent,
-        location: location
+        location: location,
+        noOfBathroom: noOfBathroom ? { $lte : Number(noOfBathroom) } : { $gte : 0},
     }
 
     let carsQuery = {
