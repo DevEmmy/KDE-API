@@ -244,6 +244,8 @@ const saveList = async (req, res) => {
 
 const searchListing = async (req, res) => {
     const { price, location, noOfBed, forRent, color, features, noOfBathroom, title, model, year, condition, category} = req.body
+    let { page } = req.query;
+    let limit = 3;
 
     let realEstateQuery = {
         price: price ? { $lte : price } : { $gte : "0"},
@@ -267,7 +269,8 @@ const searchListing = async (req, res) => {
 
     try{
         console.log(totalQuery)
-        let listings = await Listing.find(totalQuery).populate("postedBy").populate("category")
+        let listings = await Listing.find(totalQuery).populate("postedBy").populate("category").skip(((page || 1) - 1) * limit)
+        .limit(limit)
         res.json(listings)
     }
     catch(err){

@@ -69,6 +69,26 @@ io.on("connection", (socket)=>{
         }
         // console.log("work abeg")
       })
+
+      socket.on("sendNotification", (notification)=>{
+        var socketId = getUser(notification.receiver);
+        // console.log(socketId)
+        // if(socketId){
+            notification.message = "You have a New Notification"
+          console.log(socketId)
+          io.to(socketId).emit("getNotification", notification);
+        // }
+      })
+
+      socket.on("sendMessage", (m)=>{
+        var socketId = getUser(m.receiver);
+        // console.log(socketId)
+        // console.log(users)
+        if(socketId){
+          io.to(socketId).emit("getMessage", {m})
+        }
+        // console.log("work abeg")
+      })
 })
 
 
