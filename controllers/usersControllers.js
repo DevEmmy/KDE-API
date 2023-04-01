@@ -286,7 +286,7 @@ const viewProfilePage = async (req, res)=>{
     .catch(err => res.json(err))
 }
 
-const generatePasswordResetToken = async (email, res) => {
+const generatePasswordResetToken = (email, res) => {
     const user = User.findOne({ email });
     if (!user) {
       throw new Error('User not found');
@@ -295,10 +295,10 @@ const generatePasswordResetToken = async (email, res) => {
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     user.resetPasswordToken = token;
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-   await User.findOneAndUpdate({ email }, user)
-    .then(async user => {
+    User.findOneAndUpdate({ email }, user)
+    .then(user => {
         // console.log(user.firstName)
-        await sendMail(email, "King David Elite", "Your Password Reset Token", reset_html(user, token), res);
+        sendMail(email, "King David Elite", "Your Password Reset Token", reset_html(user, token), res);
    
     })
     // .catch(err => res.json(err))
@@ -319,7 +319,7 @@ const generatePasswordResetToken = async (email, res) => {
 
 const forgottenPassword = async (req, res)=>{
     try{
-        await generatePasswordResetToken(req.body.email, res)
+        generatePasswordResetToken(req.body.email, res)
         // res.json({message: "Chcek your email for reset link"});
     }
     catch(err){
