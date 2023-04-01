@@ -18,7 +18,7 @@ const userSchema = new Schema({
     city: String,
     sex: String,
     dob: {type: String},
-    email: {type: String, required: true},
+    email: {type: String, required: true, unique: true},
     phoneNumber1: {type: String},
     phoneNumber2: {type: String},
     password:  {type: String, required: true},
