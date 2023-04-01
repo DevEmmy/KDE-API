@@ -72,7 +72,7 @@ io.on("connection", (socket)=>{
 
       socket.on("sendNotification", (notification)=>{
         var socketId = getUser(notification.receiver);
-        // console.log(socketId)
+        console.log(socketId)
         // if(socketId){
             notification.message = "You have a New Notification"
           console.log(socketId)
