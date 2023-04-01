@@ -59,6 +59,13 @@ const getUser =(userId)=>{
 io.on("connection", (socket)=>{
     console.log("A User has been connected " + socket.id)
     
+    //addUser
+    socket.on("addUser", (user)=>{
+        if(user._id){
+        addUser(user, socket.id)
+        console.log(users.length)
+        }
+    })
 
     socket.on("sendMessage", (m)=>{
         var socketId = getUser(m.receiver);
@@ -71,6 +78,7 @@ io.on("connection", (socket)=>{
       })
 
       socket.on("sendNotification", (notification)=>{
+        console.log(notification)
         var socketId = getUser(notification.receiver);
         console.log(socketId)
         // if(socketId){
