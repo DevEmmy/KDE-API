@@ -67,12 +67,12 @@ const uploadAList = async (req, res) => {
     const list = req.body;
 
     list.postedBy = req.user;
-    list.collectibleFeatures = {
-        "color": "red",
-        "length": "2 Inches",
-        "nature": "Fresh",
-        "fav": "Johnny"
-    }
+    // list.collectibleFeatures = {
+    //     "color": "red",
+    //     "length": "2 Inches",
+    //     "nature": "Fresh",
+    //     "fav": "Johnny"
+    // }
     try {
         list.category = await Category.findOne({ slug: list.category })
 
@@ -119,6 +119,7 @@ const deleteList = async (req, res) => {
 const updateList = async (req, res) => {
     const { id } = req.params;
     const toUpdate = req.body;
+    toUpdate.category = await Category.findOne({ slug: toUpdate.category })
     await Listing.findByIdAndUpdate(id, toUpdate, { new: true }).populate("category")
         .then(resp => res.json(resp))
         .catch(error => res.json({ message: "An Error Occured", error: error }))
