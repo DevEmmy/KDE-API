@@ -3,7 +3,7 @@ const {testCreateAccount, getBalance, transferFund, withdrawFund, getAccount} = 
 const requireLogin = require("../middlewares/requireLogin")
 
 router.post("/test", testCreateAccount)
-router.get("/get-balance", requireLogin, getBalance)
+router.get("/get-balance", getBalance)
 router.post("/transfer-fund", requireLogin, transferFund)
 router.post("/withdraw", requireLogin, withdrawFund)
 router.post("/get-account", requireLogin, getAccount)
