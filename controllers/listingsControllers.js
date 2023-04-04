@@ -44,12 +44,18 @@ const newA = async (images, option) => {
     console.log(images.length)
     while (i < images.length) {
         console.log("working")
-        await cloudinary.uploader.upload(images[i].base64, option)
+        if(images[i].base64){
+            await cloudinary.uploader.upload(images[i].base64, option)
             .then(resp => {
-                ims.push(resp.secure_url)
-                console.log("done")
+            ims.push(resp.secure_url)
+            console.log("done")
             })
             .catch(err => console.log("err"))
+        }
+        else{
+            ims.push(images[i])
+        }
+        
         i++
     }
     return ims
