@@ -259,7 +259,7 @@ const saveList = async (req, res) => {
 
 
 const searchListing = async (req, res) => {
-    const { price, location, noOfBed, forRent, color, features, noOfBathroom, title, model, year, condition, category} = req.body
+    const { price, location, noOfBed, forRent, colour, features, noOfBathroom, title, model, year, condition, category} = req.body
     let { page } = req.query;
     let limit = 3;
 
@@ -275,7 +275,8 @@ const searchListing = async (req, res) => {
         title: title,
         model: model,
         year: year,
-        condition: condition
+        condition: condition,
+        colour: colour
     }
 
     let totalQuery = {...realEstateQuery, ...carsQuery}
