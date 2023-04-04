@@ -120,6 +120,15 @@ const updateList = async (req, res) => {
     const { id } = req.params;
     const toUpdate = req.body;
     toUpdate.category = await Category.findOne({ slug: toUpdate.category })
+    if (toUpdate.images.length > 0) {
+        toUpdate.images = await newA(toUpdate.images)
+    }
+    if (toUpdate.videos.length > 0) {
+        toUpdate.videos = await newA(toUpdate.videos, {
+            resource_type: "video",
+            format: "mp4"
+        })
+    }
     await Listing.findByIdAndUpdate(id, toUpdate, { new: true }).populate("category")
         .then(resp => res.json(resp))
         .catch(error => res.json({ message: "An Error Occured", error: error }))
