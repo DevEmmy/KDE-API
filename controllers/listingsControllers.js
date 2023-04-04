@@ -120,7 +120,7 @@ const updateList = async (req, res) => {
     const { id } = req.params;
     const toUpdate = req.body;
     toUpdate.category = await Category.findOne({ slug: toUpdate.category })
-    await Listing.findByIdAndUpdate(id, toUpdate, { new: true }).populate("category").populate("postedBy")
+    await Listing.findByIdAndUpdate(id, toUpdate, { new: true }).populate("category")
         .then(resp => res.json(resp))
         .catch(error => res.json({ message: "An Error Occured", error: error }))
 }
