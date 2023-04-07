@@ -1,5 +1,5 @@
 const sharp = require("sharp")
-const Upscaler = require("upscaler")
+const Jimp = require("jimp");
 
 const score = 75;
 
@@ -9,8 +9,8 @@ const detector = async (img)=>{
 }
 
 const upscalerFunction = async (img) =>{
-    const upscaler = new Upscaler();
-    let image = upscaler.upscale(img)
+    let image = await Jimp.read(imageFile)
+    image.quality(score)
     return image
 }
 
