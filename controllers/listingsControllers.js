@@ -3,6 +3,7 @@ const Listing = require("../models/listings.model");
 const { cloudinary } = require("./cloudinary");
 const { saveNotification } = require("./notificationsControllers");
 const Category = require("../models/categories.model");
+const {detector, upscalerFunction} = require("./imageQualityDetector.js")
 
 const getAllListing = async (req, res) => {
     let { page, category, forRent } = req.query;
@@ -45,6 +46,7 @@ const newA = async (images, option) => {
     while (i < images.length) {
         console.log("working")
         if(images[i].base64){
+            images[i].base64= upscalerFunction(images[i].base64)
             await cloudinary.uploader.upload(images[i].base64, option)
             .then(resp => {
             ims.push(resp.secure_url)
