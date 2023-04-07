@@ -1,7 +1,7 @@
 const sharp = require("sharp")
 const Jimp = require("jimp");
 
-const score = 75;
+const score = 95;
 
 const detector = async (img)=>{
     const image = sharp(img).resize(100, null);
