@@ -9,7 +9,7 @@ const detector = async (img)=>{
 }
 
 const upscalerFunction = async (img) =>{
-    let image = await Jimp.read(imageFile)
+    let image = await Jimp.read(img)
     image.quality(score)
     return image
 }
