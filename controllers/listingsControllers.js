@@ -46,7 +46,7 @@ const newA = async (images, option) => {
     while (i < images.length) {
         console.log("working")
         if(images[i].base64){
-            images[i].base64= upscalerFunction(images[i].base64)
+            // images[i].base64= upscalerFunction(images[i].base64)
             await cloudinary.uploader.upload(images[i].base64, option)
             .then(resp => {
             ims.push(resp.secure_url)
