@@ -13,7 +13,7 @@ router.patch("/make-unavailable/:id", requireLogin, makeUnavailable)//added
 router.get('/user-listing',requireLogin, getUserListing) //added
 router.patch("/view/:id", requireLogin, viewAList) // added
 router.patch("/save/:id", requireLogin, saveList) // added
-router.get("/search", searchListing) // to be updated
+router.post("/search", searchListing) // to be updated
 router.get("/rentals", requireLogin, getRentals)
 
 module.exports = router;
