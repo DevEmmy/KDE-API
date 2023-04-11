@@ -4,11 +4,14 @@ const { getUserByIdFnc } = require("./usersControllers")
 const getUserConversations = async (req, res)=>{
     const loggedUser = req.user
     await ConversationModel.find()
-    .then(async resp => {
+    .then( resp => {
         resp = resp.filter(i => i.members.includes(loggedUser._id))
-        for (let i = 0; i < resp.members.length; i++) {
-            resp.members[i] = await getUserByIdFnc(resp.members[i])
-        }
+            resp.forEach(async convo =>{
+                for (let i = 0; i < ConvolverNode.members.length; i++) {
+                convo.members[i] = await getUserByIdFnc(resp.members[i])
+            }
+        })
+        
         res.json(resp)
     })
     .catch(err => res.json(err))
