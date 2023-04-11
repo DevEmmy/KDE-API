@@ -195,7 +195,6 @@ const getUserById = async (req, res)=>{
 
 const getUserByIdFnc = async (id)=>{
     let user = await User.findById(id)
-    console.log(user)
     return user
 }
 
