@@ -264,11 +264,13 @@ const searchListing = async (req, res) => {
     const { price, location, noOfBed, forRent, colour, features, noOfBathroom, title, model, year, condition, category, locationISO} = req.body
     let { page } = req.query;
     let limit = 3;
+    console.log(req.body)
 
     let realEstateQuery = {
         price: price ? { $lte : price } : { $gte : "0"},
         noOfBed: noOfBed,
         forRent: forRent,
+        locationISO: locationISO,
         location: location,
         noOfBathroom: noOfBathroom 
     }
