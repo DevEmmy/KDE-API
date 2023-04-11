@@ -1,4 +1,5 @@
 const ConversationModel = require("../models/conversation.model")
+const User = require("../models/users.model")
 const { getUserByIdFnc } = require("./usersControllers")
 
 const getUserConversations = async (req, res)=>{
@@ -10,7 +11,7 @@ const getUserConversations = async (req, res)=>{
             resp.forEach(async convo =>{
                 // console.log(convo)
                 for (let i = 0; i < 2; i++) {
-                let user = await User(String(convo.members[i]))
+                let user = await User.findById(String(convo.members[i]))
                 console.log(user)
                 convo.members[i] = user    
             }
