@@ -5,20 +5,19 @@ const { getUserByIdFnc } = require("./usersControllers")
 const getUserConversations = async (req, res)=>{
     const loggedUser = req.user
     await ConversationModel.find()
-    .then( resp => {
+    .then( async resp => {
         resp = resp.filter(i => i.members.includes(loggedUser._id))
-        // console.log(resp)
-            resp.forEach(async convo =>{
-                // console.log(convo)
-                for (let i = 0; i < 2; i++) {
-                let user = await User.findById(String(convo.members[i]))
-                console.log(user)
-                convo.members[i] = user    
-            }
-        })
         
-        res.json(resp)
-    })
+        for(let j=0; j < resp.length; j++) {
+            for (let i = 0; i < 2; i++) {
+            console.log(i)
+            let user = await User.findById(resp[j].members[i])
+            resp[j].members[i] = user   
+        }
+        }
+            console.log(resp)
+            res.json(resp)    
+        })
     .catch(err => res.json(err))
 }
 
