@@ -6,10 +6,12 @@ const getUserConversations = async (req, res)=>{
     await ConversationModel.find()
     .then( resp => {
         resp = resp.filter(i => i.members.includes(loggedUser._id))
-        console.log(resp)
+        // console.log(resp)
             resp.forEach(async convo =>{
                 for (let i = 0; i < convo.members.length; i++) {
-                convo.members[i] = await getUserByIdFnc(convo.members[i])
+                let user = await getUserByIdFnc(convo.members[i])
+                console.log(user)
+                convo.members[i] = user    
             }
         })
         
