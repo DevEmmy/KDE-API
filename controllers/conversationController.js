@@ -42,6 +42,9 @@ const createNewConversation = async (req, res)=>{
                 .catch(err => res.json(err)) 
     }
         else{
+            for (let i = 0; i < convo.members.length; i++) {
+                convo.members[i] = await getUserByIdFnc(convo.members[i])
+            }
             res.json(convo)
         }
     
