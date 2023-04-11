@@ -261,7 +261,7 @@ const saveList = async (req, res) => {
 
 
 const searchListing = async (req, res) => {
-    const { price, location, noOfBed, forRent, colour, features, noOfBathroom, title, model, year, condition, category} = req.body
+    const { price, location, noOfBed, forRent, colour, features, noOfBathroom, title, model, year, condition, category, locationISO} = req.body
     let { page } = req.query;
     let limit = 3;
 

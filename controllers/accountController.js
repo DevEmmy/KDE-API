@@ -185,11 +185,11 @@ const getBalance = async (req, res)=>{
             "transaction_desc": "Checking for bank account",
             "transaction_ref_parent": null,
             "customer": {
-                "customer_ref": accountDetails.account_reference,
-                "firstname": loggedUser.firstName,
-                "surname": loggedUser.lastName,
-                "email": loggedUser.email,
-                "mobile_no": loggedUser.phoneNumber1
+                // "customer_ref": accountDetails.account_reference,
+                // "firstname": loggedUser.firstName,
+                // "surname": loggedUser.lastName,
+                // "email": loggedUser.email,
+                // "mobile_no": loggedUser.phoneNumber1
             },
             "meta": {
                 "a_key": "a_meta_value_1",
