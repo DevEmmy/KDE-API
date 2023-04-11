@@ -193,6 +193,11 @@ const getUserById = async (req, res)=>{
     .catch(err => res.json(err))
 }
 
+const getUserByIdFnc = async (id)=>{
+    let user = await User.findById(id)
+    return user
+}
+
 
 const verifyUser = async (req, res)=>{
     const user = req.user
@@ -389,4 +394,4 @@ const selectSellerType = async (req, res)=>{
 
 
 
-module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile, viewProfilePage, forgottenPassword, reset_password, changeAccountType, selectSellerType}
+module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile, viewProfilePage, forgottenPassword, reset_password, changeAccountType, selectSellerType, getUserByIdFnc}

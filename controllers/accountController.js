@@ -162,7 +162,7 @@ const getBalance = async (req, res)=>{
 
     // const accountDetails = await Account.findOne({user: loggedUser})
     let accountDetails = {
-        "account_number": "0882353744",
+        "account_number": "9020022879",
         "account_reference": "b392271e-3e0c-4862-8f96-108cdbfb3f9f",
         "account_name": "Emmy Olaosebikan",
         "bank_name": "Fidelity",
@@ -403,6 +403,30 @@ const getAccount = async(req, res)=>{
     }
 }
 
+const fundWallet = async (req, res)=>{
+    const {amount, narration, transaction_ref} = req.body;
+    const loggedUser = req.user;
+
+    try{
+       let loggedUserBankAccount = await Account.findOne({user: loggedUser._id})
+    loggedUserBankAccount.amount += amount;
+    loggedUserBankAccount = await Account.findOneAndUpdate({user: loggedUser._id}, loggedUserBankAccount, {new: true})
+
+    let transaction = {
+        user: loggedUser,
+        amount: amount,
+        credit: true,
+        message: "Funding my wallet",
+        transaction_ref: transaction_ref
+    }
+
+    transaction = await createTransaction(transaction); 
+    res.json({message: "Transaction Made Successfuly"})
+    }
+    catch(err){
+        res.status(400).json(err)
+    }
+}
 
 module.exports = {
     createAccount, testCreateAccount, getBalance, transferFund, withdrawFund, getAccount, initiateTransaction

@@ -6,7 +6,8 @@ const transactionSchema = new Schema({
     user: {type: Schema.Types.ObjectId, ref:"User"},
     amount: {type:Number},
     credit: {type:Boolean, default: false},
-    message: String
+    message: String,
+    transaction_ref: String,
 },{
     timestamps: true,
 })

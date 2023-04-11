@@ -8,6 +8,7 @@ const accountSchema = new Schema({
     bank_code: String,
     account_reference: Number,
     bank_name: {type:String, default: "Fidelity Bank Limited"},
+    accountBalance: {type: Number, default: 0}
 })
 
 const Account = mongoose.model("Account", accountSchema)

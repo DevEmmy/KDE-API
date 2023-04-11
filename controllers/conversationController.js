@@ -1,10 +1,14 @@
 const ConversationModel = require("../models/conversation.model")
+const { getUserByIdFnc } = require("./usersControllers")
 
 const getUserConversations = async (req, res)=>{
     const loggedUser = req.user
     await ConversationModel.find()
-    .then(resp => {
+    .then(async resp => {
         resp = resp.filter(i => i.members.includes(loggedUser._id))
+        for (let i = 0; i < resp.members.length; i++) {
+            resp.members[i] = await getUserByIdFnc(resp.members[i])
+        }
         res.json(resp)
     })
     .catch(err => res.json(err))
@@ -14,28 +18,36 @@ const createNewConversation = async (req, res)=>{
     const loggedUser = req.user;
     console.log(loggedUser)
     const toChatId = req.params.id;
-    const convo = ConversationModel.findOne({members: [loggedUser._id, toChatId]})
+    const convo = await ConversationModel.findOne({members: [loggedUser._id, toChatId]})
 
-    await convo.then(resp => {
-        if(!resp){
-            const newConvo = new ConversationModel({
-                    members: [loggedUser._id, toChatId]
+    if(!convo){
+        const newConvo = new ConversationModel({
+            members: [loggedUser._id, toChatId]
                 })
             
-                newConvo.save()
-                .then(resp => res.json(resp))
+            newConvo.save()
+                .then(async resp =>{
+                    for (let i = 0; i < resp.members.length; i++) {
+                        resp.members[i] = await getUserByIdFnc(resp.members[i])
+                    }
+                    res.json(resp)
+                })
                 .catch(err => res.json(err)) 
-                }
+    }
         else{
-            res.json(resp)
+            res.json(convo)
         }
-    })
-    .catch(err => res.json(err))
+    
 }
 
 const getConversationById = async (req, res)=>{
     await ConversationModel.findById(req.params.id)
-    .then(resp => res.json(resp))
+    .then(async resp =>{
+        for (let i = 0; i < resp.members.length; i++) {
+            resp.members[i] = await getUserByIdFnc(resp.members[i])
+        }
+        res.json(resp)
+    })
     .catch(err => res.json(err))
 }
 
