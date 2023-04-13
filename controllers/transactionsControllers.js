@@ -5,6 +5,10 @@ const { createLuxuryService } = require("./luxuryController")
 const Listing = require("../models/listings.model")
 const Cart = require("../models/cart.model")
 require("dotenv").config
+const { v4: uuidv4 } = require('uuid');
+
+const kde_account = process.env.KDE_ACCOUNT;
+const kde_bank = process.env.KDE_BANK
 
 const createTransaction = async (transaction)=>{
     const response = await new Transaction(transaction).save()
@@ -77,45 +81,49 @@ const payForList = async (req, res)=>{
         title - ${listing.title}
         price - ${listing.amount}
         `
+        transaction.transaction_ref = uuidv4()
         let response = await createTransaction(transaction)
-        res.json(response) 
+        res.json({
+            accountNumber: kde_account,
+            bankName: kde_bank,
+            accountName: "King David Elites",
+            transaction_ref: transaction.transaction_ref,
+            amount: transaction.amount
+        }) 
     }
     catch(err){
         res.status(err.status).json(err.message)
     }
 }
 
-
-
-const kde_account = process.env.KDE_ACCOUNT;
-const kde_bank = process.env.KDE_BANK
-
 const makeALuxuryPurchase = async (req, res)=>{
     let loggedUser = req.user;
     let luxury = req.body;
 
-    const request={
+    luxury = await createLuxuryService(luxury)
+        // const response 
+
+    let transaction = {
         user: loggedUser,
         amount: luxury.price,
-        destination_account: kde_account,
-        destination_bank_code: kde_bank
+        credit: false,
+        message: `You Applied for a Luxury Service - ${luxury.serviceType} for ${luxury.servicePlan} plan`,
+        transaction_ref: uuidv4()
     }
 
-    let response = await initiateTransaction(request);
-    if(response.status !== "Failed"){
-        await createLuxuryService(luxury)
-        // const response 
-        let transaction = {
-            user: loggedUser,
-            amount: luxury.price,
-            credit: false,
-            message: `You Applied for a Luxury Service - ${luxury.serviceType} for ${luxury.servicePlan} plan`
-        }
         transaction = await createTransaction(transaction)
         console.log(transaction)
-        res.json({message: "Transaction Successful"})
-    }
-    res.json({message: "Transaction Failed"})
+        res.json({
+            accountNumber: kde_account,
+            bankName: kde_bank,
+            accountName: "King David Elites",
+            transaction_ref: transaction.transaction_ref,
+            amount: transaction.amount
+        })
+}
+
+const subscribe = async (req, res) => {
+
 }
 
 
@@ -123,18 +131,31 @@ const checkOutCart = async (req, res)=>{
     const user = req.user;
     const cart = await Cart.findOne({user: user})
 
-    if(response.status !== "Failed"){
-        // const response 
-        let transaction = {
+    let transaction = {
             user: loggedUser,
             amount: cart.total,
             credit: false,
-            message: `You Purchased Some Collectibles`
-        }
+            message: `You Purchased Some Collectibles:
+            ${cart.collectibles.map((item, i)=>{
+                return (
+                    `${item.itemData.title + " " + "(" + item.quantity + ") ,"}`
+                )
+            })}
+            `,
+            transaction_ref: uuidv4()
+    }
         transaction = await createTransaction(transaction)
         console.log(transaction)
-        res.json({message: "Transaction Successful"})
-    }
+        res.json(
+            {
+                accountNumber: kde_account,
+                bankName: kde_bank,
+                accountName: "King David Elites",
+                transaction_ref: transaction.transaction_ref,
+                amount: transaction.amount
+            }
+        )
+    
     res.json({message: "Transaction Failed"})
 }
 

@@ -25,7 +25,7 @@ const createNewConversation = async (req, res)=>{
     const loggedUser = req.user;
     console.log(loggedUser)
     const toChatId = req.params.id;
-    const convo = await ConversationModel.findOne({ $or: [{members: [String(loggedUser._id), String(toChatId)]}, {members: [String(toChatId), String(loggedUser._id)]}]})
+    const convo = await ConversationModel.findOne({members: [String(loggedUser._id), String(toChatId)]})
 
     if(!convo){
         const newConvo = new ConversationModel({

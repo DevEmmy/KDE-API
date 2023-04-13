@@ -14,7 +14,9 @@ const sendMessage = async (req, res)=>{
     content.sender = req.user._id
     const newMessage = new MessageModel(content)
     await newMessage.save()
-    .then(resp => res.json(resp))
+    .then(resp =>{ 
+        console.log(resp)
+        res.json(resp)})
     .catch(err => res.json(err))
 }
 

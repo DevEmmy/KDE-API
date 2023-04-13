@@ -63,7 +63,7 @@ const createAccount  = async (details)=>{
             "route_mode": null
         },
         "transaction": {
-            "mock_mode": debug ? "inspect" : "Live",
+            "mock_mode": "Live",
             "transaction_ref": uuidv4(),
             "transaction_desc": "A random transaction",
             "transaction_ref_parent": null,
@@ -109,7 +109,7 @@ const createAccount  = async (details)=>{
         console.log(data)
         // let newAccount = new Account(data)
         // newAccount = await newAccount.save()
-        return data
+        return response.data
     }
     catch(error){
         // throw new Error(error.message)
@@ -172,40 +172,73 @@ const getBalance = async (req, res)=>{
 
     const details={
         "request_ref": requestRef,
-        "request_type": "get_balance",
-        "auth": {
-            "type": "bank.account",
-            "secure": encrypt( clientSecret,accountDetails.account_number),
-            "auth_provider": "Fidelity",
-            "route_mode": null
-        },
-        "transaction": {
-            "mock_mode": "Live",
+        "request_type": "transaction_notification",
+        "requester": "FidelityVirtual",
+        "mock_mode": "live",
+        "details": {
+            "amount": 100,
+            "customer_email": "eolaosebikan60@gmail.com",
+            "status": "Successful",
+            "provider": "FidelityVirtual",
+            "customer_ref": "2347042719024",
             "transaction_ref": uuidv4(),
-            "transaction_desc": "Checking for bank account",
-            "transaction_ref_parent": null,
-            "customer": {
-                // "customer_ref": accountDetails.account_reference,
-                // "firstname": loggedUser.firstName,
-                // "surname": loggedUser.lastName,
-                // "email": loggedUser.email,
-                // "mobile_no": loggedUser.phoneNumber1
-            },
+            "customer_surname": "Olaosebikan",
+            "customer_firstname": "Emmy",
+            "transaction_desc": "Testing Transation",
+            "transaction_type": "collect",
+            "customer_mobile_no": "2347042719024",
             "meta": {
-                "a_key": "a_meta_value_1",
-                "b_key": "a_meta_value_2"
+                "reference_number": "7042719024",
+                "service_number": "PHCLOS",
+                "pnr": "AVLP6D",
+                "transaction_date": Date.now(),
+                "booking_amount": 100
             },
-            "details": null
+            "data": {}
+        },
+        "app_info": {
+            "app_code": clientSecret
         }
     }
 
+    let details2 = {
+        "request_ref": requestRef,
+        "request_type": "transaction_notification",
+        "requester": "FidelityVirtual",
+        "mock_mode": "live",
+        "details": {
+            "amount": 10000000,
+            "status": "Successful",
+            "provider": "FidelityVirtual",
+            "customer_ref": "2347012382234",
+            "customer_email": "johndoe@gmail.com",
+            "transaction_ref": uuidv4(),
+            "customer_surname": "John",
+            "customer_firstname": "Doe",
+            "transaction_desc": "wo",
+            "transaction_type": "collect",
+            "customer_mobile_no": "2347012382234",
+            "meta": {
+                "reference_number": "70279922332",
+                "service_number": "PHCLOS",
+                "pnr": "AVLP6D",
+                "transaction_date": "2022-11-18-11-41-58",
+                "booking_amount": 10000000
+            },
+            "data": {}
+        },
+        "app_info": {
+            "app_code": "{{your_app_code}}"
+        }
+    }
     try{
-        let response = await axios.post(`${bankUri}/transact`, details, {headers: setConfig(requestRef)})
+        let response = await axios.post(`${bankUri}/transact`, details2, {headers: setConfig(requestRef)})
         res.json(response.data)
     }
     catch(err)
     {
-        res.status(400).json(err)
+        console.log(err)
+        res.status(400).json(err.message)
     }
 }
 
