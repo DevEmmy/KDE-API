@@ -7,6 +7,7 @@ const messageSchema = new Schema(
         conversationId: { type: Schema.Types.ObjectId, ref: "ConversationModel", required:true },
         sender :{ type: Schema.Types.ObjectId, ref:'User', required: true},
         messageContent: { type: String},
+        timestamp: String,
         readBy: [
             {
                 type: Schema.Types.ObjectId,
