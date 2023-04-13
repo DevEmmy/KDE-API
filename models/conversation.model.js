@@ -6,7 +6,7 @@ const conversationSchema = new Schema(
 
     {
         members: { type: Array },
-        timestamp: {type: String, default: Date.now()},
+        timestamp: {type: Date, default: Date.now()},
         lastMessage: {type: String, default:"You can now chat!"}
     },
     {
