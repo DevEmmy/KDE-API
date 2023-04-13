@@ -1,4 +1,5 @@
 const ConversationModel = require("../models/conversation.model")
+const MessageModel = require("../models/messages.model")
 const User = require("../models/users.model")
 const { getUserByIdFnc } = require("./usersControllers")
 
@@ -10,12 +11,23 @@ const getUserConversations = async (req, res)=>{
         
         for(let j=0; j < resp.length; j++) {
             for (let i = 0; i < 2; i++) {
-            console.log(i)
-            let user = await User.findById(resp[j].members[i])
-            resp[j].members[i] = user   
+                console.log(i)
+                let user = await User.findById(resp[j].members[i])
+                resp[j].members[i] = user   
+            }
+
+            let messages = await MessageModel.find({conversationId : resp[j]._id})
+            let lastMessage = messages.pop()
+
+            let conversation = {
+                _id : resp[j]._id,
+                members: resp[j].members,
+                timestamp : lastMessage.timestamp || Date.now,
+                lastMessage: lastMessage.messageContent || "You can now chat!"
+            }
+            resp[j] = conversation
         }
-        }
-            console.log(resp)
+            // console.log(resp[1].lastMessage)
             res.json(resp)    
         })
     .catch(err => res.json(err))

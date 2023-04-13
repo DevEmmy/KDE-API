@@ -11,7 +11,7 @@ const messageSchema = new Schema(
         readBy: [
             {
                 type: Schema.Types.ObjectId,
-                ref: "User"
+                ref: "User",
             }
         ],
     },
