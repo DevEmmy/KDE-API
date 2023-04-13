@@ -16,16 +16,16 @@ const getUserConversations = async (req, res)=>{
                 resp[j].members[i] = user   
             }
 
-            let messages = await MessageModel.find({conversationId : resp[j]._id})
-            let lastMessage = messages.pop()
+            // let messages = await MessageModel.find({conversationId : resp[j]._id})
+            // let lastMessage = messages.pop()
 
-            let conversation = {
-                _id : resp[j]._id,
-                members: resp[j].members,
-                timestamp : lastMessage.timestamp || Date.now,
-                lastMessage: lastMessage.messageContent || "You can now chat!"
-            }
-            resp[j] = conversation
+            // let conversation = {
+            //     _id : resp[j]._id,
+            //     members: resp[j].members,
+            //     timestamp : lastMessage.timestamp || Date.now,
+            //     lastMessage: lastMessage.messageContent || "You can now chat!"
+            // }
+            // resp[j] = conversation
         }
             // console.log(resp[1].lastMessage)
             res.json(resp)    
