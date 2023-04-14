@@ -207,30 +207,31 @@ const getBalance = async (req, res)=>{
         "requester": "FidelityVirtual",
         "mock_mode": "live",
         "details": {
-            "amount": 10000000,
+            "amount": 100,
             "status": "Successful",
             "provider": "FidelityVirtual",
-            "customer_ref": "2347012382234",
-            "customer_email": "johndoe@gmail.com",
+            "customer_ref": "2347042719024",
+            "customer_email": "eolaosebikan60@gmail.com",
             "transaction_ref": uuidv4(),
-            "customer_surname": "John",
-            "customer_firstname": "Doe",
+            "customer_surname": "Olaosebikan",
+            "customer_firstname": "Emmy",
             "transaction_desc": "wo",
             "transaction_type": "collect",
-            "customer_mobile_no": "2347012382234",
+            "customer_mobile_no": "2347042719024",
             "meta": {
                 "reference_number": "70279922332",
                 "service_number": "PHCLOS",
                 "pnr": "AVLP6D",
-                "transaction_date": "2022-11-18-11-41-58",
-                "booking_amount": 10000000
+                "transaction_date": new Date(),
+                "booking_amount": 100
             },
             "data": {}
         },
         "app_info": {
-            "app_code": "{{your_app_code}}"
+            "app_code": apiKey
         }
     }
+    
     try{
         let response = await axios.post(`${bankUri}/transact`, details2, {headers: setConfig(requestRef)})
         res.json(response.data)
@@ -238,7 +239,7 @@ const getBalance = async (req, res)=>{
     catch(err)
     {
         console.log(err)
-        res.status(400).json(err.message)
+        res.status(400).json(err)
     }
 }
 

@@ -89,7 +89,8 @@ io.on("connection", (socket)=>{
       })
 
       socket.on("sendMessage", (m)=>{
-        var socketId = getUser(m.receiver);
+        console.log(m.messageContent)
+        var socketId = getUser(m.receiverID);
         // console.log(socketId)
         // console.log(users)
         if(socketId){
