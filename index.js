@@ -67,16 +67,6 @@ io.on("connection", (socket)=>{
         }
     })
 
-    socket.on("sendMessage", (m)=>{
-        var socketId = getUser(m.receiverID);
-        // console.log(socketId)
-        // console.log(users)
-        if(socketId){
-          io.to(socketId).emit("getMessage", {m})
-        }
-        // console.log("work abeg")
-      })
-
       socket.on("sendNotification", (notification)=>{
         console.log(notification)
         var socketId = getUser(notification.receiver);
@@ -88,13 +78,13 @@ io.on("connection", (socket)=>{
         // }
       })
 
-      socket.on("sendMessage", (m)=>{
-        console.log(m)
-        var socketId = getUser(m.receiverID);
-        // console.log(socketId)
+      socket.on("sendMessage", (message)=>{
+        console.log({...message})
+        var socketId = getUser(message.receiverID);
+        console.log(socketId)
         // console.log(users)
         if(socketId){
-          io.to(socketId).emit("getMessage", {m})
+          io.to(socketId).emit("getMessage", {...message})
         }
         // console.log("work abeg")
       })
