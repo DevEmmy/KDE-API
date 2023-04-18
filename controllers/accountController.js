@@ -18,6 +18,7 @@ const setConfig = (requestRef)=>{
         "Authorization": `Bearer ${apiKey}`,
         "Signature": signature
     }
+    console.log(data)
     return data
 }
 
@@ -204,8 +205,9 @@ const getBalance = async (req, res)=>{
     let details2 = {
         "request_ref": requestRef,
         "request_type": "transaction_notification",
-        "requester": "FidelityVirtual",
-        "mock_mode": "live",
+        "provider": "FidelityVirtual",
+        "requester": "Simple Payments",
+        "mock_mode": "Inspect",
         "details": {
             "amount": 100,
             "status": "Successful",
@@ -228,12 +230,41 @@ const getBalance = async (req, res)=>{
             "data": {}
         },
         "app_info": {
-            "app_code": apiKey
+            "app_code": "PAYP53304"
         }
     }
+
+    let det = {
+        "auth": {
+        "type": null,
+        "secure": null,
+        "route_mode": null,
+        "auth_provider": "FidelityVirtual"
+        },
+        "request_ref": requestRef,
+        "transaction": {
+        "meta": null,
+        "amount": 1000,
+        "details": null,
+        "customer": {
+        "email": "null",
+        "surname": "Olaosebikan",
+        "firstname": "Emmy",
+        "mobile_no": "2347042719024",
+        "customer_ref": "2347042719024",
+        "transaction_ref_parent": null
+        },
+        "mock_mode": "Live",
+        "transaction_ref": uuidv4(),
+        "transaction_desc": "collect",
+        "transaction_ref_parent": null
+        },
+        "request_type": "transaction_notification"
+        }
     
     try{
-        let response = await axios.post(`${bankUri}/transact`, details2, {headers: setConfig(requestRef)})
+        let response = await axios.post(`${bankUri}/transact`, det, {headers: setConfig(requestRef)})
+        console.log(response.headers)
         res.json(response.data)
     }
     catch(err)

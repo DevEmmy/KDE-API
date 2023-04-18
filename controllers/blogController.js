@@ -2,7 +2,6 @@ const Blog = require("../models/blog.model")
 
 const getAllBlogs = async (req, res)=>{
         await Blog.find()
-        .populate("author")
         .populate("category")
         .then(blogs => res.json(blogs))
         .catch(err => res.json(err))
@@ -10,7 +9,6 @@ const getAllBlogs = async (req, res)=>{
 
 const createBlog = async (req, res)=>{
     const payload = req.body;
-    payload.author = req.user
     const newBlog = new Blog(payload);
     await newBlog.save()
     .then(blog => res.json(blog))

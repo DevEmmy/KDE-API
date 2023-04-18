@@ -6,7 +6,7 @@ const blogSchema = new Schema({
     content: String,
     coverImg: String,
     slug: String,
-    author: {type: Schema.Types.ObjectId, ref: "User"},
+    author: {type: String, default: "King David Elites"},
     category: {type: Schema.Types.ObjectId, ref: "Category"},
 },
 {
