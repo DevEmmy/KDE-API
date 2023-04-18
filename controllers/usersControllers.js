@@ -53,7 +53,6 @@ const signIn = async (req, res)=>{
             .then(async doMatch =>{
                 if(doMatch){
                     const token = jwt.sign({_id: user._id}, jwt_secret)
-                    await initiateCart(user)
                     res.json({token: token, message: "Signed In Successfully", user: user})
                 }
                 else{
@@ -68,49 +67,20 @@ const signIn = async (req, res)=>{
 const signUp = async (req, res)=>{
     const userDetails = req.body;
     const {password} = req.body
-    User.findOne({email: userDetails.email})
-    .then(resp =>{
-        if(!resp){
-            bcrypt.hash(password, 8)
-    .then(hashedPassword => {
-        userDetails.password = hashedPassword;
-        const newUser = new User(userDetails);
-        newUser.save()
-        .then(resp =>{
-            User.findById(resp._id)
-            .then(user=>{
-                if(!user){
-                    res.json({message: "An Error Occured"})
-                }
-                else{
-                    bcrypt.compare(password, user.password)
-                    .then(async doMatch=>{
-                        if(doMatch){
-                            const token = jwt.sign({_id:user._id}, jwt_secret);
-                            await initiateCart(user)
-                            res.json({token: token, message:"Successful", user: user})
-                        }
-                        else{
-                            res.json({message: "Wrong Password"})
-                        }
-                    })
-                }
-            })
-        })
-        .catch(err => res.status(400).json({
-            error: err, 
-            message: "An Error Occured"
-        }))
-    }).catch(err => res.status(400).json({
-        error: err, 
-        message: "An Error Occured"
-    }))
-    }
-    else{
-        res.status(403).json({message: "This email is attached to an account"})
+    let user = await User.findOne({email: userDetails.email})
+    if(user){
+        res.status(403).json({message: "This Email is attached to an account"})
     }
 
-}).catch(err => res.status(400).json(err))
+    else{
+        let hashed = await bcrypt.hash(password, 4)
+        userDetails.password = hashed;
+        let newUser = new User(userDetails);
+        newUser = await newUser.save();
+        const token = jwt.sign({_id:newUser._id}, jwt_secret);
+        await initiateCart(newUser);
+        res.json({token: token, message:"Successful", user: newUser});
+    }
 }
 
 const updateUserTypeToSeller = async (req, res)=>{
