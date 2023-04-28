@@ -10,6 +10,7 @@ const apiKey = process.env.API_KEY
 const clientSecret = process.env.CLIENT_SECRET
 const bankUri = process.env.BANK_URI
 const debug = process.env.DEBUG
+const mock = debug ? "Inspect" : "Live";
 
 const setConfig = (requestRef)=>{
     let signature = md5(`${requestRef};${clientSecret}`)
@@ -21,12 +22,6 @@ const setConfig = (requestRef)=>{
     console.log(data)
     return data
 }
-
-
-// const encrypt = (item)=>{
-//     let response = Encryption.encrypt(clientSecret, item)
-//     return response
-// }
 
 const crypto = require('crypto');
 function encrypt(sharedKey, plainText) {
@@ -51,53 +46,52 @@ const getBankCode = async (bankName)=>{
   }
 
 const createAccount  = async (details)=>{
-    console.log(bankUri)
     const requestRef = uuidv4()
 
-    const data2 = {
-        "request_ref": requestRef,
-        "request_type": "open_account",
-        "auth": {
-            "type": null,
-            "secure": null,
-            "auth_provider": "FidelityVirtual",
-            "route_mode": null
-        },
-        "transaction": {
-            "mock_mode": "Live",
-            "transaction_ref": uuidv4(),
-            "transaction_desc": "A random transaction",
-            "transaction_ref_parent": null,
-            "amount": 0,
-            "customer": {
-                "customer_ref": details.number,
-                "firstname": details.firstName,
-                "surname": details.lastName,
-                "email": details.email,
-                "mobile_no": details.number
+    try{
+        let data = {
+            "request_ref": requestRef,
+            "request_type": "open_account",
+            "auth": {
+                "type": null,
+                "secure": null,
+                "auth_provider": "FidelityVirtual",
+                "route_mode": null
             },
-            "meta": {
-                "a_key": "a_meta_value_1",
-                "b_key": "a_meta_value_2"
-            },
-            "details": {
-                "name_on_account": details.firstName + " " + details.lastName,
-                "middlename": details.middleName,
-                "dob": details.dob,
-                "gender": details.gender,
-                "title": details.title,
-                "address_line_1": details.address,
-                "address_line_2": details.city,
-                "city": details.city,
-                "state": details.city,
-                "country": details.country
+            "transaction": {
+                "mock_mode": mock,
+                "transaction_ref": uuidv4(),
+                "transaction_desc": "A random transaction",
+                "transaction_ref_parent": null,
+                "amount": 0,
+                "customer": {
+                    "customer_ref": details.number,
+                    "firstname": details.firstName,
+                    "surname": details.lastName,
+                    "email": details.email,
+                    "mobile_no": details.number
+                },
+                "meta": {
+                    "a_key": "a_meta_value_1",
+                    "b_key": "a_meta_value_2"
+                },
+                "details": {
+                    "name_on_account": details.firstName + " " + details.lastName,
+                    "middlename": details.middleName,
+                    "dob": details.dob,
+                    "gender": details.gender,
+                    "title": details.title,
+                    "address_line_1": details.address,
+                    "address_line_2": details.city,
+                    "city": details.city,
+                    "state": details.city,
+                    "country": details.country
+                }
             }
         }
-    }
 
-    try{
-        let response = await axios.post(`${bankUri}/transact`, data2, {headers:setConfig(requestRef)})
-        let data = response.data.data.provider_response
+        let response = await axios.post(`${bankUri}/transact`, data, {headers:setConfig(requestRef)})
+        data = response.data.data.provider_response
         data = {
             'account_number': data.account_number,
             'account_reference': data.account_reference,
@@ -120,16 +114,17 @@ const createAccount  = async (details)=>{
 
 
 const testCreateAccount = async (req, res)=>{
+    console.log(mock)
     let details = {
-        number: 2347042719024,
-        firstName: "Emmy",
-        lastName: "Olaosebikan",
+        number: 2347042719028,
+        firstName: "Simeon",
+        lastName: "Ogunyinka",
         middleName: "Patrick",
         gender: "M",
         address: "No 21",
-        email: "eolaosebikan60@gmail.com",
-        city: "Abeokuta",
-        state: "Ogun State",
+        email: "simeon60@gmail.com",
+        city: "Lagos",
+        state: "Lagos State",
         country: "Nigeria",
         title: "Mr"
     }
@@ -171,69 +166,6 @@ const getBalance = async (req, res)=>{
         "user": "undefined"
       }
 
-    const details={
-        "request_ref": requestRef,
-        "request_type": "transaction_notification",
-        "requester": "FidelityVirtual",
-        "mock_mode": "live",
-        "details": {
-            "amount": 100,
-            "customer_email": "eolaosebikan60@gmail.com",
-            "status": "Successful",
-            "provider": "FidelityVirtual",
-            "customer_ref": "2347042719024",
-            "transaction_ref": uuidv4(),
-            "customer_surname": "Olaosebikan",
-            "customer_firstname": "Emmy",
-            "transaction_desc": "Testing Transation",
-            "transaction_type": "collect",
-            "customer_mobile_no": "2347042719024",
-            "meta": {
-                "reference_number": "7042719024",
-                "service_number": "PHCLOS",
-                "pnr": "AVLP6D",
-                "transaction_date": Date.now(),
-                "booking_amount": 100
-            },
-            "data": {}
-        },
-        "app_info": {
-            "app_code": clientSecret
-        }
-    }
-
-    let details2 = {
-        "request_ref": requestRef,
-        "request_type": "transaction_notification",
-        "provider": "FidelityVirtual",
-        "requester": "Simple Payments",
-        "mock_mode": "Inspect",
-        "details": {
-            "amount": 100,
-            "status": "Successful",
-            "provider": "FidelityVirtual",
-            "customer_ref": "2347042719024",
-            "customer_email": "eolaosebikan60@gmail.com",
-            "transaction_ref": uuidv4(),
-            "customer_surname": "Olaosebikan",
-            "customer_firstname": "Emmy",
-            "transaction_desc": "wo",
-            "transaction_type": "collect",
-            "customer_mobile_no": "2347042719024",
-            "meta": {
-                "reference_number": "70279922332",
-                "service_number": "PHCLOS",
-                "pnr": "AVLP6D",
-                "transaction_date": new Date(),
-                "booking_amount": 100
-            },
-            "data": {}
-        },
-        "app_info": {
-            "app_code": "PAYP53304"
-        }
-    }
-
     let det = {
         "auth": {
         "type": null,
@@ -261,10 +193,41 @@ const getBalance = async (req, res)=>{
         },
         "request_type": "transaction_notification"
         }
+
+    let deta = {
+        "request_ref": requestRef,
+        "request_type": "transaction_notification",
+        "auth": {
+            "type": null,
+            "secure": null,
+            "auth_provider": "FidelityVirtual",
+            "route_mode": null
+        },
+        "transaction": {
+            "mock_mode": "Live",
+            "transaction_ref": uuidv4(),
+            "transaction_desc": "A random transaction",
+            "transaction_ref_parent": null,
+            "amount": 100,
+            "customer": {
+                "customer_ref": "61a67491-84b4-4a51-aedc-a2d74bbba1ba",
+                "firstname": "Simeon",
+                "surname": "Ogunyinka",
+                "email": "simeon60@gmail.com",
+                "mobile_no": "2347042719028"
+            },
+            "meta": null,
+            "details": {
+                "destination_account": "7259331664",
+                "destination_bank_code": getBankCode("Wema Bank"),
+                // "otp_override": true
+            }
+        }
+    }
     
     try{
-        let response = await axios.post(`${bankUri}/transact`, det, {headers: setConfig(requestRef)})
-        console.log(response.headers)
+        let response = await axios.post(`${bankUri}/transact`, deta, {headers: setConfig(requestRef)})
+        console.log(response)
         res.json(response.data)
     }
     catch(err)

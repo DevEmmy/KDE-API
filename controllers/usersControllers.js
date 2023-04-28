@@ -8,6 +8,7 @@ const { saveNotification } = require("./notificationsControllers");
 const { sendMail } = require("./nodemailer");
 const { reset_html } = require("../html_templates/html");
 const { initiateCart } = require("./cartController");
+const Verification = require("../models/verification.model");
 const Account = "../models/account.model"
 
 const upload = async (data)=>{
@@ -171,6 +172,7 @@ const getUserByIdFnc = async (id)=>{
 
 const verifyUser = async (req, res)=>{
     const user = req.user
+    let verification = {}
     const {verificationId, nationality, verificationType, verifiedProfilePicture} = req.body
     
     if(verificationType && verifiedProfilePicture){
@@ -178,16 +180,21 @@ const verifyUser = async (req, res)=>{
             front: upload(verificationId.front),
             back: upload(verificationId.back),
         }
-        user.verifiedProfilePicture = upload(verifiedProfilePicture)
-        user.nationality = nationality;
-        user.verificationType = verificationType
-        user.isVerified = true
+        verification.verifiedProfilePicture = upload(verifiedProfilePicture)
+        verification.nationality = nationality;
+        verification.verificationType = verificationType
+        verification.isVerified = true
+        verification.user = user
         user.accountType = 1
-        User.findByIdAndUpdate(user._id, user, {new: true})
-        .then(resp =>{
-            res.status(200).json(resp)
-        })
-        .catch(err => res.status(400).json(err))
+        
+        try{
+            let updatedUser = await User.findByIdAndUpdate(user._id, user)
+            verification = await new Verification(verification).save()
+            res.json(updatedUser)
+        }
+        catch(err){
+            res.status(err.status).json({message: err.message})
+        }
     }
     else{
         res.status(400).json({message: "Verification ID and Profile Picture are required"})
