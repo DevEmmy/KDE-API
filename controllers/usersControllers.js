@@ -187,6 +187,7 @@ const verifyUser = async (req, res)=>{
         verification.user = user
         user.accountType = 1
         
+        
         try{
             let updatedUser = await User.findByIdAndUpdate(user._id, user)
             verification = await new Verification(verification).save()
