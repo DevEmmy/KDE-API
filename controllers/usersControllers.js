@@ -187,8 +187,6 @@ const verifyUser = async (req, res)=>{
             user.isVerified = true
             verification.user = user
             user.accountType = 1
-            
-            
         }
         else{
             res.status(400).json({message: "Verification ID and Profile Picture are required"})
@@ -210,15 +208,10 @@ const verifyUser = async (req, res)=>{
         verification.user = user
         user.accountType = 1
         
-        
-        try{
             let updatedUser = await User.findByIdAndUpdate(user._id, user)
+            console.log(verification)
             verification = await new Verification(verification).save()
             res.json(updatedUser)
-        }
-        catch(err){
-            res.status(err.status).json({message: err.message})
-        }
     }
     else{
         res.status(400).json({message: "Verification ID and Profile Picture are required"})
