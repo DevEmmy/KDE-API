@@ -174,6 +174,29 @@ const verifyUser = async (req, res)=>{
     const user = req.user
     let verification = {}
     const {verificationId, nationality, verificationType, verifiedProfilePicture} = req.body
+
+    try{
+        if(verificationType && verifiedProfilePicture){
+            user.verificationId = {
+                front: upload(verificationId.front),
+                back: upload(verificationId.back),
+            }
+            verification.verifiedProfilePicture = upload(verifiedProfilePicture)
+            verification.nationality = nationality;
+            verification.verificationType = verificationType
+            user.isVerified = true
+            verification.user = user
+            user.accountType = 1
+            
+            
+        }
+        else{
+            res.status(400).json({message: "Verification ID and Profile Picture are required"})
+        }
+    }
+    catch(err){
+        res.status(err.status).json({message: err.message})
+    }
     
     if(verificationType && verifiedProfilePicture){
         user.verificationId = {
@@ -183,7 +206,7 @@ const verifyUser = async (req, res)=>{
         verification.verifiedProfilePicture = upload(verifiedProfilePicture)
         verification.nationality = nationality;
         verification.verificationType = verificationType
-        verification.isVerified = true
+        user.isVerified = true
         verification.user = user
         user.accountType = 1
         
