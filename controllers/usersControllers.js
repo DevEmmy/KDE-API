@@ -183,7 +183,7 @@ const verifyUser = async (req, res)=>{
         verification.verifiedProfilePicture = await upload(verifiedProfilePicture)
         verification.nationality = nationality;
         verification.verificationType = verificationType
-        user.isVerified = true
+        // user.isVerified = true
         verification.user = user._id
         user.accountType = 1
         
