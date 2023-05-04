@@ -177,13 +177,13 @@ const verifyUser = async (req, res)=>{
     
     if(verificationType && verifiedProfilePicture){
         user.verificationId = {
-            front: upload(verificationId.front),
-            back: upload(verificationId.back),
+            front: await upload(verificationId.front),
+            back: await upload(verificationId.back),
         }
-        verification.verifiedProfilePicture = upload(verifiedProfilePicture)
+        verification.verifiedProfilePicture = await upload(verifiedProfilePicture)
         verification.nationality = nationality;
         verification.verificationType = verificationType
-        verification.isVerified = true
+        user.isVerified = true
         verification.user = user._id
         user.accountType = 1
         
