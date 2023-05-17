@@ -17,6 +17,7 @@ const blogRoute = require("./routes/blogRoute")
 const cartRoute = require("./routes/cartRoute")
 const reportRoute = require("./routes/reportRoute")
 const accountRoute = require("./routes/accountRoute")
+const verificationRoute = require("./routes/verificationRoute")
 const {Server}= require("socket.io")
 
 //initiate express
@@ -95,9 +96,9 @@ io.on("connection", (socket)=>{
 
 //set port and db uri
 const port = process.env.PORT || 9099
-const uri = process.env.DB_URI 
+const uri = "mongodb://127.0.0.1:27017/kde"
 
-// "mongodb://127.0.0.1:27017/kde"
+// process.env.DB_URI 
 // connect mongodb
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -120,6 +121,7 @@ app.use("/blogs", blogRoute)
 app.use("/carts", cartRoute)
 app.use("/reports", reportRoute)
 app.use("/accounts", accountRoute)
+app.use("/verifcation", verificationRoute)
 
 //run server
 server.listen(port, ()=>{
