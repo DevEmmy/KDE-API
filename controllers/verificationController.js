@@ -8,6 +8,7 @@ const getVerificationStatus =  async (req, res)=>{
     }
     else{
         res.json({status: null})
-    }
-    
+    }   
 }
+
+module.exports = {getVerificationStatus}
