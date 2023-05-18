@@ -121,7 +121,7 @@ app.use("/blogs", blogRoute)
 app.use("/carts", cartRoute)
 app.use("/reports", reportRoute)
 app.use("/accounts", accountRoute)
-app.use("/verifcation", verificationRoute)
+app.use("/verification", verificationRoute)
 
 //run server
 server.listen(port, ()=>{

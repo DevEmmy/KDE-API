@@ -173,9 +173,10 @@ const getUserByIdFnc = async (id)=>{
 const verifyUser = async (req, res)=>{
     const user = req.user
     let verification = {}
+    console.log(verification)
     const {verificationId, nationality, verificationType, verifiedProfilePicture} = req.body
     
-    if(verificationType && verifiedProfilePicture){
+    if(nationality && verifiedProfilePicture){
         user.verificationId = {
             front: await upload(verificationId.front),
             back: await upload(verificationId.back),
@@ -185,9 +186,9 @@ const verifyUser = async (req, res)=>{
         verification.verificationType = verificationType
         // user.isVerified = true
         verification.user = user._id
-        user.accountType = 1
+        // user.accountType = 1
         
-        
+        console.log(verification.nationality)
         try{
             let updatedUser = await User.findByIdAndUpdate(user._id, user)
             verification = await new Verification(verification).save()
@@ -200,6 +201,7 @@ const verifyUser = async (req, res)=>{
     }
     else{
         res.status(400).json({message: "Verification ID and Profile Picture are required"})
+        console.log({message: "Verification ID and Profile Picture are required"})
     }
 }
 
