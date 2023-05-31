@@ -124,7 +124,7 @@ app.use("/reports", reportRoute)
 app.use("/accounts", accountRoute)
 app.use("/verification", verificationRoute)
 
-app.use("/webhook", (req, res, next) => {
+app.post("/webhook", (req, res, next) => {
     const payload = req.body;
 
     console.log(payload)
