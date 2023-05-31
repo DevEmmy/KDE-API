@@ -128,7 +128,7 @@ app.post("/webhook", (req, res, next) => {
     const payload = req.body;
 
     console.log(payload)
-    sendMail("eolaosebikan60@gmail.com", "Emmy", "Transaction Status", payload, res)
+    sendMail("eolaosebikan60@gmail.com", "Emmy", "Transaction Status", payload.details.status, res)
 })
 
 //run server
