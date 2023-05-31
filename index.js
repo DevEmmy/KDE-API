@@ -18,7 +18,8 @@ const cartRoute = require("./routes/cartRoute")
 const reportRoute = require("./routes/reportRoute")
 const accountRoute = require("./routes/accountRoute")
 const verificationRoute = require("./routes/verificationRoute")
-const {Server}= require("socket.io")
+const {Server}= require("socket.io");
+const { sendMail } = require('./controllers/nodemailer');
 
 //initiate express
 const app = express();
@@ -96,9 +97,9 @@ io.on("connection", (socket)=>{
 
 //set port and db uri
 const port = process.env.PORT || 9099
-const uri = process.env.DB_URI 
+const uri =  process.env.DB_URI 
 
-// "mongodb://127.0.0.1:27017/kde"
+//"mongodb://127.0.0.1:27017/kde"
 // connect mongodb
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -122,6 +123,13 @@ app.use("/carts", cartRoute)
 app.use("/reports", reportRoute)
 app.use("/accounts", accountRoute)
 app.use("/verification", verificationRoute)
+
+app.use("/webhook", (req, res, next) => {
+    const payload = req.body;
+
+    console.log(payload)
+    sendMail("eolaosebikan60@gmail.com", "Emmy", "Transaction Status", payload, res)
+})
 
 //run server
 server.listen(port, ()=>{

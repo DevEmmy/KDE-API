@@ -166,33 +166,37 @@ const getBalance = async (req, res)=>{
         "user": "undefined"
       }
 
-    let det = {
-        "auth": {
-        "type": null,
-        "secure": null,
-        "route_mode": null,
-        "auth_provider": "FidelityVirtual"
-        },
-        "request_ref": requestRef,
-        "transaction": {
-        "meta": null,
-        "amount": 500,
-        "details": null,
-        "customer": {
-        "email": "null",
-        "surname": "Ogunyinka",
-        "firstname": "Simeon",
-        "mobile_no": "2347042719028",
-        "customer_ref": "2347042719028",
-        "transaction_ref_parent": null
-        },
-        "mock_mode": "Live",
-        "transaction_ref": uuidv4(),
-        "transaction_desc": "collect",
-        "transaction_ref_parent": null
-        },
-        "request_type": "transaction_notification"
-        }
+    // let det = {
+    //     "auth": {
+    //     "type": null,
+    //     "secure": null,
+    //     "route_mode": null,
+    //     "auth_provider": "FidelityVirtual"
+    //     },
+    //     "request_ref": requestRef,
+    //     "transaction": {
+    //         "meta": null,
+    //         "amount": 500,
+    //         "customer": {
+    //         "email": "null",
+    //         "surname": "Ogunyinka",
+    //         "firstname": "Simeon",
+    //         "mobile_no": "2347042719028",
+    //         "customer_ref": "2347042719028",
+    //         "transaction_ref_parent": null
+    //         },
+    //         "mock_mode": "Live",
+    //         "transaction_ref": uuidv4(),
+    //         "transaction_desc": "collect",
+    //         "transaction_ref_parent": null,
+    //         "details": {
+    //             "destination_account": "0567154759",
+    //             "destination_bank_code": getBankCode("Guaranty Trust Bank")
+    //         },
+    //     },
+        
+    //     "request_type": "disburse"
+    //     }
 
     let deta = {
         "auth": {
@@ -200,34 +204,47 @@ const getBalance = async (req, res)=>{
             "secure": null,
             "route_mode": null,
             "auth_provider": "FidelityVirtual"
-            },
-            "mock_mode": "Live",
+        },
+        "mock_mode": null,
+        "request_ref": requestRef,
         "transaction_ref": uuidv4(),
         "transaction_desc": "collect",
         "transaction_ref_parent": null,
+        "transaction": {
+            "meta": null,
+            "amount": 5000,
+            "details": {
+                "amount": 5000,
+                "status": "Successful|Failed",
+                "provider": "FidelityVirtual",
+                "customer_ref": "2349870818",
+                "customer_email": "simeon60@gmail.com",
+                "transaction_ref": uuidv4(),
+                "customer_surname": "Ogunyinka",
+                "transaction_desc": "{{transaction_description}}",
+                "transaction_type": "collect",
+                "customer_firstname": "Simeon",
+                "customer_mobile_no": "2347042719028",
+                "data":null
+            },
+            "customer": {
+            "email": "null",
+            "surname": "Ogunyinka",
+            "firstname": "Simeon",
+            "mobile_no": "2347042719028",
+            "customer_ref": "2347042719028",
+            "transaction_ref_parent": null
+            },
+            "mock_mode": "Live",
+            "transaction_ref": uuidv4(),
+            "transaction_desc": "collect",
+            "transaction_ref_parent": null
+            },
         "request_type": "transaction_notification",
         "requester": "Simple Payments",
-        "mock_mode": "live",
-        "details": {
-            "amount": 50,
-            "status": "Successful|Failed",
-            "provider": "FidelityVirtual",
-            "customer_ref": "2349870818",
-            "customer_email": "simeon60@gmail.com",
-            "transaction_ref": uuidv4(),
-            "customer_surname": "Ogunyinka",
-            "transaction_desc": "{{transaction_description}}",
-            "transaction_type": "collect",
-            "customer_firstname": "Simeon",
-            "customer_mobile_no": "2347042719028",
-            "data":null
-        },
-        "app_info": {
-            "app_code": null
-        }
     }
     try{
-        let response = await axios.post(`${bankUri}/transact`, deta, {headers: setConfig(requestRef)})
+        let response = await axios.post(`${bankUri}/transact/query`, deta, {headers: setConfig(requestRef)})
         console.log(response)
         res.json(response.data)
     }
