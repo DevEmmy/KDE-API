@@ -10,7 +10,7 @@ const apiKey = process.env.API_KEY
 const clientSecret = process.env.CLIENT_SECRET
 const bankUri = process.env.BANK_URI
 const debug = process.env.DEBUG
-const mock = "Live";
+const mock = "Inspect";
 
 const setConfig = (requestRef)=>{
     let signature = md5(`${requestRef};${clientSecret}`)
@@ -24,6 +24,7 @@ const setConfig = (requestRef)=>{
 }
 
 const crypto = require('crypto');
+const Transaction = require('../models/transaction.model');
 function encrypt(sharedKey, plainText) {
     const bufferedKey = Buffer.from(sharedKey, 'utf16le');
     const key = crypto.createHash('md5').update(bufferedKey).digest();
@@ -47,7 +48,7 @@ const getBankCode = async (bankName)=>{
 
 const createAccount  = async (details)=>{
     const requestRef = uuidv4()
-
+    console.log(details)
     try{
         let data = {
             "request_ref": requestRef,
@@ -65,11 +66,11 @@ const createAccount  = async (details)=>{
                 "transaction_ref_parent": null,
                 "amount": 0,
                 "customer": {
-                    "customer_ref": details.number,
+                    "customer_ref": details._id,
                     "firstname": details.firstName,
                     "surname": details.lastName,
                     "email": details.email,
-                    "mobile_no": details.number
+                    "mobile_no": details.phoneNumber1
                 },
                 "meta": {
                     "a_key": "a_meta_value_1",
@@ -101,10 +102,10 @@ const createAccount  = async (details)=>{
             'user': String(details.userId),
         }
 
-        console.log(data)
-        // let newAccount = new Account(data)
-        // newAccount = await newAccount.save()
-        return response.data
+        
+        let newAccount = new Account(data)
+        newAccount = await newAccount.save()
+        return newAccount
     }
     catch(error){
         // throw new Error(error.message)
@@ -112,21 +113,16 @@ const createAccount  = async (details)=>{
     }
 }
 
-
 const testCreateAccount = async (req, res)=>{
     console.log(mock)
+    
     let details = {
-        number: 2347042719028,
-        firstName: "Simeon",
-        lastName: "Ogunyinka",
-        middleName: "Patrick",
-        gender: "M",
+        number: 2349048988593,
+        firstName: "Emmanuel",
+        lastName: "Olaosebikan",
         address: "No 21",
-        email: "simeon60@gmail.com",
-        city: "Lagos",
-        state: "Lagos State",
+        email: "eolaosebikan60@gmail.com",
         country: "Nigeria",
-        title: "Mr"
     }
 
     try{
@@ -253,6 +249,29 @@ const getBalance = async (req, res)=>{
         console.log(err)
         res.status(400).json(err)
     }
+}
+
+const confimrTimeDiff = (createdAt)=>{
+    
+    return true
+}
+
+const confirmCreditting = async (req, res)=>{
+    try{
+        let user = req.user;
+    let transactions = await Transaction.find({user: user})
+    let lastTransaction = transactions[transactions.length - 1]
+    if(confimrTimeDiff(lastTransaction.createdAt)){
+        res.json({message: "Payment Received Successfully"})
+    }
+    else{
+        res.status(400).json({message: "Payment not received"})
+    }
+    }
+    catch(err){
+        res.status(err.status).json({message: err.message})
+    }
+    
 }
 
 const initiateTransaction = async (request)=>{
@@ -449,31 +468,7 @@ const getAccount = async(req, res)=>{
     }
 }
 
-const fundWallet = async (req, res)=>{
-    const {amount, narration, transaction_ref} = req.body;
-    const loggedUser = req.user;
-
-    try{
-       let loggedUserBankAccount = await Account.findOne({user: loggedUser._id})
-    loggedUserBankAccount.amount += amount;
-    loggedUserBankAccount = await Account.findOneAndUpdate({user: loggedUser._id}, loggedUserBankAccount, {new: true})
-
-    let transaction = {
-        user: loggedUser,
-        amount: amount,
-        credit: true,
-        message: "Funding my wallet",
-        transaction_ref: transaction_ref
-    }
-
-    transaction = await createTransaction(transaction); 
-    res.json({message: "Transaction Made Successfuly"})
-    }
-    catch(err){
-        res.status(400).json(err)
-    }
-}
 
 module.exports = {
-    createAccount, testCreateAccount, getBalance, transferFund, withdrawFund, getAccount, initiateTransaction
+    createAccount, testCreateAccount, getBalance, transferFund, withdrawFund, getAccount, initiateTransaction, confirmCreditting
 }

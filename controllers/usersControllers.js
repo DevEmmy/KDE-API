@@ -9,6 +9,7 @@ const { sendMail } = require("./nodemailer");
 const { reset_html } = require("../html_templates/html");
 const { initiateCart } = require("./cartController");
 const Verification = require("../models/verification.model");
+const { createAccount } = require("./accountController");
 const Account = "../models/account.model"
 
 const upload = async (data)=>{
@@ -80,6 +81,7 @@ const signUp = async (req, res)=>{
         newUser = await newUser.save();
         const token = jwt.sign({_id:newUser._id}, jwt_secret);
         await initiateCart(newUser);
+        await createAccount(newUser)
         res.json({token: token, message:"Successful", user: newUser});
     }
 }

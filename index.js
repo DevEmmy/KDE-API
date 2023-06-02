@@ -20,6 +20,9 @@ const accountRoute = require("./routes/accountRoute")
 const verificationRoute = require("./routes/verificationRoute")
 const {Server}= require("socket.io");
 const { sendMail } = require('./controllers/nodemailer');
+const User = require('./models/users.model');
+const Transaction = require('./models/transaction.model');
+const Account = require('./models/account.model');
 
 //initiate express
 const app = express();
@@ -97,7 +100,7 @@ io.on("connection", (socket)=>{
 
 //set port and db uri
 const port = process.env.PORT || 9099
-const uri =  process.env.DB_URI 
+const uri =process.env.DB_URI  
 
 //"mongodb://127.0.0.1:27017/kde"
 // connect mongodb
@@ -124,11 +127,30 @@ app.use("/reports", reportRoute)
 app.use("/accounts", accountRoute)
 app.use("/verification", verificationRoute)
 
-app.post("/webhook", (req, res, next) => {
+app.post("/webhook", async (req, res, next) => {
     const payload = req.body;
-
     console.log(payload)
-    sendMail("eolaosebikan60@gmail.com", "Emmy", "Transaction Status", payload.details.status, res)
+
+    if(payload.details.status = 'Successful'){
+         let transaction = {
+        user: await User.findById(payload.details.customer_ref),
+        amount: payload.details.data.amount,
+        credit: true,
+        message: payload.details.transaction_desc,
+        transaction_ref: payload.details.transaction_ref,
+        transaction_type: payload.details.transaction_type
+    }
+
+    transaction = await new Transaction(transaction).save();
+    let userAccount = await Account.findOne({user: transaction.user})
+    userAccount.account_balance += Number(transaction.amount)
+    userAccount = await Account.findOneAndUpdate({user: transaction.user}, userAccount, {new: true})
+
+    sendMail(payload.details.customer_email, payload.details.customer_firstname, "Transaction Status", payload.details.status, res)
+    }
+    else{
+        //do nothing()
+    }
 })
 
 //run server
