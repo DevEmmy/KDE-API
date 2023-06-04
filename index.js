@@ -100,9 +100,9 @@ io.on("connection", (socket)=>{
 
 //set port and db uri
 const port = process.env.PORT || 9099
-const uri =process.env.DB_URI  
+const uri =process.env.DB_URI 
 
-//"mongodb://127.0.0.1:27017/kde"
+// "mongodb://127.0.0.1:27017/kde"
 // connect mongodb
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -127,6 +127,12 @@ app.use("/reports", reportRoute)
 app.use("/accounts", accountRoute)
 app.use("/verification", verificationRoute)
 
+let transactionStatus = {
+    "PENDING": "PENDING",
+    "SUCCESSFUL": "SUCCESSFULL",
+    "FAILED": "FAILED"
+}
+
 app.post("/webhook", async (req, res, next) => {
     const payload = req.body;
     console.log(payload)
@@ -138,7 +144,8 @@ app.post("/webhook", async (req, res, next) => {
         credit: true,
         message: payload.details.transaction_desc,
         transaction_ref: payload.details.transaction_ref,
-        transaction_type: payload.details.transaction_type
+        transaction_type: payload.details.transaction_type,
+        status: transactionStatus.PENDING
     }
 
     transaction = await new Transaction(transaction).save();
@@ -157,3 +164,5 @@ app.post("/webhook", async (req, res, next) => {
 server.listen(port, ()=>{
     console.log(`Server running on port ${port}`)
 })
+
+module.exports = {transactionStatus}

@@ -6,7 +6,7 @@ const accountSchema = new Schema({
     account_number: String,
     account_name: String,
     bank_code: String,
-    account_reference: Number,
+    account_reference: String,
     bank_name: {type:String, default: "Fidelity Bank Limited"},
     account_balance: {type: Number, default: 0}
 })

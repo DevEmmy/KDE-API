@@ -10,7 +10,7 @@ const apiKey = process.env.API_KEY
 const clientSecret = process.env.CLIENT_SECRET
 const bankUri = process.env.BANK_URI
 const debug = process.env.DEBUG
-const mock = "Inspect";
+const mock = "Live";
 
 const setConfig = (requestRef)=>{
     let signature = md5(`${requestRef};${clientSecret}`)
@@ -19,7 +19,7 @@ const setConfig = (requestRef)=>{
         "Authorization": `Bearer ${apiKey}`,
         "Signature": signature
     }
-    console.log(data)
+    // console.log(data)
     return data
 }
 
@@ -48,7 +48,7 @@ const getBankCode = async (bankName)=>{
 
 const createAccount  = async (details)=>{
     const requestRef = uuidv4()
-    console.log(details)
+    // console.log(details)
     try{
         let data = {
             "request_ref": requestRef,
@@ -93,18 +93,20 @@ const createAccount  = async (details)=>{
 
         let response = await axios.post(`${bankUri}/transact`, data, {headers:setConfig(requestRef)})
         data = response.data.data.provider_response
+        console.log(response.data)
         data = {
             'account_number': data.account_number,
             'account_reference': data.account_reference,
             'account_name': data.account_name,
             'bank_name': data.bank_name,
             'bank_code': data.bank_code,
-            'user': String(details.userId),
+            'user': String(details._id),
         }
 
         
         let newAccount = new Account(data)
         newAccount = await newAccount.save()
+        console.log(newAccount)
         return newAccount
     }
     catch(error){
@@ -331,8 +333,8 @@ const transferFund = async (req, res)=>{
     const requestRef = uuidv4()
     const transferDetails = req.body
 
-    const loggedUserBankAccount = await AccountDetails.findOne({user: loggedUser._id})
-    const receiverBankAccount =await AccountDetails.findOne({user: transferDetails.receiver}).populate("user")
+    // const loggedUserBankAccount = await AccountDetails.findOne({user: loggedUser._id})
+    // const receiverBankAccount =await AccountDetails.findOne({user: transferDetails.receiver}).populate("user")
 
 
     const details = {
@@ -340,54 +342,54 @@ const transferFund = async (req, res)=>{
         "request_type": "transfer_funds",
         "auth": {
             "type": "bank.account",
-            "secure": encrypt(loggedUserBankAccount.account_number),
+            "secure": encrypt(clientSecret, '4553343878'),
             "auth_provider": "Fidelity",
             "route_mode": null
         },
         "transaction": {
-            "mock_mode": "Live",
+            "mock_mode": mock,
             "transaction_ref": uuidv4(),
             "transaction_desc": "A random transaction",
             "transaction_ref_parent": null,
-            "amount": transferDetails.amount,
+            "amount": 1000,
             "customer": {
-                "customer_ref": loggedUserBankAccount._id,
-                "firstname": loggedUser.firstName,
-                "surname": loggedUser.lastName,
-                "email": loggedUser,
-                "mobile_no": loggedUser.phoneNumber1
+                "customer_ref": "2347042719028",
+                "firstname": "Simeon",
+                "surname": "Ogunyinka",
+                "email": "simeon60@gmail.com",
+                "mobile_no": "2347042719028"
             },
             "meta": {
                 "a_key": "a_meta_value_1",
                 "b_key": "a_meta_value_2"
             },
             "details": {
-                "destination_account": receiverBankAccount.account_number,
-                "destination_bank_code": receiverBankAccount.bank_code,
+                "destination_account": "0567154759",
+                "destination_bank_code": getBankCode("Guaranty Trust Bank"),
                 "otp_override": true
             }
         }
     }
-
     try{
         let response = await axios.post(`${bankUri}/transact`, details, {headers: setConfig(requestRef)})
+        console.log(response)
 
-        const transaction1 = {
-            message: `Transer of ${"NGN" + this.amount} to ${receiverBankAccount.account_name} - ${receiverBankAccount.account_number}`,
-            amount: transferDetails.amount,
-            credit: false,
-            user: loggedUser
-        }
+        // const transaction1 = {
+        //     message: `Transer of ${"NGN" + this.amount} to ${receiverBankAccount.account_name} - ${receiverBankAccount.account_number}`,
+        //     amount: transferDetails.amount,
+        //     credit: false,
+        //     user: loggedUser
+        // }
 
-        await createTransaction(transaction1)
+        // await createTransaction(transaction1)
 
-        const transaction2 = {
-            message: `Received  ${"NGN" + this.amount} from ${loggedUserBankAccount.account_name}`,
-            amount: transferDetails.amount,
-            credit: true,
-            user: transferDetails.receiver
-        }
-        await createTransaction(transaction2)
+        // const transaction2 = {
+        //     message: `Received  ${"NGN" + this.amount} from ${loggedUserBankAccount.account_name}`,
+        //     amount: transferDetails.amount,
+        //     credit: true,
+        //     user: transferDetails.receiver
+        // }
+        // await createTransaction(transaction2)
 
         res.json(response.data)
     }
