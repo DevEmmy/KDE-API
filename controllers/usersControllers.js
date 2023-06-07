@@ -81,8 +81,8 @@ const signUp = async (req, res)=>{
         newUser = await newUser.save();
         const token = jwt.sign({_id:newUser._id}, jwt_secret);
         const cart = await initiateCart(newUser);
-        const resp = await createAccount(newUser)
-        res.json({token: token, message:"Successful", user: newUser});
+        const resp = await createAccount(userDetails)
+        res.json({token: token, message:"Successful", user: newUser, account: resp});
     }
 }
 

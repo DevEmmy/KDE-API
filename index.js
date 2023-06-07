@@ -100,7 +100,7 @@ io.on("connection", (socket)=>{
 
 //set port and db uri
 const port = process.env.PORT || 9099
-const uri =process.env.DB_URI 
+const uri = process.env.DB_URI 
 
 // "mongodb://127.0.0.1:27017/kde"
 // connect mongodb
@@ -145,7 +145,7 @@ app.post("/webhook", async (req, res, next) => {
         message: payload.details.transaction_desc,
         transaction_ref: payload.details.transaction_ref,
         transaction_type: payload.details.transaction_type,
-        status: transactionStatus.PENDING
+        status: transactionStatus.SUCCESSFUL
     }
 
     transaction = await new Transaction(transaction).save();

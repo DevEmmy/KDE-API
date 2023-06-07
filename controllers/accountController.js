@@ -119,12 +119,15 @@ const testCreateAccount = async (req, res)=>{
     console.log(mock)
     
     let details = {
-        number: 2349048988593,
-        firstName: "Emmanuel",
-        lastName: "Olaosebikan",
+        phoneNumber1: 08129833892,
+        firstName: "Joseph",
+        lastName: "Amao",
         address: "No 21",
-        email: "eolaosebikan60@gmail.com",
+        email: "eo60@gmail.com",
         country: "Nigeria",
+        dob: new Date(2002, 10, 10),
+        title: "Dr",
+        gender: "male"
     }
 
     try{
