@@ -55,7 +55,7 @@ const signIn = async (req, res)=>{
             .then(async doMatch =>{
                 if(doMatch){
                     const token = jwt.sign({_id: user._id}, jwt_secret)
-                    const resp = await createAccount(newUser)
+                    const resp = await createAccount(user)
                     res.json({token: token, message:"Successful", user: newUser, account: resp});
                 }
                 else{
