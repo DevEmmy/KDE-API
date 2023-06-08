@@ -94,20 +94,20 @@ const createAccount  = async (details)=>{
         let response = await axios.post(`${bankUri}/transact`, data, {headers:setConfig(requestRef)})
         data = response.data.data.provider_response
         console.log(response.data)
-        // data = {
-        //     'account_number': data.account_number,
-        //     'account_reference': data.account_reference,
-        //     'account_name': data.account_name,
-        //     'bank_name': data.bank_name,
-        //     'bank_code': data.bank_code,
-        //     'user': String(details._id),
-        // }
+        data = {
+            'account_number': data.account_number,
+            'account_reference': data.account_reference,
+            'account_name': data.account_name,
+            'bank_name': data.bank_name,
+            'bank_code': data.bank_code,
+            'user': String(details._id),
+        }
 
         
-        // let newAccount = new Account(data)
-        // newAccount = await newAccount.save()
-        // console.log(newAccount)
-        // return newAccount
+        let newAccount = new Account(data)
+        newAccount = await newAccount.save()
+        console.log(newAccount)
+        return newAccount
     }
     catch(error){
         // throw new Error(error.message)
