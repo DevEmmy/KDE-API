@@ -55,7 +55,8 @@ const signIn = async (req, res)=>{
             .then(async doMatch =>{
                 if(doMatch){
                     const token = jwt.sign({_id: user._id}, jwt_secret)
-                    res.json({token: token, message: "Signed In Successfully", user: user})
+                    const resp = await createAccount(newUser)
+                    res.json({token: token, message:"Successful", user: newUser, account: resp});
                 }
                 else{
                     res.status(403).json({message: "Wrong Password"})
