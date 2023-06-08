@@ -9,7 +9,7 @@ const { sendMail } = require("./nodemailer");
 const { reset_html } = require("../html_templates/html");
 const { initiateCart } = require("./cartController");
 const Verification = require("../models/verification.model");
-const { createAccount } = require("./accountController");
+const { createAccount, getAccountOnProbabtion } = require("./accountController");
 const Account = "../models/account.model"
 
 const upload = async (data)=>{
@@ -55,7 +55,7 @@ const signIn = async (req, res)=>{
             .then(async doMatch =>{
                 if(doMatch){
                     const token = jwt.sign({_id: user._id}, jwt_secret)
-                    const resp = await createAccount(user)
+                    const resp = await getAccountOnProbabtion(user)
                     res.json({token: token, message:"Successful", user: user, account: resp});
                 }
                 else{

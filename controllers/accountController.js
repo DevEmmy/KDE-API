@@ -466,6 +466,7 @@ const getAccount = async(req, res)=>{
     const loggedUser = req.user
     try{
         let loggedUserBankAccount = await Account.findOne({user: loggedUser._id})
+
         res.json(loggedUserBankAccount)
     }
     catch(err){
@@ -473,7 +474,24 @@ const getAccount = async(req, res)=>{
     }
 }
 
+const getAccountOnProbabtion = async (details)=>{
+    try{
+        let account = await Account.findOne({user: details._id})
+        if(account){
+            return account
+        }
+        else{
+            account = await createAccount(details)
+            return account
+        }
+    }
+    catch(err){
+        console.log(err)
+        return err
+    }
+}
+
 
 module.exports = {
-    createAccount, testCreateAccount, getBalance, transferFund, withdrawFund, getAccount, initiateTransaction, confirmCreditting
+    createAccount, testCreateAccount, getBalance, transferFund, withdrawFund, getAccount, initiateTransaction, confirmCreditting, getAccountOnProbabtion
 }
