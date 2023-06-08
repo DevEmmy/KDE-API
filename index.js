@@ -100,9 +100,9 @@ io.on("connection", (socket)=>{
 
 //set port and db uri
 const port = process.env.PORT || 9099
-const uri = process.env.DB_URI 
+const uri = "mongodb://127.0.0.1:27017/kde"
 
-// "mongodb://127.0.0.1:27017/kde"
+// process.env.DB_URI 
 // connect mongodb
 mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -139,7 +139,7 @@ app.post("/webhook", async (req, res, next) => {
 
     if(payload.details.status = 'Successful'){
          let transaction = {
-        user: await User.findById(payload.details.customer_ref),
+        user: await User.findOne({email : payload.details.customer_email}),
         amount: payload.details.data.amount,
         credit: true,
         message: payload.details.transaction_desc,

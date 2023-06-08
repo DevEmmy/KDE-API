@@ -66,7 +66,7 @@ const createAccount  = async (details)=>{
                 "transaction_ref_parent": null,
                 "amount": 0,
                 "customer": {
-                    "customer_ref": details._id,
+                    "customer_ref": details.phoneNumber1,
                     "firstname": details.firstName,
                     "surname": details.lastName,
                     "email": details.email,
@@ -85,7 +85,7 @@ const createAccount  = async (details)=>{
                     "address_line_1": details.address,
                     "address_line_2": details.city,
                     "city": details.city,
-                    "state": details.city,
+                    "state": details.state,
                     "country": details.country
                 }
             }
@@ -94,20 +94,20 @@ const createAccount  = async (details)=>{
         let response = await axios.post(`${bankUri}/transact`, data, {headers:setConfig(requestRef)})
         data = response.data.data.provider_response
         console.log(response.data)
-        data = {
-            'account_number': data.account_number,
-            'account_reference': data.account_reference,
-            'account_name': data.account_name,
-            'bank_name': data.bank_name,
-            'bank_code': data.bank_code,
-            'user': String(details._id),
-        }
+        // data = {
+        //     'account_number': data.account_number,
+        //     'account_reference': data.account_reference,
+        //     'account_name': data.account_name,
+        //     'bank_name': data.bank_name,
+        //     'bank_code': data.bank_code,
+        //     'user': String(details._id),
+        // }
 
         
-        let newAccount = new Account(data)
-        newAccount = await newAccount.save()
-        console.log(newAccount)
-        return newAccount
+        // let newAccount = new Account(data)
+        // newAccount = await newAccount.save()
+        // console.log(newAccount)
+        // return newAccount
     }
     catch(error){
         // throw new Error(error.message)
@@ -119,15 +119,15 @@ const testCreateAccount = async (req, res)=>{
     console.log(mock)
     
     let details = {
-        phoneNumber1: 08129833892,
+        phoneNumber1: "08029833895",
         firstName: "Joseph",
         lastName: "Amao",
         address: "No 21",
-        email: "eo60@gmail.com",
-        country: "Nigeria",
-        dob: new Date(2002, 10, 10),
-        title: "Dr",
-        gender: "male"
+        email: "eolao60@gmail.com",
+        // country: "Nigeria",
+        // dob: new Date(2002, 10, 10),
+        // title: "Dr",
+        // gender: "male"
     }
 
     try{
