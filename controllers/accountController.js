@@ -491,7 +491,59 @@ const getAccountOnProbabtion = async (details)=>{
     }
 }
 
+let transactionStatus = {
+    "PENDING": "PENDING",
+    "SUCCESSFUL": "SUCCESSFULL",
+    "FAILED": "FAILED"
+}
+
+const makeAPurchase = async (req, res)=>{
+    const loggedUser = req.user
+    const details = req.body;
+
+    // details = {
+    //     amount, message
+    // }
+    try{
+        let account = await Account.findOne({user: loggedUser._id})
+
+        if(details.amount > account.account_balance){
+            let transaction = {
+                amount: details.amount,
+                user: loggedUser,
+                message: details.message,
+                credit: false,
+                transaction_ref: null,
+                transaction_type: "Outflow",
+                status: transactionStatus.FAILED
+            }
+            transaction = await createTransaction(transaction)
+            res.status(403).json({message: "Insuffucient Balanced", transaction: transaction})
+        }
+        else{
+            let transaction = {
+                amount: details.amount,
+                user: loggedUser,
+                credit: false,
+                transaction_ref: null,
+                transaction_type: "Outflow",
+                status: transactionStatus.SUCCESSFUL
+            }
+            account.account_balance -= details.amount; 
+            account = await Account.findOneAndUpdate({user: loggedUser._id}, account, {new: true})
+            transaction = await createTransaction(transaction)
+            res.status({
+                account: account,
+                transaction: transaction
+            })
+        }
+        
+    }
+    catch(err){
+        res.status(err.status).json(err)
+    }
+}
 
 module.exports = {
-    createAccount, testCreateAccount, getBalance, transferFund, withdrawFund, getAccount, initiateTransaction, confirmCreditting, getAccountOnProbabtion
+    createAccount, testCreateAccount, getBalance, transferFund, withdrawFund, getAccount, initiateTransaction, confirmCreditting, getAccountOnProbabtion, makeAPurchase
 }
