@@ -1,0 +1,265 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CREAM API",
+    "description": "Real estate",
+    "version": "2.0.0",
+    "contact": {
+      "name": "CREAM",
+      "url": "https://github.com/daniel-dunsin"
+    }
+  },
+  "severs": [
+    {
+      "url": "https://github.com/DevEmmy/KDE-API",
+      "description": "GitHub URL"
+    }
+  ],
+
+  "paths": {
+    "/api/v2/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "phoneNumber1": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "min": 8
+                  },
+                  "confirmPassword": {
+                    "type": "string",
+                    "min": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": {
+            "description": "Account created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Verification email sent"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        "security": []
+      }
+    },
+    "/api/v2/auth/verify-account": {
+      "post": {
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful verification",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Account verified successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v2/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string", "min": 8 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginRes"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If account is not verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Your account is not verified, a new verification link has been sent to your email"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "otherNames": {
+            "type": "string"
+          },
+          "about": {
+            "type": "string"
+          },
+          "profilePicture": {
+            "type": "string"
+          },
+          "facebookUrl": { "type": "string" },
+          "instagramUrl": { "type": "string" },
+          "website": { "type": "string" },
+          "address": { "type": "string" },
+          "country": { "type": "string" },
+          "state": { "type": "string" },
+          "city": { "type": "string" },
+          "nationality": { "type": "string" },
+          "sex": { "type": "string" },
+          "dob": { "type": "string" },
+          "phoneNumber1": { "type": "number" },
+          "phoneNumber2": { "type": "number" },
+          "savedListings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "profileViews": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "number",
+                "viewedBy": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
+            }
+          },
+
+          "accountNumber": {
+            "type": "number"
+          },
+          "bankName": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "isSeller": {
+            "type": "boolean"
+          },
+          "totalListings": {
+            "type": "number"
+          },
+
+          "totalAvailableListings": {
+            "type": "number"
+          },
+          "subscribedToNewsletter": { "type": "boolean" }
+        }
+      },
+      "LoginRes": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth"
+    }
+  ]
+}

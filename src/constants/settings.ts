@@ -24,7 +24,7 @@ const settings = {
     email: process.env.EMAIL_ADDRESS,
     password: process.env.EMAIL_TEST_PASSWORD,
   },
-  jwtSecret: process.env.JWT_SECRET,
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   kde: {
     account: process.env.KDE_ACCOUNT,
     bank: process.env.KDE_BANK,

@@ -17,11 +17,11 @@ export const errorHandler = (
   next: NextFunction
 ) => {
   if (error instanceof CustomError) {
-    return res.status(error.code).json({ error: error.message });
+    return res.status(error.code).json({ error });
   }
   res.status(500).json({ error });
 };
 
 export const notFound = (req: Request, res: Response, next: NextFunction) => {
-  return next(new CustomError(404, "Requested route does not exist"));
+  res.status(404).json({ error: "Requested route does not exist" });
 };
