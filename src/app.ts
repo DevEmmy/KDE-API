@@ -24,6 +24,7 @@ app.get("/", (req, res, next) => {
 app.use("/doc", swagger.serve, swagger.setup(documentation));
 
 app.use("/api/v2/auth", routes.auth);
+app.use("/api/v2/user", routes.user);
 
 app.all("*", notFound);
 app.use(errorHandler);
