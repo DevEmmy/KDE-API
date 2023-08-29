@@ -41,7 +41,7 @@ export class UnauthorizedError extends CustomError {
   message: string;
 
   constructor(message: string) {
-    super(404, message);
+    super(401, message);
     this.message = message;
     this.name = "UnauthorizedError";
   }

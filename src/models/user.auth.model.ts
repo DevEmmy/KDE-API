@@ -13,7 +13,7 @@ const AuthSchema = new mongoose.Schema<IUserAuth>(
 );
 
 AuthSchema.pre("save", async function () {
-  if (this.isModified("password")) {
+  if (!this.isModified("password")) {
     this.password = await argon.hash(this.password);
   }
   return;

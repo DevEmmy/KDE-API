@@ -29,13 +29,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     phoneNumber1: { type: Number },
     phoneNumber2: { type: Number },
     savedListings: [{ type: Types.ObjectId, ref: Collections.listing }],
-    profileViews: {
-      count: { type: Number, default: 0 },
-      viewedBy: {
-        type: [{ type: Types.ObjectId, ref: Collections.user }],
-        default: [],
-      },
-    },
+    profileViews: { type: Number, default: 0 },
     accountNumber: { type: Number },
     accountName: { type: String },
     bankName: { type: String },

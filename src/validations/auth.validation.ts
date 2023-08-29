@@ -33,3 +33,21 @@ export const VerifyEmailInput = object({
     token: string().required("Provide token"),
   }),
 });
+
+export const RequestPasswordResetInput = object({
+  body: object({
+    email: string().required("Provide email").email("Provide a valid email"),
+  }),
+});
+
+export const ResetPasswordInput = object({
+  body: object({
+    password: string()
+      .required("Password is required")
+      .min(8, "Password must not be less than 8 characters"),
+    confirmPassword: string()
+      .required("confirmPassword is required")
+      .min(8, "Confirm password must not be less than 8 charcters"),
+    code: string().required("Provide code"),
+  }),
+});

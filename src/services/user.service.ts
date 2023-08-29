@@ -1,5 +1,10 @@
-import { BadRequestError, NotFoundError } from "../helpers/error-responses";
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} from "../helpers/error-responses";
 import { IUser } from "../interfaces/model/user.interface";
+import Auth from "../models/user.auth.model";
 import User from "../models/user.model";
 import { AuthService } from "./auth.service";
 
@@ -51,7 +56,7 @@ export class UserService {
     }
   }
 
-  async editUserProfile(body: Partial<IUser>, _id: string) {
+  async editProfile(body: Partial<IUser>, _id: string): Promise<IUser> {
     try {
       const user = await User.findById(_id);
 
@@ -75,10 +80,61 @@ export class UserService {
       user.dob = body.dob || user.dob;
       user.phoneNumber1 = body.phoneNumber1 || user.phoneNumber1;
       user.phoneNumber2 = body.phoneNumber2 || user.phoneNumber2;
+      user.accountName = body.accountName || user.accountName;
+      user.accountNumber = body.accountNumber || user.accountNumber;
+      user.bankName = body.bankName || user.bankName;
 
       const editedInfo = await user.save();
 
       return editedInfo;
+    } catch (error: any) {
+      throw new BadRequestError(error.message);
+    }
+  }
+
+  async deleteAccount(_id: string): Promise<void> {
+    try {
+      const user = await this.getUserById(_id);
+
+      await Auth.findOneAndDelete({ email: user.email });
+      await User.findByIdAndDelete(_id);
+    } catch (error: any) {
+      throw new BadRequestError(error.message);
+    }
+  }
+
+  async becomeASeller(_id: string): Promise<void> {
+    try {
+      const user = await User.findById(_id);
+
+      if (!user) {
+        throw new NotFoundError("User does not exist");
+      }
+
+      if (user.isSeller) {
+        throw new ForbiddenError("User is already a seller");
+      }
+
+      user.isSeller = true;
+
+      await user.save();
+    } catch (error: any) {
+      throw new BadRequestError(error.message);
+    }
+  }
+
+  async viewUserProfile(_id: string): Promise<IUser> {
+    try {
+      const user = await User.findById(_id);
+
+      if (!user) {
+        throw new NotFoundError("User does not exist");
+      }
+      user.profileViews += 1;
+
+      await user.save();
+
+      return user;
     } catch (error: any) {
       throw new BadRequestError(error.message);
     }

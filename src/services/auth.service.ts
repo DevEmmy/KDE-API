@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 import sendMail from "../config/mailer.config";
-import { verifyEmailHTML } from "../constants/mails";
+import { resetPasswordHTML, verifyEmailHTML } from "../constants/mails";
 import {
   BadRequestError,
   InternalServerError,
@@ -17,24 +17,38 @@ import User from "../models/user.model";
 import Token from "../models/user.token.model";
 import JWTHelper from "../helpers/Jwt.helper";
 import { ILoginRes } from "../interfaces/CustomResponses/auth.response";
+import Crypto from "crypto";
+import { UserService } from "./user.service";
+import argon2 from "argon2";
 
 export class AuthService {
-  private async createToken(email: string, type: ITokenTypes): Promise<IToken> {
-    const token = await Token.create({
-      email,
-      type: type,
-    });
+  private async createToken(
+    email: string,
+    type: ITokenTypes,
+    code?: string
+  ): Promise<IToken> {
+    const body: Partial<IToken> = { email, type };
+    if (code) {
+      body.token = code;
+    }
+
+    const token = await Token.create(body);
 
     return token;
   }
 
-  constructor() {}
+  private async generateCryptoToken(): Promise<string> {
+    const token = Crypto.randomBytes(32).toString("hex");
+
+    return token;
+  }
+
   async getUserAuth(param: Partial<IUserAuth>): Promise<IUserAuth> {
     try {
       const user = await Auth.findOne(param);
 
       if (!user) {
-        throw new BadRequestError("User does not exist");
+        throw new NotFoundError("User does not exist");
       }
 
       return user;
@@ -115,7 +129,7 @@ export class AuthService {
       const userAuth = await Auth.findOne({ email });
 
       if (!userAuth) {
-        throw new BadRequestError("User does not exist");
+        throw new NotFoundError("User does not exist");
       }
 
       if (userAuth?.verified) {
@@ -174,12 +188,64 @@ export class AuthService {
           "Your account is not verified, a new verification link has been sent to your email"
         );
       } else {
-        const accessToken = await JWTHelper.signAccessToken(
-          (user as IUser)._id
-        );
+        const accessToken = await JWTHelper.signAccessToken(userAuth._id);
 
         return { accessToken, user: user as IUser };
       }
+    } catch (error: any) {
+      throw new BadRequestError(error.message);
+    }
+  }
+
+  async sendPasswordResetToken(email: string): Promise<void> {
+    try {
+      const user = await User.findOne<IUser>({ email });
+
+      if (!user) {
+        throw new NotFoundError("User does not exist");
+      }
+
+      const hex = await this.generateCryptoToken();
+
+      const token = await this.createToken(
+        email,
+        ITokenTypes.passwordResetToken,
+        hex
+      );
+
+      await sendMail({
+        to: email,
+        subject: "Password reset link",
+        html: resetPasswordHTML(user, token.token),
+      });
+    } catch (error: any) {
+      throw new BadRequestError(error.message);
+    }
+  }
+
+  async resetPassword(body: Partial<IUserAuth>, token: string): Promise<void> {
+    try {
+      const { password, confirmPassword } = body;
+
+      if (password != confirmPassword) {
+        throw new BadRequestError("Passwords do not match");
+      }
+
+      const tokenInDb = await Token.findOne({
+        token,
+        type: ITokenTypes.passwordResetToken,
+      });
+
+      if (!tokenInDb) {
+        throw new NotFoundError("Token does not exist or has expired");
+      }
+
+      await Auth.findOneAndUpdate(
+        { email: tokenInDb.email },
+        { password: await argon2.hash(password as string) }
+      );
+
+      await tokenInDb.deleteOne();
     } catch (error: any) {
       throw new BadRequestError(error.message);
     }

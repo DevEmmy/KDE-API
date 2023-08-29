@@ -37,10 +37,7 @@ export interface IUser {
   phoneNumber1: number;
   phoneNumber2: number;
   savedListings: Array<string | Types.ObjectId>;
-  profileViews: {
-    count: number;
-    viewedBy: Array<string | Types.ObjectId | IUser>;
-  };
+  profileViews: number;
   accountNumber: number;
   bankName: string;
   accountName: string;

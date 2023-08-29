@@ -2,6 +2,8 @@ import { Router } from "express";
 import validate from "../validations";
 import {
   LoginInput,
+  RequestPasswordResetInput,
+  ResetPasswordInput,
   SignupInput,
   VerifyEmailInput,
 } from "../validations/auth.validation";
@@ -18,5 +20,16 @@ router.post(
 );
 
 router.post("/login", validate(LoginInput), authController.login);
+
+router.post(
+  "/forgot-password",
+  validate(RequestPasswordResetInput),
+  authController.requestPasswordResetToken
+);
+router.patch(
+  "/reset-password",
+  validate(ResetPasswordInput),
+  authController.resetPassword
+);
 
 export default router;

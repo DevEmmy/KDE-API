@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import logger from "./logger.config";
 
 export class CustomError extends Error {
   code: number;
@@ -16,8 +17,10 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  logger.error(error);
+
   if (error instanceof CustomError) {
-    return res.status(error.code).json({ error });
+    return res.status(error.code).json({ error: error.message });
   }
   res.status(500).json({ error });
 };

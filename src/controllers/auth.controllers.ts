@@ -74,6 +74,46 @@ class AuthController {
       return next(error.message);
     }
   };
+
+  public requestPasswordResetToken = async (
+    req: Request<{}, {}, Partial<IUserAuth>>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { email } = req.body;
+
+      await this.authServices.sendPasswordResetToken(email as string);
+
+      res.status(200).json({
+        message: "Password reset link has been sent to your email",
+        data: null,
+      });
+    } catch (error: any) {
+      return next(error.message);
+    }
+  };
+
+  public resetPassword = async (
+    req: Request<{}, {}, Partial<IUserAuth & { code: string }>>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { password, confirmPassword, code } = req.body;
+
+      await this.authServices.resetPassword(
+        { password, confirmPassword },
+        code as string
+      );
+
+      res
+        .status(200)
+        .json({ message: "Password reset successful", data: null });
+    } catch (error: any) {
+      return next(error.message);
+    }
+  };
 }
 
 const authController = new AuthController();
