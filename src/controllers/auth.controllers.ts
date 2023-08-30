@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../services/auth.service";
 import expressAsyncHandler from "express-async-handler";
 import { IUser, IUserAuth } from "../interfaces/model/user.interface";
+import { IRequest } from "../interfaces/CustomExpressHandlers";
 
 class AuthController {
   private readonly authServices: AuthService;
@@ -110,6 +111,31 @@ class AuthController {
       res
         .status(200)
         .json({ message: "Password reset successful", data: null });
+    } catch (error: any) {
+      return next(error.message);
+    }
+  };
+
+  public changePassword = async (
+    req: IRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { password, confirmPassword, oldPassword } = req.body;
+
+      const userId = req.userId;
+
+      await this.authServices.changePassword({
+        password,
+        confirmPassword,
+        oldPassword,
+        _id: userId,
+      });
+
+      res
+        .status(200)
+        .json({ message: "Password changed successfully", data: null });
     } catch (error: any) {
       return next(error.message);
     }

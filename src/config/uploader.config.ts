@@ -45,7 +45,7 @@ export const fileUploader = multer({
   ) {
     const acceptedExtensions = ["jpg", "png", "webp", "gif"];
 
-    if (acceptedExtensions.includes(file.mimetype.toLowerCase())) {
+    if (file.mimetype.includes("image")) {
       cb(null, true);
     } else {
       cb(null, false);
@@ -55,15 +55,18 @@ export const fileUploader = multer({
 
 export const uploadToCloud = async (filePath: string): Promise<string> => {
   try {
-    await imageService.compressImage(filePath);
+    // we ahve to return a new path because sharp does not replace the same image parsed as input
+    const newPath = await imageService.compressImage(filePath);
 
-    const image = await cloudinary.uploader.upload(filePath, {
+    const image = await cloudinary.uploader.upload(newPath, {
       folder: "CREAM IMAGES",
     });
 
     await fs.unlink(filePath, () => {
       logger.info(`File- ${filePath} deleted`);
     });
+
+    await fs.unlink(newPath, () => {});
 
     return image.url;
   } catch (error: any) {

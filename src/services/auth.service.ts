@@ -3,6 +3,7 @@ import sendMail from "../config/mailer.config";
 import { resetPasswordHTML, verifyEmailHTML } from "../constants/mails";
 import {
   BadRequestError,
+  ForbiddenError,
   InternalServerError,
   NotFoundError,
 } from "../helpers/error-responses";
@@ -246,6 +247,46 @@ export class AuthService {
       );
 
       await tokenInDb.deleteOne();
+    } catch (error: any) {
+      throw new BadRequestError(error.message);
+    }
+  }
+
+  async changePassword(body: Partial<IUserAuth & { oldPassword: string }>) {
+    try {
+      const { password, confirmPassword, _id, oldPassword } = body;
+
+      if (password !== confirmPassword) {
+        throw new BadRequestError("Password and confirm password do not match");
+      }
+
+      const user = await User.findById(_id);
+
+      if (!user) {
+        throw new NotFoundError("User does not exist");
+      }
+
+      // check if the old password is correct
+
+      const userAuth = await Auth.findOne({ email: user.email });
+
+      if (!userAuth) {
+        throw new NotFoundError("User Auth does not exist");
+      }
+
+      const isOldPasswordCorrect = await userAuth?.verifyPassword(
+        oldPassword as string
+      );
+
+      if (!isOldPasswordCorrect) {
+        throw new ForbiddenError("Old password is incorrect");
+      }
+
+      const newPasswordHash = await argon2.hash(password as string);
+
+      userAuth.password = newPasswordHash;
+
+      await userAuth?.save();
     } catch (error: any) {
       throw new BadRequestError(error.message);
     }

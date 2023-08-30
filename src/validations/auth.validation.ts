@@ -51,3 +51,17 @@ export const ResetPasswordInput = object({
     code: string().required("Provide code"),
   }),
 });
+
+export const ChangePasswordInput = object({
+  body: object({
+    password: string()
+      .required("Password is required")
+      .min(8, "Password must not be less than 8 characters"),
+    confirmPassword: string()
+      .required("confirmPassword is required")
+      .min(8, "Confirm password must not be less than 8 charcters"),
+    oldPassword: string()
+      .required("Old password is required")
+      .min(8, "Password must not be less than 8 characters"),
+  }),
+});

@@ -78,7 +78,7 @@ class UserController {
 
       res.status(200).json({ message: "You are now a seller", data: null });
     } catch (error: any) {
-      return next(error);
+      return next(error.message);
     }
   };
 
@@ -95,6 +95,27 @@ class UserController {
       res
         .status(200)
         .json({ message: "User profile fetched successfully", data });
+    } catch (error: any) {
+      return next(error.message);
+    }
+  };
+
+  public updateProfilePicture = async (
+    req: IRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const file = req.file?.path;
+      const userId = req.userId as string;
+
+      if (!file) {
+        throw new BadRequestError("Provide file");
+      }
+
+      const image = await this.userService.updateProfilePicture(file, userId);
+
+      res.status(200).json({ message: "Profile picture updated", data: image });
     } catch (error: any) {
       return next(error.message);
     }

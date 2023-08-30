@@ -1,3 +1,4 @@
+import { uploadToCloud } from "../config/uploader.config";
 import {
   BadRequestError,
   ForbiddenError,
@@ -135,6 +136,21 @@ export class UserService {
       await user.save();
 
       return user;
+    } catch (error: any) {
+      throw new BadRequestError(error.message);
+    }
+  }
+
+  async updateProfilePicture(
+    filePath: string,
+    userId: string
+  ): Promise<string> {
+    try {
+      const image = await uploadToCloud(filePath);
+
+      await User.findByIdAndUpdate(userId, { profilePicture: image });
+
+      return image;
     } catch (error: any) {
       throw new BadRequestError(error.message);
     }

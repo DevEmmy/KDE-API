@@ -237,6 +237,54 @@
         }
       }
     },
+    "/api/v2/auth/change-password": {
+      "patch": {
+        "tags": ["Auth"],
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "oldPassword": {
+                    "type": "string",
+                    "min": 8
+                  },
+                  "password": {
+                    "type": "string",
+                    "min": 8
+                  },
+                  "confirmPassword": {
+                    "type": "string",
+                    "min": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Password changed successfully"
+                    },
+                    "data": { "type": null }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
 
     "/api/v2/user/": {
       "get": {
@@ -362,6 +410,48 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/user/profile-picture": {
+      "put": {
+        "tags": ["User"],
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dp": {
+                    "type": "string",
+                    "description": "Use formdata.append('image', <the file>) to upload this"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "string",
+                      "description": "The image url"
+                    }
+                  }
                 }
               }
             }

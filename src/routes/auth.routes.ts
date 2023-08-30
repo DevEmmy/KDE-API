@@ -1,6 +1,7 @@
 import { Router } from "express";
 import validate from "../validations";
 import {
+  ChangePasswordInput,
   LoginInput,
   RequestPasswordResetInput,
   ResetPasswordInput,
@@ -8,6 +9,7 @@ import {
   VerifyEmailInput,
 } from "../validations/auth.validation";
 import authController from "../controllers/auth.controllers";
+import isAuth from "../middlewares/isAuth";
 
 const router = Router();
 
@@ -30,6 +32,12 @@ router.patch(
   "/reset-password",
   validate(ResetPasswordInput),
   authController.resetPassword
+);
+router.patch(
+  "/change-password",
+  isAuth,
+  validate(ChangePasswordInput),
+  authController.changePassword
 );
 
 export default router;

@@ -6,6 +6,7 @@ import {
   EditUserInput,
   GetUserProfileInput,
 } from "../validations/user.validation";
+import { fileUploader } from "../config/uploader.config";
 
 const router = Router();
 
@@ -20,6 +21,12 @@ router.get(
   "/profile/:id",
   validate(GetUserProfileInput),
   userController.viewUserProfile
+);
+router.patch(
+  "/profile-picture",
+  isAuth,
+  fileUploader.single("dp"),
+  userController.updateProfilePicture
 );
 
 export default router;

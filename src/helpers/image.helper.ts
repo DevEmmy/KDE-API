@@ -18,13 +18,15 @@ class ImageService {
   constructor() {}
 
   // convert the images to jpeg
-  public async compressImage(imagePath: string) {
+  public async compressImage(imagePath: string): Promise<string> {
     const metadata = this.getImageMetadata(imagePath);
 
     await sharp(imagePath)
       .resize(800)
       .toFormat("jpeg", { mozjpeg: true })
-      .toFile(imagePath);
+      .toFile(imagePath + "1");
+
+    return imagePath + "1";
   }
 }
 
