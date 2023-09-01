@@ -13,7 +13,7 @@ const validate =
 
       next();
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
 

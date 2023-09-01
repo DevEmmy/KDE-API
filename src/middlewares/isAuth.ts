@@ -36,7 +36,7 @@ const isAuth = async (req: IRequest, res: Response, next: NextFunction) => {
 
     next();
   } catch (error: any) {
-    return next(error.message);
+    return next(error);
   }
 };
 

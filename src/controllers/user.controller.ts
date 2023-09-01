@@ -26,7 +26,7 @@ class UserController {
         .status(200)
         .json({ message: "User profile fetched successfully", data });
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
 
@@ -45,7 +45,7 @@ class UserController {
         .status(200)
         .json({ message: "User profile updated successfully", data });
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
   public deleteAccount = async (
@@ -62,7 +62,7 @@ class UserController {
         .status(200)
         .json({ message: "User account deleted successfully", data: null });
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
 
@@ -78,7 +78,7 @@ class UserController {
 
       res.status(200).json({ message: "You are now a seller", data: null });
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
 
@@ -96,7 +96,7 @@ class UserController {
         .status(200)
         .json({ message: "User profile fetched successfully", data });
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
 
@@ -117,7 +117,7 @@ class UserController {
 
       res.status(200).json({ message: "Profile picture updated", data: image });
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
 }

@@ -19,10 +19,12 @@ export const errorHandler = (
 ) => {
   logger.error(error);
 
-  if (error instanceof CustomError) {
-    return res.status(error.code).json({ error: error.message });
+  if ((error as CustomError)?.code) {
+    return res
+      .status((error as CustomError)?.code)
+      .json({ error: error.message });
   }
-  res.status(500).json({ error });
+  res.status(500).json({ error: error.message || error });
 };
 
 export const notFound = (req: Request, res: Response, next: NextFunction) => {

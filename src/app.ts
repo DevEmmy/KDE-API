@@ -25,6 +25,8 @@ app.use("/doc", swagger.serve, swagger.setup(documentation));
 
 app.use("/api/v2/auth", routes.auth);
 app.use("/api/v2/user", routes.user);
+app.use("/api/v2/newsletter", routes.newsletter);
+app.use("/api/v2/category", routes.category);
 
 app.all("*", notFound);
 app.use(errorHandler);

@@ -5,7 +5,6 @@ config();
 const settings = {
   mongo: {
     url: process.env.DB_URI,
-    collections: {},
   },
   port: process.env.PORT || 3001,
   bank: {

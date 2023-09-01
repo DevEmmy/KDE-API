@@ -48,6 +48,7 @@ export interface IUser {
   subscribedToNewsletter: boolean;
   createdAt: Date;
   updatedAt: Date;
+  isAdmin: boolean;
 }
 export interface IUserAuth {
   _id: string;

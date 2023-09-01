@@ -3,4 +3,6 @@ export enum Collections {
   user = "user",
   token = "token",
   listing = "listing",
+  newsletterSubscription = "newsletterSubscription",
+  category = "category",
 }

@@ -45,17 +45,13 @@ export class AuthService {
   }
 
   async getUserAuth(param: Partial<IUserAuth>): Promise<IUserAuth> {
-    try {
-      const user = await Auth.findOne(param);
+    const user = await Auth.findOne(param);
 
-      if (!user) {
-        throw new NotFoundError("User does not exist");
-      }
-
-      return user;
-    } catch (error: any) {
-      throw new BadRequestError(error.message);
+    if (!user) {
+      throw new NotFoundError("User does not exist");
     }
+
+    return user;
   }
 
   async createAccount(body: Partial<IUser & IUserAuth>) {
@@ -104,191 +100,169 @@ export class AuthService {
   }
 
   async verifyAccount(token: string) {
-    try {
-      /**
-       * Check if the token exist.
-       * Check if the account is already verified
-       * Verify if not
-       */
+    /**
+     * Check if the token exist.
+     * Check if the account is already verified
+     * Verify if not
+     */
 
-      const tokenInDb = await Token.findOne({
-        token,
-        type: ITokenTypes.accountVerificationToken,
-      });
+    const tokenInDb = await Token.findOne({
+      token,
+      type: ITokenTypes.accountVerificationToken,
+    });
 
-      if (!tokenInDb) {
-        throw new NotFoundError("Token does not exist or has expired");
-      }
-
-      const email = tokenInDb.email;
-
-      await Token.findOneAndDelete({
-        token,
-        type: ITokenTypes.accountVerificationToken,
-      });
-
-      const userAuth = await Auth.findOne({ email });
-
-      if (!userAuth) {
-        throw new NotFoundError("User does not exist");
-      }
-
-      if (userAuth?.verified) {
-        throw new BadRequestError(
-          "Account is already verified, kinldy proceed to login"
-        );
-      }
-
-      userAuth.verified = true;
-
-      await userAuth.save();
-    } catch (error: any) {
-      throw new BadRequestError(error.message);
+    if (!tokenInDb) {
+      throw new NotFoundError("Token does not exist or has expired");
     }
+
+    const email = tokenInDb.email;
+
+    await Token.findOneAndDelete({
+      token,
+      type: ITokenTypes.accountVerificationToken,
+    });
+
+    const userAuth = await Auth.findOne({ email });
+
+    if (!userAuth) {
+      throw new NotFoundError("User does not exist");
+    }
+
+    if (userAuth?.verified) {
+      throw new BadRequestError(
+        "Account is already verified, kinldy proceed to login"
+      );
+    }
+
+    userAuth.verified = true;
+
+    await userAuth.save();
   }
 
   async loginUser(body: Partial<IUserAuth>): Promise<ILoginRes> {
     const { email, password } = body;
 
-    try {
-      const userAuth = await Auth.findOne({ email });
+    const userAuth = await Auth.findOne({ email });
 
-      if (!userAuth) {
-        throw new NotFoundError("Email/password is incorrect");
-      }
-
-      const isPasswordCorrect = await userAuth.verifyPassword(
-        password as string
-      );
-
-      if (!isPasswordCorrect) {
-        throw new BadRequestError("Email/password is incorrect");
-      }
-
-      const user = await User.findOne<IUser>({ email });
-
-      if (!userAuth.verified) {
-        // delete the previous token if it exists then create a new one
-        await Token.findOneAndDelete({
-          email,
-          type: ITokenTypes.accountVerificationToken,
-        });
-
-        const token = await this.createToken(
-          email as string,
-          ITokenTypes.accountVerificationToken
-        );
-
-        await sendMail({
-          to: email,
-          subject: "Verify account",
-          html: verifyEmailHTML(user as IUser, token.token),
-        });
-
-        throw new BadRequestError(
-          "Your account is not verified, a new verification link has been sent to your email"
-        );
-      } else {
-        const accessToken = await JWTHelper.signAccessToken(userAuth._id);
-
-        return { accessToken, user: user as IUser };
-      }
-    } catch (error: any) {
-      throw new BadRequestError(error.message);
+    if (!userAuth) {
+      throw new NotFoundError("Email/password is incorrect");
     }
-  }
 
-  async sendPasswordResetToken(email: string): Promise<void> {
-    try {
-      const user = await User.findOne<IUser>({ email });
+    const isPasswordCorrect = await userAuth.verifyPassword(password as string);
 
-      if (!user) {
-        throw new NotFoundError("User does not exist");
-      }
+    if (!isPasswordCorrect) {
+      throw new BadRequestError("Email/password is incorrect");
+    }
 
-      const hex = await this.generateCryptoToken();
+    const user = await User.findOne<IUser>({ email });
+
+    if (!userAuth.verified) {
+      // delete the previous token if it exists then create a new one
+      await Token.findOneAndDelete({
+        email,
+        type: ITokenTypes.accountVerificationToken,
+      });
 
       const token = await this.createToken(
-        email,
-        ITokenTypes.passwordResetToken,
-        hex
+        email as string,
+        ITokenTypes.accountVerificationToken
       );
 
       await sendMail({
         to: email,
-        subject: "Password reset link",
-        html: resetPasswordHTML(user, token.token),
+        subject: "Verify account",
+        html: verifyEmailHTML(user as IUser, token.token),
       });
-    } catch (error: any) {
-      throw new BadRequestError(error.message);
+
+      throw new BadRequestError(
+        "Your account is not verified, a new verification link has been sent to your email"
+      );
+    } else {
+      const accessToken = await JWTHelper.signAccessToken(userAuth._id);
+
+      return { accessToken, user: user as IUser };
     }
+  }
+
+  async sendPasswordResetToken(email: string): Promise<void> {
+    const user = await User.findOne<IUser>({ email });
+
+    if (!user) {
+      throw new NotFoundError("User does not exist");
+    }
+
+    const hex = await this.generateCryptoToken();
+
+    const token = await this.createToken(
+      email,
+      ITokenTypes.passwordResetToken,
+      hex
+    );
+
+    await sendMail({
+      to: email,
+      subject: "Password reset link",
+      html: resetPasswordHTML(user, token.token),
+    });
   }
 
   async resetPassword(body: Partial<IUserAuth>, token: string): Promise<void> {
-    try {
-      const { password, confirmPassword } = body;
+    const { password, confirmPassword } = body;
 
-      if (password != confirmPassword) {
-        throw new BadRequestError("Passwords do not match");
-      }
-
-      const tokenInDb = await Token.findOne({
-        token,
-        type: ITokenTypes.passwordResetToken,
-      });
-
-      if (!tokenInDb) {
-        throw new NotFoundError("Token does not exist or has expired");
-      }
-
-      await Auth.findOneAndUpdate(
-        { email: tokenInDb.email },
-        { password: await argon2.hash(password as string) }
-      );
-
-      await tokenInDb.deleteOne();
-    } catch (error: any) {
-      throw new BadRequestError(error.message);
+    if (password != confirmPassword) {
+      throw new BadRequestError("Passwords do not match");
     }
+
+    const tokenInDb = await Token.findOne({
+      token,
+      type: ITokenTypes.passwordResetToken,
+    });
+
+    if (!tokenInDb) {
+      throw new NotFoundError("Token does not exist or has expired");
+    }
+
+    await Auth.findOneAndUpdate(
+      { email: tokenInDb.email },
+      { password: await argon2.hash(password as string) }
+    );
+
+    await tokenInDb.deleteOne();
   }
 
   async changePassword(body: Partial<IUserAuth & { oldPassword: string }>) {
-    try {
-      const { password, confirmPassword, _id, oldPassword } = body;
+    const { password, confirmPassword, _id, oldPassword } = body;
 
-      if (password !== confirmPassword) {
-        throw new BadRequestError("Password and confirm password do not match");
-      }
-
-      const user = await User.findById(_id);
-
-      if (!user) {
-        throw new NotFoundError("User does not exist");
-      }
-
-      // check if the old password is correct
-
-      const userAuth = await Auth.findOne({ email: user.email });
-
-      if (!userAuth) {
-        throw new NotFoundError("User Auth does not exist");
-      }
-
-      const isOldPasswordCorrect = await userAuth?.verifyPassword(
-        oldPassword as string
-      );
-
-      if (!isOldPasswordCorrect) {
-        throw new ForbiddenError("Old password is incorrect");
-      }
-
-      const newPasswordHash = await argon2.hash(password as string);
-
-      userAuth.password = newPasswordHash;
-
-      await userAuth?.save();
-    } catch (error: any) {
-      throw new BadRequestError(error.message);
+    if (password !== confirmPassword) {
+      throw new BadRequestError("Password and confirm password do not match");
     }
+
+    const user = await User.findById(_id);
+
+    if (!user) {
+      throw new NotFoundError("User does not exist");
+    }
+
+    // check if the old password is correct
+
+    const userAuth = await Auth.findOne({ email: user.email });
+
+    if (!userAuth) {
+      throw new NotFoundError("User Auth does not exist");
+    }
+
+    const isOldPasswordCorrect = await userAuth?.verifyPassword(
+      oldPassword as string
+    );
+
+    if (!isOldPasswordCorrect) {
+      throw new ForbiddenError("Old password is incorrect");
+    }
+
+    const newPasswordHash = await argon2.hash(password as string);
+
+    userAuth.password = newPasswordHash;
+
+    await userAuth?.save();
   }
 }

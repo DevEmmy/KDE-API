@@ -24,6 +24,7 @@ class AuthController {
         email,
         confirmPassword,
         phoneNumber1,
+        isAdmin,
       } = req.body;
 
       await this.authServices.createAccount({
@@ -33,11 +34,12 @@ class AuthController {
         password,
         confirmPassword,
         phoneNumber1,
+        isAdmin: isAdmin ? true : false,
       });
 
       res.status(201).json({ message: "Verification email sent" });
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
 
@@ -53,7 +55,7 @@ class AuthController {
 
       res.status(200).json({ message: "Account verified successfully" });
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
 
@@ -72,7 +74,7 @@ class AuthController {
         data: { accessToken: response.accessToken, user: response.user },
       });
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
 
@@ -91,7 +93,7 @@ class AuthController {
         data: null,
       });
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
 
@@ -112,7 +114,7 @@ class AuthController {
         .status(200)
         .json({ message: "Password reset successful", data: null });
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
 
@@ -137,7 +139,7 @@ class AuthController {
         .status(200)
         .json({ message: "Password changed successfully", data: null });
     } catch (error: any) {
-      return next(error.message);
+      return next(error);
     }
   };
 }
