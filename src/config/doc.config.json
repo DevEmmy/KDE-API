@@ -396,7 +396,7 @@
     "/api/v2/user/{id}": {
       "parameters": [
         {
-          "in": "params",
+          "in": "path",
           "name": "id",
           "required": true,
           "description": "The user id",
@@ -504,7 +504,7 @@
         "parameters": [
           {
             "required": true,
-            "in": "params",
+            "in": "path",
             "description": "the subscriber's email",
             "name": "email",
             "schema": { "type": "string" }
@@ -521,6 +521,134 @@
                       "type": "string",
                       "example": "You have successfully unsubscribed from CREAM newsletter"
                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/category": {
+      "post": {
+        "tags": ["Listing Category"],
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "title": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category Added Successfully"
+                    },
+                    "data": { "$ref": "#/components/schemas/Category" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "security": [{ "bearer": [] }],
+        "tags": ["Listing Category"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Categories fetched successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Category"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/category/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "name": "id"
+        }
+      ],
+      "put": {
+        "security": [{ "bearer": {} }],
+        "tags": ["Listing Category"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "title": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category Edited Successfully"
+                    },
+                    "data": { "$ref": "#/components/schemas/Category" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [{ "bearer": {} }],
+        "tags": ["Listing Category"],
+
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category deleted Successfully"
+                    },
+                    "data": null
                   }
                 }
               }
