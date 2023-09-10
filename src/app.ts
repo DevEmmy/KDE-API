@@ -27,6 +27,7 @@ app.use("/api/v2/auth", routes.auth);
 app.use("/api/v2/user", routes.user);
 app.use("/api/v2/newsletter", routes.newsletter);
 app.use("/api/v2/category", routes.category);
+app.use("/api/v2/listing", routes.listing);
 
 app.all("*", notFound);
 app.use(errorHandler);

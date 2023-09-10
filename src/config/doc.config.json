@@ -656,6 +656,40 @@
           }
         }
       }
+    },
+
+    "/api/v2/listing/": {
+      "post": {
+        "description": "create listing (must be a seller)",
+        "tags": ["Listing"],
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/form-data": {
+              "schema": { "$ref": "#/components/schemas/PartialListing" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "You have successfully created a listing"
+                    },
+                    "data": { "$ref": "#/components/schemas/Listing" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -690,6 +724,29 @@
           "dob": { "type": "string" },
           "phoneNumber1": { "type": "number" },
           "phoneNumber2": { "type": "number" }
+        }
+      },
+
+      "PartialListing": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "title": { "type": "string" },
+          "location": { "type": "string" },
+          "features": { "type": "array", "items": { "type": "string" } },
+          "description": { "type": "string" },
+          "price": { "type": "number" },
+          "attachedDocuments": { "type": "string" },
+          "year": { "type": "number" },
+          "offerType": { "type": "string", "example": "sale/rent" },
+          "noOfBathrooms": { "type": "number" },
+          "noOfBedrooms": { "type": "number" },
+          "carCondition": { "type": "string", "example": "new/used" },
+          "engineType": { "type": "string" },
+          "color": { "type": "string" },
+          "model": { "type": "string" }
         }
       },
       "Category": {
@@ -777,6 +834,40 @@
           "subscribedToNewsletter": { "type": "boolean" }
         }
       },
+      "Listing": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "title": { "type": "string" },
+          "owner": {
+            "$ref": "#/components/schemas/User"
+          },
+          "images": { "type": "array", "items": { "type": "string" } },
+          "videos": { "type": "array", "items": { "type": "string" } },
+          "location": { "type": "string" },
+          "features": { "type": "array", "items": { "type": "string" } },
+          "description": { "type": "string" },
+          "price": { "type": "number" },
+          "isAvailable": { "type": "boolean" },
+          "views": { "type": "number" },
+          "savedBy": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/User" }
+          },
+          "rentedBy": { "$ref": "#/components/schemas/User" },
+          "attachedDocuments": { "type": "string" },
+          "year": { "type": "number" },
+          "offerType": { "type": "string", "example": "sale/rent" },
+          "noOfBathrooms": { "type": "number" },
+          "noOfBedrooms": { "type": "number" },
+          "carCondition": { "type": "string", "example": "new/used" },
+          "engineType": { "type": "string" },
+          "color": { "type": "string" },
+          "model": { "type": "string" }
+        }
+      },
       "LoginRes": {
         "type": "object",
         "properties": {
@@ -808,6 +899,9 @@
     },
     {
       "name": "Listing Category"
+    },
+    {
+      "name": "Listing"
     }
   ]
 }

@@ -106,7 +106,7 @@ class UserController {
     next: NextFunction
   ) => {
     try {
-      const file = req.file?.path;
+      const file = <Express.Multer.File>req.file;
       const userId = req.userId as string;
 
       if (!file) {

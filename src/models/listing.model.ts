@@ -74,6 +74,7 @@ const ListingSchema = new mongoose.Schema<IListing>(
     },
     noOfBathrooms: { type: Number },
     noOfBedrooms: { type: Number },
+    rentedBy: { type: Types.ObjectId, ref: Collections.user },
     carCondition: {
       typr: String,
       enum: [ICarConditions.new, ICarConditions.used],
@@ -84,3 +85,6 @@ const ListingSchema = new mongoose.Schema<IListing>(
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+const Listing = mongoose.model(Collections.listing, ListingSchema);
+export default Listing;

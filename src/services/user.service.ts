@@ -114,10 +114,10 @@ export class UserService {
   }
 
   async updateProfilePicture(
-    filePath: string,
+    file: Express.Multer.File,
     userId: string
   ): Promise<string> {
-    const image = await uploadToCloud(filePath);
+    const image = await uploadToCloud(file);
 
     await User.findByIdAndUpdate(userId, { profilePicture: image });
 

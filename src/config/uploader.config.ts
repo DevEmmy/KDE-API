@@ -1,5 +1,5 @@
 import multer from "multer";
-import { v2 } from "cloudinary";
+import { UploadApiOptions, v2 } from "cloudinary";
 import settings from "../constants/settings";
 import { BadRequestError } from "../helpers/error-responses";
 import { Request } from "express";
@@ -34,7 +34,16 @@ export const fileUploader = multer({
       file: Express.Multer.File,
       cb: MulterStorageCallback
     ) {
-      cb(null, `${file.originalname}-${v4()}`);
+      let fileName: any = file.originalname;
+      // add a uuid before the extension
+
+      fileName = fileName.split(".");
+
+      fileName[fileName.length - 2] = fileName[fileName.length - 2] + v4();
+
+      fileName = fileName.join(".");
+
+      cb(null, `${fileName}`);
     },
   }),
 
@@ -45,7 +54,7 @@ export const fileUploader = multer({
   ) {
     const acceptedExtensions = ["jpg", "png", "webp", "gif"];
 
-    if (file.mimetype.includes("image")) {
+    if (file.mimetype.includes("image") || file.mimetype.includes("video")) {
       cb(null, true);
     } else {
       cb(null, false);
@@ -53,23 +62,34 @@ export const fileUploader = multer({
   },
 });
 
-export const uploadToCloud = async (filePath: string): Promise<string> => {
+export const uploadToCloud = async (
+  file: Express.Multer.File,
+  options?: UploadApiOptions
+): Promise<string> => {
   try {
-    // we ahve to return a new path because sharp does not replace the same image parsed as input
-    const newPath = await imageService.compressImage(filePath);
+    let newPath: string;
 
-    const image = await cloudinary.uploader.upload(newPath, {
-      folder: "CREAM IMAGES",
+    // we ahve to return a new path because sharp does not replace the same image parsed as input
+    if (file.mimetype.includes("image")) {
+      console.log("file.mimetype");
+      newPath = await imageService.compressImage(file.path);
+    } else {
+      newPath = file.path;
+    }
+
+    const media = await cloudinary.uploader.upload(newPath, {
+      folder: "CREAM MEDIA",
+      ...options,
     });
 
-    await fs.unlink(filePath, () => {
-      logger.info(`File- ${filePath} deleted`);
+    await fs.unlink(file.path, () => {
+      logger.info(`File- ${file.path} deleted`);
     });
 
     await fs.unlink(newPath, () => {});
 
-    return image.url;
+    return media.url;
   } catch (error: any) {
-    throw new BadRequestError(error.message);
+    throw new BadRequestError(error);
   }
 };
