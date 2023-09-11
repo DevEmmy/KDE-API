@@ -689,6 +689,195 @@
             }
           }
         }
+      },
+
+      "get": {
+        "description": "Get all listings",
+        "tags": ["Listing"],
+        "security": [{ "bearer": [] }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Listing" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/listing/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "required": true,
+          "name": "id",
+          "schema": { "type": "string" }
+        }
+      ],
+      "get": {
+        "description": "get single listing",
+        "security": [{ "bearer": [] }],
+        "tags": ["Listing"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Listing" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Listing"],
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/form-data": {
+              "schema": { "$ref": "#/components/schemas/PartialListing" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Listing" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [{ "bearer": [] }],
+        "tags": ["Listing"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/v2/listing/user/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "required": true,
+          "name": "id",
+          "description": "the user id",
+          "schema": { "type": "string" }
+        }
+      ],
+      "get": {
+        "description": "get user listing (this request is to be made by other users)",
+        "security": [{ "bearer": [] }],
+        "tags": ["Listing"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Listing" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/listing/user/": {
+      "get": {
+        "description": "get user listing (this request is to be made by the user gangan😅)",
+        "security": [{ "bearer": [] }],
+        "tags": ["Listing"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Listing" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/v2/listing/save/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "required": true,
+          "name": "id",
+          "description": "the listing id",
+          "schema": { "type": "string" }
+        }
+      ],
+      "patch": {
+        "description": "Use this endpoint to save and unsave a listing",
+        "security": [{ "bearer": [] }],
+        "tags": ["Listing"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "message": { "type": "string" } }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },

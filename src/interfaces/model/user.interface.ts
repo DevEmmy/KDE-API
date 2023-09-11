@@ -36,7 +36,6 @@ export interface IUser {
   dob: Date | string;
   phoneNumber1: number;
   phoneNumber2: number;
-  savedListings: Array<string | Types.ObjectId>;
   profileViews: number;
   accountNumber: number;
   bankName: string;

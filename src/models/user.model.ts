@@ -28,7 +28,6 @@ const UserSchema = new mongoose.Schema<IUser>(
     dob: { type: Date },
     phoneNumber1: { type: Number },
     phoneNumber2: { type: Number },
-    savedListings: [{ type: Types.ObjectId, ref: Collections.listing }],
     profileViews: { type: Number, default: 0 },
     accountNumber: { type: Number },
     accountName: { type: String },
