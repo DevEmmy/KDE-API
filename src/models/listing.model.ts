@@ -76,7 +76,7 @@ const ListingSchema = new mongoose.Schema<IListing>(
     noOfBedrooms: { type: Number },
     rentedBy: { type: Types.ObjectId, ref: Collections.user },
     carCondition: {
-      typr: String,
+      type: String,
       enum: [ICarConditions.new, ICarConditions.used],
     },
     engineType: { type: String },

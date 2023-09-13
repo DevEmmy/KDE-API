@@ -172,8 +172,6 @@ export default class ListingService {
       throw new NotFoundError("listing does not exist");
     }
 
-    listing = listing.toObject();
-
     if (listing.savedBy.includes(userId.toString())) {
       listing.savedBy = listing.savedBy.filter(
         (user) => user.toString() != userId.toString()

@@ -159,7 +159,6 @@ class ListingController {
   ) => {
     try {
       const userId = <string>req.userId || req.params.id;
-
       const data = await this.listingService.getUserListings(userId);
 
       res

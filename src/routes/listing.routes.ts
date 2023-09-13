@@ -17,19 +17,23 @@ router
   .post(
     isAuth,
     isSeller,
-    validate(CreateListingInput),
     fileUploader.array("media"),
+    validate(CreateListingInput),
     listingController.createListing
   )
   .get(listingController.getAllListings);
+
+router.get("/user", isAuth, listingController.getUserListing);
+router.get("/user/:id", listingController.getUserListing);
+router.patch("/save/:id", isAuth, listingController.saveListing);
 
 router
   .route("/:id")
   .patch(
     isAuth,
     isSeller,
-    validate(EditListingInput),
     fileUploader.array("media"),
+    validate(EditListingInput),
     listingController.editListing
   )
   .delete(
@@ -39,9 +43,5 @@ router
     listingController.deleteListing
   )
   .get(listingController.getSingleListing);
-
-router.get("/user", isAuth, listingController.getUserListing);
-router.get("/user/:id", listingController.getUserListing);
-router.patch("/save/:id", isAuth, listingController.saveListing);
 
 export default router;

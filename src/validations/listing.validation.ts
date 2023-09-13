@@ -16,7 +16,7 @@ export const CreateListingInput = object({
     price: number().required(),
     attachedDocuments: array().required(),
     year: number().required(),
-    offerType: string().required("offer must be sale/rent"),
+    offerType: string().required("offerType must be sale/rent"),
     noOfBathrooms: number().notRequired(),
     noOfBedrooms: number().notRequired(),
     carCondition: string().notRequired(),
