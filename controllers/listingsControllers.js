@@ -11,7 +11,8 @@ const getAllListing = async (req, res) => {
     category = await Category.findOne({ slug: category })
     const length = (await Listing.find({ category: category?._id,forRent: forRent || false })).length
 
-    await Listing.find({ category: category?._id, forRent: forRent || false }).populate("postedBy").populate("category").skip(((page || 1) - 1) * limit)
+    if(category){
+        await Listing.find({ category: category?._id, forRent: forRent || false }).populate("postedBy").populate("category").skip(((page || 1) - 1) * limit)
         .limit(limit)
         .then(resp => {
             // console.log(resp)
@@ -22,12 +23,20 @@ const getAllListing = async (req, res) => {
         }
         )
         .catch(error => res.json({ message: "An Error Occured", error: error }))
+    }
+    else{
+        await Listing.find().populate("postedBy").populate("category")
+        .then(resp => {
+            res.json(resp)
+        }
+        )
+    .catch(error => res.json({ message: "An Error Occured", error: error }))
+    }
 }
 
 
 const getAll = async (req, res)=>{
-    await Listing.find().populate("postedBy").populate("category").skip(((page || 1) - 1) * limit)
-        .limit(limit)
+    await Listing.find().populate("postedBy").populate("category")
         .then(resp => {
             
             res.json({})
