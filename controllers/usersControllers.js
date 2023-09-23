@@ -284,11 +284,10 @@ const generatePasswordResetToken = async (email, res) => {
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     user.resetPasswordToken = token;
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-   await User.findOneAndUpdate({ email }, user)
+    await User.findOneAndUpdate({ email }, user)
     .then(async user => {
         // console.log(user.firstName)
         await sendMail(email, "King David Elite", "Your Password Reset Token", reset_html(user, token), res);
-   
     })
     // .catch(err => res.json(err))
   
@@ -331,7 +330,7 @@ const resetPassword = async (token, password, res) => {
     user.password = hashedPassword;
     user.resetPasswordToken = null;
     user.resetPasswordExpires = null;
-    await User.findOne({resetPasswordToken: token})
+    await User.findOneAndUpdate({resetPasswordToken: token})
     .then(user => res.json(user))
     .catch(err => res.json(err))
   };
