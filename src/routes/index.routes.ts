@@ -3,6 +3,7 @@ import user from "./user.routes";
 import newsletter from "./newsletter.routes";
 import category from "./category.routes";
 import listing from "./listing.routes";
+import article from "./article.routes";
 
 const routes = {
   auth,
@@ -10,6 +11,7 @@ const routes = {
   newsletter,
   category,
   listing,
+  article,
 };
 
 export default routes;

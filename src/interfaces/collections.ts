@@ -5,4 +5,5 @@ export enum Collections {
   listing = "listing",
   newsletterSubscription = "newsletterSubscription",
   category = "category",
+  article = "article",
 }
