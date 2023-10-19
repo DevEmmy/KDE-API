@@ -67,17 +67,7 @@ export const uploadToCloud = async (
   options?: UploadApiOptions
 ): Promise<string> => {
   try {
-    let newPath: string;
-
-    // we ahve to return a new path because sharp does not replace the same image parsed as input
-    if (file.mimetype.includes("image")) {
-      console.log("file.mimetype");
-      newPath = await imageService.compressImage(file.path);
-    } else {
-      newPath = file.path;
-    }
-
-    const media = await cloudinary.uploader.upload(newPath, {
+    const media = await cloudinary.uploader.upload(file.path, {
       folder: "CREAM MEDIA",
       ...options,
     });
@@ -86,10 +76,37 @@ export const uploadToCloud = async (
       logger.info(`File- ${file.path} deleted`);
     });
 
-    await fs.unlink(newPath, () => {});
-
     return media.url;
   } catch (error: any) {
     throw new BadRequestError(error);
   }
+};
+
+interface Base64Media extends Express.Multer.File {
+  base64: string;
+}
+
+export const uploadListingMedia = async (
+  media: Base64Media[] | any[],
+  option: UploadApiOptions
+) => {
+  let i = 0;
+  const ims = [];
+  while (i < media.length) {
+    if (media[i].base64) {
+      await cloudinary.uploader
+        .upload(media[i].base64, option)
+        .then((resp) => {
+          ims.push(resp.secure_url);
+          console.log("done");
+        })
+        .catch((err) => console.log("err"));
+    } else {
+      ims.push(media[i]);
+    }
+
+    i++;
+  }
+
+  return ims;
 };

@@ -17,7 +17,6 @@ router
   .post(
     isAuth,
     isSeller,
-    fileUploader.array("media"),
     validate(CreateListingInput),
     listingController.createListing
   )
@@ -32,7 +31,6 @@ router
   .patch(
     isAuth,
     isSeller,
-    fileUploader.array("media"),
     validate(EditListingInput),
     listingController.editListing
   )

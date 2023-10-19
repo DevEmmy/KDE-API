@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { IUserAuth } from "../interfaces/model/user.interface";
 import { Collections } from "../interfaces/collections";
-import argon from "argon2";
+import bcrypt from "bcryptjs";
 
 const AuthSchema = new mongoose.Schema<IUserAuth>(
   {
@@ -14,7 +14,7 @@ const AuthSchema = new mongoose.Schema<IUserAuth>(
 
 AuthSchema.pre("save", async function () {
   if (!this.isModified("password")) {
-    this.password = await argon.hash(this.password);
+    this.password = await bcrypt.hash(this.password, await bcrypt.genSalt(10));
   }
   return;
 });
@@ -22,7 +22,7 @@ AuthSchema.pre("save", async function () {
 AuthSchema.methods.verifyPassword = async function (
   password: string
 ): Promise<boolean> {
-  const isPasswordMatch = await argon.verify(this.password, password);
+  const isPasswordMatch = await bcrypt.compare(password, this.password);
 
   return isPasswordMatch;
 };

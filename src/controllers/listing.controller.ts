@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import ListingService from "../services/listing.service";
 import { IRequest } from "../interfaces/CustomExpressHandlers";
-import { uploadToCloud } from "../config/uploader.config";
+import { uploadListingMedia, uploadToCloud } from "../config/uploader.config";
 import { BadRequestError } from "../helpers/error-responses";
 import logger from "../config/logger.config";
 
@@ -40,36 +40,15 @@ class ListingController {
 
       const owner = req.userId;
 
-      req.files = [...((req.files || []) as Express.Multer.File[])];
-
-      const imagesUpload = req.files?.filter((file) =>
-        file.mimetype.includes("image")
-      );
-      const videosUpload = req.files?.filter((file) =>
-        file.mimetype.includes("video")
-      );
-
-      if (imagesUpload.length === 0 || videosUpload.length === 0) {
+      if (req?.body?.images?.length === 0) {
         return next(new BadRequestError("Provide at lease one image & video"));
       }
 
-      let images: string[] = [];
-      let videos: string[] = [];
-
-      for (const image of imagesUpload) {
-        const url = await uploadToCloud(image);
-
-        images.push(url);
-      }
-
-      for (const video of videosUpload) {
-        const url = await uploadToCloud(video, {
-          format: "mp4",
-          resource_type: "video",
-        });
-
-        videos.push(url);
-      }
+      const images = await uploadListingMedia(req?.body?.images, {});
+      const videos = await uploadListingMedia(req?.body?.videos || [], {
+        resource_type: "video",
+        format: "mp4",
+      });
 
       const data = await this.listingService.createListing({
         category,
@@ -197,44 +176,15 @@ class ListingController {
         model,
       } = req.body;
 
-      // set them to undefined first instead of empty array so an empty array  won't be added to the DB
+      if (req.body.images?.length > 0) {
+        req.body.images = await uploadListingMedia(req.body.images, {});
+      }
 
-      let images: string[] | undefined;
-      let videos: string[] | undefined;
-
-      if ((req.files?.length as number) > 0) {
-        req.files = [...((req.files || []) as Express.Multer.File[])];
-
-        const imagesUpload = req.files?.filter((file) =>
-          file.mimetype.includes("image")
-        );
-        const videosUpload = req.files?.filter((file) =>
-          file.mimetype.includes("video")
-        );
-
-        //  initialize the arrays
-        if (imagesUpload.length > 0) {
-          images = [];
-
-          for (const image of imagesUpload) {
-            const url = await uploadToCloud(image);
-
-            images.push(url);
-          }
-        }
-
-        if (videosUpload.length > 0) {
-          videos = [];
-
-          for (const video of videosUpload) {
-            const url = await uploadToCloud(video, {
-              format: "mp4",
-              resource_type: "video",
-            });
-
-            videos.push(url);
-          }
-        }
+      if (req?.body?.videos?.length > 0) {
+        req.body.videos = await uploadListingMedia(req?.body?.videos, {
+          resource_type: "video",
+          format: "mp4",
+        });
       }
 
       const data = await this.listingService.editListing(userId, {
@@ -244,8 +194,8 @@ class ListingController {
         location,
         features,
         description,
-        images,
-        videos,
+        images: req.body?.images,
+        videos: req.body?.videos,
         price,
         attachedDocuments,
         year,

@@ -20,7 +20,7 @@ import JWTHelper from "../helpers/Jwt.helper";
 import { ILoginRes } from "../interfaces/CustomResponses/auth.response";
 import Crypto from "crypto";
 import { UserService } from "./user.service";
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 
 export class AuthService {
   private async createToken(
@@ -145,13 +145,13 @@ export class AuthService {
     const userAuth = await Auth.findOne({ email });
 
     if (!userAuth) {
-      throw new NotFoundError("Email/password is incorrect");
+      throw new NotFoundError("User does not exist");
     }
 
     const isPasswordCorrect = await userAuth.verifyPassword(password as string);
 
     if (!isPasswordCorrect) {
-      throw new BadRequestError("Email/password is incorrect");
+      throw new BadRequestError("password is incorrect");
     }
 
     const user = await User.findOne<IUser>({ email });
@@ -224,7 +224,12 @@ export class AuthService {
 
     await Auth.findOneAndUpdate(
       { email: tokenInDb.email },
-      { password: await argon2.hash(password as string) }
+      {
+        password: await bcrypt.hash(
+          password as string,
+          await bcrypt.genSalt(10)
+        ),
+      }
     );
 
     await tokenInDb.deleteOne();
@@ -259,7 +264,10 @@ export class AuthService {
       throw new ForbiddenError("Old password is incorrect");
     }
 
-    const newPasswordHash = await argon2.hash(password as string);
+    const newPasswordHash = await bcrypt.hash(
+      password as string,
+      await bcrypt.genSalt(10)
+    );
 
     userAuth.password = newPasswordHash;
 
