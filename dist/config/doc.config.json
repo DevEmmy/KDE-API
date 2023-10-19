@@ -1,0 +1,1096 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CREAM API",
+    "description": "Real estate",
+    "version": "2.0.0",
+    "contact": {
+      "name": "CREAM",
+      "url": "https://github.com/daniel-dunsin"
+    }
+  },
+  "severs": [
+    {
+      "url": "http://localhost:3001",
+      "description": "GitHub URL"
+    }
+  ],
+
+  "paths": {
+    "/api/v2/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "description": "Do not pass isAdmin if they're not registering on the admin dashboard, but pass it as true if otherwise!",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "isAdmin": {
+                    "type": "boolean"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "phoneNumber1": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string",
+                    "min": 8
+                  },
+                  "confirmPassword": {
+                    "type": "string",
+                    "min": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        "responses": {
+          "200": {
+            "description": "Account created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Verification email sent"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        "security": []
+      }
+    },
+    "/api/v2/auth/verify-account": {
+      "post": {
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful verification",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Account verified successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v2/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" },
+                  "password": { "type": "string", "min": 8 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Login successful"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/LoginRes"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "If account is not verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Your account is not verified, a new verification link has been sent to your email"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v2/auth/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "security": [],
+        "description": "Used to request a password reset token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Password reset link sent"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/auth/reset-password": {
+      "patch": {
+        "description": "Used to reset the password with the code sent to the user's email",
+        "tags": ["Auth"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "min": 8
+                  },
+                  "confirmPassword": {
+                    "type": "string",
+                    "min": 8
+                  },
+                  "code": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/auth/change-password": {
+      "patch": {
+        "tags": ["Auth"],
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "oldPassword": {
+                    "type": "string",
+                    "min": 8
+                  },
+                  "password": {
+                    "type": "string",
+                    "min": 8
+                  },
+                  "confirmPassword": {
+                    "type": "string",
+                    "min": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Password changed successfully"
+                    },
+                    "data": { "type": null }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/v2/user/": {
+      "get": {
+        "description": "Get My Profile",
+        "tags": ["User"],
+        "security": [{ "bearer": [] }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User profile fetched successfully"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Edit user profile",
+        "tags": ["User"],
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PartialUser" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User profile updated successfully"
+                    },
+                    "data": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "To delete user account",
+        "tags": ["User"],
+        "security": [{ "bearer": [] }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User account deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/user/become-a-seller": {
+      "patch": {
+        "security": [{ "bearer": [] }],
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "You are now a seller"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/user/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "description": "The user id",
+          "schema": { "type": "string" }
+        }
+      ],
+
+      "get": {
+        "tags": ["User"],
+        "security": [],
+        "description": "View User Profile",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/user/profile-picture": {
+      "put": {
+        "tags": ["User"],
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dp": {
+                    "type": "string",
+                    "description": "Use formdata.append('image', <the file>) to upload this"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "string",
+                      "description": "The image url"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/newsletter/subscription": {
+      "post": {
+        "description": "Subscribe to newsletter",
+        "tags": ["Newsletter"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "email": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "You have successfully subscribed to our newsletter"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/newsletter/subscription/{email}": {
+      "delete": {
+        "tags": ["Newsletter"],
+        "parameters": [
+          {
+            "required": true,
+            "in": "path",
+            "description": "the subscriber's email",
+            "name": "email",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "You have successfully unsubscribed from CREAM newsletter"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/category": {
+      "post": {
+        "tags": ["Listing Category"],
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "title": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category Added Successfully"
+                    },
+                    "data": { "$ref": "#/components/schemas/Category" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "security": [{ "bearer": [] }],
+        "tags": ["Listing Category"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Categories fetched successfully"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Category"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/category/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "name": "id"
+        }
+      ],
+      "put": {
+        "security": [{ "bearer": {} }],
+        "tags": ["Listing Category"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "title": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category Edited Successfully"
+                    },
+                    "data": { "$ref": "#/components/schemas/Category" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [{ "bearer": {} }],
+        "tags": ["Listing Category"],
+
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category deleted Successfully"
+                    },
+                    "data": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/v2/listing/": {
+      "post": {
+        "description": "create listing (must be a seller)",
+        "tags": ["Listing"],
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/form-data": {
+              "schema": { "$ref": "#/components/schemas/PartialListing" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "You have successfully created a listing"
+                    },
+                    "data": { "$ref": "#/components/schemas/Listing" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+
+      "get": {
+        "description": "Get all listings",
+        "tags": ["Listing"],
+        "security": [{ "bearer": [] }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Listing" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/listing/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "required": true,
+          "name": "id",
+          "schema": { "type": "string" }
+        }
+      ],
+      "get": {
+        "description": "get single listing",
+        "security": [{ "bearer": [] }],
+        "tags": ["Listing"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Listing" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Listing"],
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/form-data": {
+              "schema": { "$ref": "#/components/schemas/PartialListing" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Listing" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [{ "bearer": [] }],
+        "tags": ["Listing"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": null
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/v2/listing/user/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "required": true,
+          "name": "id",
+          "description": "the user id",
+          "schema": { "type": "string" }
+        }
+      ],
+      "get": {
+        "description": "get user listing (this request is to be made by other users)",
+        "security": [{ "bearer": [] }],
+        "tags": ["Listing"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Listing" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/listing/user/": {
+      "get": {
+        "description": "get user listing (this request is to be made by the user gangan😅)",
+        "security": [{ "bearer": [] }],
+        "tags": ["Listing"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Listing" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/v2/listing/save/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "required": true,
+          "name": "id",
+          "description": "the listing id",
+          "schema": { "type": "string" }
+        }
+      ],
+      "patch": {
+        "description": "Use this endpoint to save and unsave a listing",
+        "security": [{ "bearer": [] }],
+        "tags": ["Listing"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "message": { "type": "string" } }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PartialUser": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "otherNames": {
+            "type": "string"
+          },
+          "about": {
+            "type": "string"
+          },
+          "facebookUrl": { "type": "string" },
+          "instagramUrl": { "type": "string" },
+          "website": { "type": "string" },
+          "address": { "type": "string" },
+          "country": { "type": "string" },
+          "state": { "type": "string" },
+          "city": { "type": "string" },
+          "nationality": { "type": "string" },
+          "sex": { "type": "string" },
+          "dob": { "type": "string" },
+          "phoneNumber1": { "type": "number" },
+          "phoneNumber2": { "type": "number" }
+        }
+      },
+
+      "PartialListing": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "title": { "type": "string" },
+          "location": { "type": "string" },
+          "features": { "type": "array", "items": { "type": "string" } },
+          "description": { "type": "string" },
+          "price": { "type": "number" },
+          "attachedDocuments": { "type": "string" },
+          "year": { "type": "number" },
+          "offerType": { "type": "string", "example": "sale/rent" },
+          "noOfBathrooms": { "type": "number" },
+          "noOfBedrooms": { "type": "number" },
+          "carCondition": { "type": "string", "example": "new/used" },
+          "engineType": { "type": "string" },
+          "color": { "type": "string" },
+          "model": { "type": "string" }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "otherNames": {
+            "type": "string"
+          },
+          "about": {
+            "type": "string"
+          },
+          "profilePicture": {
+            "type": "string"
+          },
+          "facebookUrl": { "type": "string" },
+          "instagramUrl": { "type": "string" },
+          "website": { "type": "string" },
+          "address": { "type": "string" },
+          "country": { "type": "string" },
+          "state": { "type": "string" },
+          "city": { "type": "string" },
+          "nationality": { "type": "string" },
+          "sex": { "type": "string" },
+          "dob": { "type": "string" },
+          "phoneNumber1": { "type": "number" },
+          "phoneNumber2": { "type": "number" },
+          "savedListings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "profileViews": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "number",
+                "viewedBy": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
+            }
+          },
+
+          "accountNumber": {
+            "type": "number"
+          },
+          "bankName": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "isSeller": {
+            "type": "boolean"
+          },
+          "totalListings": {
+            "type": "number"
+          },
+
+          "totalAvailableListings": {
+            "type": "number"
+          },
+          "subscribedToNewsletter": { "type": "boolean" }
+        }
+      },
+      "Listing": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "title": { "type": "string" },
+          "owner": {
+            "$ref": "#/components/schemas/User"
+          },
+          "images": { "type": "array", "items": { "type": "string" } },
+          "videos": { "type": "array", "items": { "type": "string" } },
+          "location": { "type": "string" },
+          "features": { "type": "array", "items": { "type": "string" } },
+          "description": { "type": "string" },
+          "price": { "type": "number" },
+          "isAvailable": { "type": "boolean" },
+          "views": { "type": "number" },
+          "savedBy": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/User" }
+          },
+          "rentedBy": { "$ref": "#/components/schemas/User" },
+          "attachedDocuments": { "type": "string" },
+          "year": { "type": "number" },
+          "offerType": { "type": "string", "example": "sale/rent" },
+          "noOfBathrooms": { "type": "number" },
+          "noOfBedrooms": { "type": "number" },
+          "carCondition": { "type": "string", "example": "new/used" },
+          "engineType": { "type": "string" },
+          "color": { "type": "string" },
+          "model": { "type": "string" }
+        }
+      },
+      "LoginRes": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "User"
+    },
+    {
+      "name": "Newsletter"
+    },
+    {
+      "name": "Listing Category"
+    },
+    {
+      "name": "Listing"
+    }
+  ]
+}
