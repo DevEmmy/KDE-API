@@ -3,7 +3,8 @@ export enum Collections {
   user = "user",
   token = "token",
   listing = "listing",
-  newsletterSubscription = "newsletterSubscription",
+  newsletter_subscription = "newsletter_subscription",
   category = "category",
   article = "article",
+  property_request = "property_request",
 }

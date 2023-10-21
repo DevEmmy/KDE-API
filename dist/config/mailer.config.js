@@ -24,7 +24,7 @@ const transporter = nodemailer_1.default.createTransport({
 });
 const sendMail = (mailOptions) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield transporter.sendMail(Object.assign(Object.assign({}, mailOptions), { from: settings_1.default.nodemailer.email }));
+        yield transporter.sendMail(Object.assign({ from: settings_1.default.nodemailer.email }, mailOptions));
     }
     catch (error) {
         throw new error_responses_1.InternalServerError(error);

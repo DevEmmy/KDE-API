@@ -14,8 +14,8 @@ const transporter = nodemailer.createTransport({
 const sendMail = async (mailOptions: Mail.Options) => {
   try {
     await transporter.sendMail({
-      ...mailOptions,
       from: settings.nodemailer.email,
+      ...mailOptions,
     });
   } catch (error: any) {
     throw new InternalServerError(error);

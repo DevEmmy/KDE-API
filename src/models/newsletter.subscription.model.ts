@@ -19,7 +19,7 @@ const NewsletterSubscriptionSchema =
   );
 
 const NewsletterSubscription = mongoose.model(
-  Collections.newsletterSubscription,
+  Collections.newsletter_subscription,
   NewsletterSubscriptionSchema
 );
 

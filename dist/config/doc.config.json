@@ -879,6 +879,135 @@
           }
         }
       }
+    },
+
+    "/api/v2/property-request": {
+      "post": {
+        "tags": ["Property Request"],
+        "security": [],
+        "description": "Create Property Request",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "request": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/PropertyRequest"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "security": [],
+        "tags": ["Property Request"],
+        "description": "Get All Property Requests",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PropertyRequest"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/v2/property-request/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "description": "The property request id",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "security": [],
+        "tags": ["Property Request"],
+        "description": "Get Single Property Request",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/PropertyRequest"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [],
+        "tags": ["Property Request"],
+        "description": "Get Single Property Request",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "data": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1067,6 +1196,19 @@
             "$ref": "#/components/schemas/User"
           }
         }
+      },
+      "PropertyRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "request": {
+            "type": "string"
+          },
+          "email": { "type": "string" },
+          "_id": { "type": "string" }
+        }
       }
     },
     "securitySchemes": {
@@ -1091,6 +1233,9 @@
     },
     {
       "name": "Listing"
+    },
+    {
+      "name": "Property Request"
     }
   ]
 }

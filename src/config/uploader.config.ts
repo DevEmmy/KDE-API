@@ -5,7 +5,6 @@ import { BadRequestError } from "../helpers/error-responses";
 import { Request } from "express";
 import path from "path";
 import { v4 } from "uuid";
-import imageService from "../helpers/image.helper";
 import fs from "fs";
 import logger from "./logger.config";
 

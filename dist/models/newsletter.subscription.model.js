@@ -16,5 +16,5 @@ const NewsletterSubscriptionSchema = new mongoose_1.default.Schema({
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
 });
-const NewsletterSubscription = mongoose_1.default.model(collections_1.Collections.newsletterSubscription, NewsletterSubscriptionSchema);
+const NewsletterSubscription = mongoose_1.default.model(collections_1.Collections.newsletter_subscription, NewsletterSubscriptionSchema);
 exports.default = NewsletterSubscription;
