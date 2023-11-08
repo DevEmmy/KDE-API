@@ -695,6 +695,24 @@
         "description": "Get all listings",
         "tags": ["Listing"],
         "security": [{ "bearer": [] }],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -704,8 +722,18 @@
                   "properties": {
                     "message": { "type": "string" },
                     "data": {
-                      "type": "array",
-                      "items": { "$ref": "#/components/schemas/Listing" }
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "number"
+                        },
+                        "listings": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Listing"
+                          }
+                        }
+                      }
                     }
                   }
                 }

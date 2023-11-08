@@ -106,9 +106,18 @@ class ListingController {
   ) => {
     logger.info("Fetching listings");
     try {
-      const data = await this.listingService.getAllListings();
+      const page = <number>parseInt(req.query?.page as string) || 0;
+      const limit = <number>parseInt(req.query?.hitsPerPage as string) || 10;
 
-      res.status(200).json({ message: "Listings fetched successfully", data });
+      const data = await this.listingService.getAllListings({ page, limit });
+
+      res.status(200).json({
+        message: "Listings fetched successfully",
+        data: {
+          listings: data.listings,
+          count: data.count,
+        },
+      });
     } catch (error) {
       return next(error);
     }

@@ -71,10 +71,16 @@ export default class ListingService {
     return listing;
   }
 
-  async getAllListings(): Promise<IListing[]> {
-    const listings = await Listing.find({ isAvailable: true });
+  async getAllListings(data: {
+    page: number;
+    limit: number;
+  }): Promise<{ listings: IListing[]; count: number }> {
+    const count = await Listing.find({ isAvailable: true }).countDocuments();
+    const listings = await Listing.find({ isAvailable: true })
+      .skip(data.page * data.limit)
+      .limit(data.limit);
 
-    return listings;
+    return { listings, count };
   }
 
   async getUserListings(userId: string): Promise<IListing[]> {
