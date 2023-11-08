@@ -48,6 +48,9 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
   isAdmin: boolean;
+
+  // update it any time a news letter is sent
+  newsLetterDate: number;
 }
 export interface IUserAuth {
   _id: string;

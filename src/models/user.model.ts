@@ -37,6 +37,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     totalAvailableListings: { type: Number, default: 0 },
     subscribedToNewsletter: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false },
+    newsLetterDate: { type: Number, default: Date.now() },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
