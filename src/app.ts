@@ -9,7 +9,7 @@ import routes from "./routes/index.routes";
 import swagger from "swagger-ui-express";
 import loggerMiddleware from "./middlewares/logger";
 
-const documentation = require("./config/doc.config.json");
+const documentation = require("../doc.config.json");
 
 const app = express();
 
