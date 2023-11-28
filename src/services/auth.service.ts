@@ -1,6 +1,10 @@
 import { v4 } from "uuid";
 import sendMail from "../config/mailer.config";
-import { resetPasswordHTML, verifyEmailHTML } from "../constants/mails";
+import {
+  resetPasswordHTML,
+  signUpCompleteHTML,
+  verifyEmailHTML,
+} from "../constants/mails";
 import {
   BadRequestError,
   ForbiddenError,
@@ -127,6 +131,7 @@ export class AuthService {
     if (!userAuth) {
       throw new NotFoundError("User does not exist");
     }
+    const user = await User.findOne({ email });
 
     if (userAuth?.verified) {
       throw new BadRequestError(
@@ -137,6 +142,12 @@ export class AuthService {
     userAuth.verified = true;
 
     await userAuth.save();
+
+    await sendMail({
+      to: email,
+      subject: "Verify your account",
+      html: signUpCompleteHTML(user?.firstName as string),
+    });
   }
 
   async loginUser(body: Partial<IUserAuth>): Promise<ILoginRes> {

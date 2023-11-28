@@ -3,7 +3,7 @@ import User from "../models/user.model";
 import cron from "node-cron";
 
 export const newsletterCron = () =>
-  cron.schedule("* * * * * *", async () => {
+  cron.schedule("0 0 * * *", async () => {
     /*
      * every midnight 👻 fetch all users, check if the last time they received a newsletter is up to a week
      */
