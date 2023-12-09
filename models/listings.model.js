@@ -13,7 +13,7 @@ const listingSchema = new Schema({
     images: {type: Array, required: false},
     videos: {type: Array, required: false},
     available: {type: Boolean, default: true},
-    price: String,
+    price: Number,
     attachedDocument: {type:Array},
     year: {type: Number},
     carCondition: String,
