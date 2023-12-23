@@ -32,6 +32,10 @@ app.use("/api/v2/category", routes.category);
 app.use("/api/v2/listing", routes.listing);
 app.use("/api/v2/article", routes.article);
 app.use("/api/v2/property-request", routes.property_request);
+app.use("/api/v2/report", routes.report);
+app.use("/api/v2/chat", routes.chat);
+app.use("/api/v2/cart", routes.cart);
+app.use("/api/v2/notification", routes.notifications);
 
 app.all("*", notFound);
 app.use(errorHandler);

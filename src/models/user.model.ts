@@ -1,5 +1,5 @@
-import mongoose, { Types } from "mongoose";
-import { ISex, IUser } from "../interfaces/model/user.interface";
+import mongoose, { Collection, Types } from "mongoose";
+import { IUser } from "../interfaces/model/user.interface";
 import { Collections } from "../interfaces/collections";
 
 const UserSchema = new mongoose.Schema<IUser>(
@@ -16,27 +16,62 @@ const UserSchema = new mongoose.Schema<IUser>(
       type: String,
       default: "https://avatarfiles.alphacoders.com/865/86518.png",
     },
+    cover: {
+      type: String,
+      default: "https://avatarfiles.alphacoders.com/865/86518.png",
+    },
     facebookUrl: { type: String },
     instagramUrl: { type: String },
-    website: { type: String },
+    websiteUrl: { type: String },
     address: { type: String },
     country: { type: String },
     state: { type: String },
+    stateOfResidence: { type: String },
     city: { type: String },
     nationality: { type: String },
-    sex: { type: String, enum: [ISex.male, ISex.female] },
+    sex: { type: String },
     dob: { type: Date },
     phoneNumber1: { type: Number },
     phoneNumber2: { type: Number },
-    profileViews: { type: Number, default: 0 },
-    accountNumber: { type: Number },
-    accountName: { type: String },
-    bankName: { type: String },
-    isSeller: { type: Boolean, default: false },
-    totalListings: { type: Number, default: 0 },
-    totalAvailableListings: { type: Number, default: 0 },
-    subscribedToNewsletter: { type: Boolean, default: false },
+    pageViews: {
+      value: { type: Number, default: 0 },
+      users: {
+        type: [{ type: Types.ObjectId, ref: Collections.user }],
+        default: [],
+      },
+    },
     isAdmin: { type: Boolean, default: false },
+    totalListing: { type: Number, default: 0 },
+    savedListing: {
+      type: [{ type: Types.ObjectId, ref: Collections.listing }],
+      default: [],
+    },
+    subscribedToNewsletter: { type: Boolean, default: false },
+    totalSaved: {
+      value: { type: Number, default: 0 },
+      users: {
+        default: [],
+        type: [{ type: Types.ObjectId, ref: Collections.user }],
+      },
+    },
+
+    isVerified: { type: Boolean, default: false },
+
+    balanceAmount: { type: Number },
+    zipCode: { type: Number },
+
+    // for bank
+    accountNo: { type: String },
+    bankName: { type: String },
+    accountName: { type: String },
+    userType: { type: Number, default: 0 },
+
+    // typeof account
+    accountType: { type: Number, default: 0 },
+    subscribed: { type: Boolean, default: false },
+    noOfSubscription: { type: Number, default: 0 },
+    sellerType: { type: Number, default: 0 },
+
     newsLetterDate: { type: Number, default: Date.now() },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }

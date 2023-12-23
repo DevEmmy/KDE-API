@@ -66,22 +66,6 @@ class UserController {
     }
   };
 
-  public becomeASeller = async (
-    req: IRequest,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const userId = req.userId as string;
-
-      await this.userService.becomeASeller(userId);
-
-      res.status(200).json({ message: "You are now a seller", data: null });
-    } catch (error: any) {
-      return next(error);
-    }
-  };
-
   public viewUserProfile = async (
     req: Request<{ id: string }, {}, {}>,
     res: Response,

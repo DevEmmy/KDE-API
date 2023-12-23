@@ -10,11 +10,10 @@ export enum ITokenTypes {
   accountVerificationToken = "accountVerificationToken",
 }
 
-export enum ISex {
-  male = "male",
-  female = "female",
-  // no LGBTQ 😅
-}
+export type UserPageViews = {
+  value: number;
+  users: string[] | Types.ObjectId[] | IUser[];
+};
 
 export interface IUser {
   _id: string;
@@ -23,31 +22,48 @@ export interface IUser {
   email: string;
   otherNames: string;
   about: string;
+  cover: string;
   profilePicture: string;
   facebookUrl: string;
   instagramUrl: string;
-  website: string;
+  websiteUrl: string;
   address: string;
   country: string;
   state: string;
+  stateOfResidence: string;
   city: string;
   nationality: string;
-  sex: ISex.male | ISex.female;
+  sex: string;
   dob: Date | string;
   phoneNumber1: number;
   phoneNumber2: number;
-  profileViews: number;
-  accountNumber: number;
-  bankName: string;
-  accountName: string;
-  //   generally everybody should be allowed to buy a property, so we only need isSeller
-  isSeller: boolean;
-  totalListings: number;
-  totalAvailableListings: number;
+  pageViews: UserPageViews;
+
+  isAdmin: boolean;
+  savedListing: string[] | Types.ObjectId[] | IUser[];
+  totalSaved: { value: number; users: string | Types.ObjectId | IUser };
+  gender: string;
   subscribedToNewsletter: boolean;
   createdAt: Date;
   updatedAt: Date;
-  isAdmin: boolean;
+
+  accountNo: string;
+  bankName: string;
+  accountName: string;
+  balanceAmount: number;
+
+  isVerified: boolean;
+  zipCode: number;
+
+  // user account
+  accountType: number;
+  subscribed: boolean;
+  noOfSubscription: number;
+  userType: number;
+  sellerType: number;
+  totalListing: number;
+
+  locationISO: string;
 
   // update it any time a news letter is sent
   newsLetterDate: number;

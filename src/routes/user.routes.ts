@@ -15,8 +15,6 @@ router
   .get(isAuth, userController.getUserProfile)
   .put(isAuth, validate(EditUserInput), userController.editUserProfile)
   .delete(isAuth, userController.deleteAccount);
-
-router.patch("/become-a-seller", isAuth, userController.becomeASeller);
 router.get(
   "/profile/:id",
   validate(GetUserProfileInput),

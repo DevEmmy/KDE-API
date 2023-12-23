@@ -25,6 +25,7 @@ import { ILoginRes } from "../interfaces/CustomResponses/auth.response";
 import Crypto from "crypto";
 import { UserService } from "./user.service";
 import bcrypt from "bcryptjs";
+import { CartService } from "./cart.service";
 
 export class AuthService {
   private async createToken(
@@ -48,6 +49,12 @@ export class AuthService {
     return token;
   }
 
+  private readonly cartServices: CartService;
+
+  constructor() {
+    this.cartServices = new CartService();
+  }
+
   async getUserAuth(param: Partial<IUserAuth>): Promise<IUserAuth> {
     const user = await Auth.findOne(param);
 
@@ -58,7 +65,7 @@ export class AuthService {
     return user;
   }
 
-  async createAccount(body: Partial<IUser & IUserAuth>) {
+  public createAccount = async (body: Partial<IUser & IUserAuth>) => {
     try {
       const {
         firstName,
@@ -95,13 +102,14 @@ export class AuthService {
         subject: "Verify your account",
         html: verifyEmailHTML(user, token.token),
       });
+      await this.cartServices.initiateCart(user?._id);
     } catch (error: any) {
       if (error.code === 11000) {
         throw new BadRequestError("A user with this email already exists");
       }
       throw new BadRequestError(error.message);
     }
-  }
+  };
 
   async verifyAccount(token: string) {
     /**

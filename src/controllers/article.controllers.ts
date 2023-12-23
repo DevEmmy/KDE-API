@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import ArticleServices from "../services/article.service";
 import { IRequest } from "../interfaces/CustomExpressHandlers";
 import { BadRequestError } from "../helpers/error-responses";
-import { uploadToCloud } from "../config/uploader.config";
+import { uploadListingMedia, uploadToCloud } from "../config/uploader.config";
 
 class ArticleController {
   private readonly articleServices: ArticleServices;
@@ -10,7 +10,11 @@ class ArticleController {
     this.articleServices = new ArticleServices();
   }
 
-  async getAllArticles(req: Request, res: Response, next: NextFunction) {
+  public getAllArticles = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const data = await this.articleServices.getArticles({});
 
@@ -18,9 +22,13 @@ class ArticleController {
     } catch (error) {
       return next(error);
     }
-  }
+  };
 
-  async getUserArticles(req: Request, res: Response, next: NextFunction) {
+  public getUserArticles = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const userId = req.params.id;
 
@@ -32,9 +40,13 @@ class ArticleController {
     } catch (error) {
       return next(error);
     }
-  }
+  };
 
-  async getMyArticles(req: IRequest, res: Response, next: NextFunction) {
+  public getMyArticles = async (
+    req: IRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const userId = <string>req.userId;
 
@@ -46,9 +58,13 @@ class ArticleController {
     } catch (error) {
       return next(error);
     }
-  }
+  };
 
-  async getSingleArticle(req: Request, res: Response, next: NextFunction) {
+  public getSingleArticle = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const _id = req.params.id;
       const data = await this.articleServices.findById(_id);
@@ -57,45 +73,47 @@ class ArticleController {
     } catch (error) {
       return next(error);
     }
-  }
+  };
 
-  async addArticle(req: IRequest, res: Response, next: NextFunction) {
+  public addArticle = async (
+    req: IRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const author = <string>req.userId;
       const { title, body, category } = req.body;
 
-      const file = <Express.Multer.File>req.file;
-
-      if (!file) throw new BadRequestError("Provide cover");
-
-      const cover = await uploadToCloud(file);
+      const cover = await uploadListingMedia([req.body.cover]);
 
       const data = await this.articleServices.addArticle({
         title,
         body,
         category,
         author,
-        cover,
+        cover: cover[0],
       });
 
       res.status(201).json({ message: "Article created successfully", data });
     } catch (error) {
       return next(error);
     }
-  }
+  };
 
-  async editArticle(req: IRequest, res: Response, next: NextFunction) {
+  public editArticle = async (
+    req: IRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const author = <string>req.userId;
       const _id = req.params.id;
       const { title, body, category } = req.body;
 
-      const file = <Express.Multer.File>req.file;
-
       let cover: string | undefined;
 
-      if (file) {
-        cover = await uploadToCloud(file);
+      if (req.body.cover) {
+        cover = (await uploadListingMedia([req.body.cover]))[0];
       }
 
       const data = await this.articleServices.editArticle({
@@ -111,9 +129,13 @@ class ArticleController {
     } catch (error) {
       return next(error);
     }
-  }
+  };
 
-  async deleteArticle(req: IRequest, res: Response, next: NextFunction) {
+  public deleteArticle = async (
+    req: IRequest,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const userId = <string>req.userId;
       const _id = req.params.id;
@@ -124,7 +146,7 @@ class ArticleController {
     } catch (error) {
       return next(error);
     }
-  }
+  };
 }
 
 const articleController = new ArticleController();

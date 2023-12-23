@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { fileUploader } from "../config/uploader.config";
 import isAuth from "../middlewares/isAuth";
-import isSeller from "../middlewares/isSeller";
 import listingController from "../controllers/listing.controller";
 import validate from "../validations";
 import {
@@ -14,12 +13,7 @@ const router = Router();
 
 router
   .route("/")
-  .post(
-    isAuth,
-    isSeller,
-    validate(CreateListingInput),
-    listingController.createListing
-  )
+  .post(isAuth, validate(CreateListingInput), listingController.createListing)
   .get(listingController.getAllListings);
 
 router.get("/user", isAuth, listingController.getUserListing);
@@ -30,16 +24,11 @@ router
   .route("/:id")
   .patch(
     isAuth,
-    isSeller,
+
     validate(EditListingInput),
     listingController.editListing
   )
-  .delete(
-    isAuth,
-    isSeller,
-    validate(DeleteListingInput),
-    listingController.deleteListing
-  )
+  .delete(isAuth, validate(DeleteListingInput), listingController.deleteListing)
   .get(listingController.getSingleListing);
 
 export default router;

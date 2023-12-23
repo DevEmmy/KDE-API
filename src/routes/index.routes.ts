@@ -5,6 +5,10 @@ import category from "./category.routes";
 import listing from "./listing.routes";
 import article from "./article.routes";
 import property_request from "./property-request.routes";
+import report from "./report.routes";
+import chat from "./chat.routes";
+import cart from "./cart.routes";
+import notifications from "./notification.routes";
 
 const routes = {
   auth,
@@ -14,6 +18,10 @@ const routes = {
   listing,
   article,
   property_request,
+  report,
+  chat,
+  cart,
+  notifications,
 };
 
 export default routes;

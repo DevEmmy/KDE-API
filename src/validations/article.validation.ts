@@ -5,6 +5,7 @@ export const AddArticleValidation = object({
     title: string().required(),
     body: string().required(),
     category: string().required(),
+    // cover: ,
   }),
 });
 
@@ -13,5 +14,6 @@ export const EditArticleValidation = object({
     title: string().notRequired(),
     body: string().notRequired(),
     category: string().notRequired(),
+    // cover: string().notRequired(),
   }),
 });

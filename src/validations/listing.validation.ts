@@ -1,4 +1,4 @@
-import { array, number, object, string } from "yup";
+import { array, boolean, number, object, string } from "yup";
 
 export const DeleteListingInput = object({
   params: object({
@@ -16,7 +16,7 @@ export const CreateListingInput = object({
     price: number().required(),
     attachedDocuments: array().required(),
     year: number().required(),
-    offerType: string().required("offerType must be sale/rent"),
+    forRent: boolean().default(false),
     noOfBathrooms: number().notRequired(),
     noOfBedrooms: number().notRequired(),
     carCondition: string().notRequired(),

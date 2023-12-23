@@ -22,18 +22,18 @@ export interface IListing {
   category: Types.ObjectId | string | IListingCategory;
   title: string;
   location: string;
-  owner: string | Types.ObjectId | IUser;
+  postedBy: string | Types.ObjectId | IUser;
   features: string[];
   description: string;
   images: string[];
   videos: string[];
-  isAvailable: boolean;
+  available: boolean;
   price: number;
   attachedDocuments: string[];
   year: number;
-  offerType: IListingType;
+  forRent: boolean;
   views: number;
-  savedBy: string[]; // the string contains ref of users that saved the property
+  thoseWhoSaved: Array<string | Types.ObjectId | IUser>;
   noOfBedrooms: number;
   noOfBathrooms: number;
   rentedBy: string | Types.ObjectId | IUser;

@@ -1,5 +1,9 @@
 import { notFound } from "../config/errors.config";
-import { ForbiddenError, NotFoundError } from "../helpers/error-responses";
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} from "../helpers/error-responses";
 import slugify from "../helpers/slugify";
 import { IArticle } from "../interfaces/model/article.interface";
 import Article from "../models/article.model";
@@ -58,14 +62,17 @@ export default class ArticleServices {
 
   public editArticle = async (query: Partial<IArticle>): Promise<IArticle> => {
     let { _id, title, slug, cover, body, author, category } = query;
-    category = await this.categoryService.getCategoryById(category as string);
+    if (category) {
+      category = await this.categoryService.getCategoryById(category as string);
+    }
 
     const article = await Article.findById(_id);
 
     if (!article) throw new NotFoundError("Article does not exist");
 
     if (article.author.toString() != author?.toString())
-      article.title = title || article.title;
+      throw new BadRequestError("you cannot edit this blog ");
+    article.title = title || article.title;
     article.slug = slugify(title || article.title);
     article.cover = cover || article.cover;
     article.body = body || article.body;

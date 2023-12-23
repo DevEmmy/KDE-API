@@ -87,19 +87,16 @@ interface Base64Media extends Express.Multer.File {
 
 export const uploadListingMedia = async (
   media: Base64Media[] | any[],
-  option: UploadApiOptions
+  option?: UploadApiOptions
 ) => {
   let i = 0;
   const ims = [];
   while (i < media.length) {
     if (media[i].base64) {
-      await cloudinary.uploader
-        .upload(media[i].base64, option)
-        .then((resp) => {
-          ims.push(resp.secure_url);
-          console.log("done");
-        })
-        .catch((err) => console.log("err"));
+      await cloudinary.uploader.upload(media[i].base64, option).then((resp) => {
+        ims.push(resp.secure_url);
+        console.log("done");
+      });
     } else {
       ims.push(media[i]);
     }

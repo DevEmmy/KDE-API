@@ -12,22 +12,12 @@ const router = Router();
 
 router
   .route("/")
-  .post(
-    isAuth,
-    validate(AddArticleValidation),
-    fileUploader.single("media"),
-    articleController.addArticle
-  )
+  .post(isAuth, validate(AddArticleValidation), articleController.addArticle)
   .get(articleController.getAllArticles);
 
 router
   .route("/:id")
-  .put(
-    isAuth,
-    validate(EditArticleValidation),
-    fileUploader.single("media"),
-    articleController.editArticle
-  )
+  .put(isAuth, validate(EditArticleValidation), articleController.editArticle)
   .delete(isAuth, articleController.deleteArticle)
   .get(articleController.getSingleArticle);
 

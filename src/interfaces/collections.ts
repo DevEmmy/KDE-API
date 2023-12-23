@@ -7,4 +7,10 @@ export enum Collections {
   category = "category",
   article = "article",
   property_request = "property_request",
+  verification = "verification",
+  report = "report",
+  conversation = "conversation",
+  message = "message",
+  cart = "cart",
+  notification = "notification",
 }

@@ -4,7 +4,7 @@ import {
   ForbiddenError,
   NotFoundError,
 } from "../helpers/error-responses";
-import { IUser } from "../interfaces/model/user.interface";
+import { IUser, UserPageViews } from "../interfaces/model/user.interface";
 import Auth from "../models/user.auth.model";
 import User from "../models/user.model";
 import { AuthService } from "./auth.service";
@@ -56,21 +56,26 @@ export class UserService {
     user.lastName = body.lastName || user.lastName;
     user.otherNames = body.otherNames || user.otherNames;
     user.about = body.about || user.about;
-    user.website = body.website || user.website;
+    user.websiteUrl = body.websiteUrl || user.websiteUrl;
     user.facebookUrl = body.facebookUrl || user.facebookUrl;
     user.instagramUrl = body.instagramUrl || user.instagramUrl;
     user.address = body.address || user.address;
     user.country = body.country || user.country;
     user.state = body.state || user.state;
+    user.stateOfResidence = body.stateOfResidence || user.stateOfResidence;
     user.city = body.city || user.city;
     user.nationality = body.nationality || user.nationality;
+    user.zipCode = body.zipCode || user.zipCode;
     user.sex = body.sex || user.sex;
     user.dob = body.dob || user.dob;
     user.phoneNumber1 = body.phoneNumber1 || user.phoneNumber1;
     user.phoneNumber2 = body.phoneNumber2 || user.phoneNumber2;
     user.accountName = body.accountName || user.accountName;
-    user.accountNumber = body.accountNumber || user.accountNumber;
+    user.accountNo = body.accountNo || user.accountNo;
     user.bankName = body.bankName || user.bankName;
+    user.accountType = body.accountType || user.accountType;
+    user.noOfSubscription = body.noOfSubscription || user.noOfSubscription;
+    user.sellerType = body.sellerType || user.sellerType;
 
     const editedInfo = await user.save();
 
@@ -84,29 +89,13 @@ export class UserService {
     await User.findByIdAndDelete(_id);
   }
 
-  async becomeASeller(_id: string): Promise<void> {
-    const user = await User.findById(_id);
-
-    if (!user) {
-      throw new NotFoundError("User does not exist");
-    }
-
-    if (user.isSeller) {
-      throw new ForbiddenError("User is already a seller");
-    }
-
-    user.isSeller = true;
-
-    await user.save();
-  }
-
   async viewUserProfile(_id: string): Promise<IUser> {
     const user = await User.findById(_id);
 
     if (!user) {
       throw new NotFoundError("User does not exist");
     }
-    user.profileViews += 1;
+    (user.pageViews as UserPageViews).value += 1;
 
     await user.save();
 

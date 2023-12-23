@@ -1,15 +1,21 @@
 import { ForbiddenError, NotFoundError } from "../helpers/error-responses";
-import { IListing } from "../interfaces/model/listing.interface";
+import {
+  IListing,
+  IListingCategory,
+} from "../interfaces/model/listing.interface";
 import { IUser } from "../interfaces/model/user.interface";
 import Listing from "../models/listing.model";
 import User from "../models/user.model";
 import CategoryService from "./category.service";
+import NotificationService from "./notification.service";
 
 export default class ListingService {
   private readonly categoryService: CategoryService;
+  private readonly notificationService: NotificationService;
 
   constructor() {
     this.categoryService = new CategoryService();
+    this.notificationService = new NotificationService();
   }
 
   async createListing(body: Partial<IListing>): Promise<IListing> {
@@ -17,7 +23,7 @@ export default class ListingService {
       category,
       title,
       location,
-      owner,
+      postedBy,
       features,
       description,
       images,
@@ -25,7 +31,7 @@ export default class ListingService {
       price,
       attachedDocuments,
       year,
-      offerType,
+      forRent,
       noOfBathrooms,
       noOfBedrooms,
       carCondition,
@@ -38,7 +44,7 @@ export default class ListingService {
 
     if (!category) throw new NotFoundError("Category does not exist");
 
-    const user = await User.findByIdAndUpdate(owner);
+    const user = await User.findByIdAndUpdate(postedBy);
 
     if (!user) throw new NotFoundError("User does not exist");
 
@@ -46,7 +52,7 @@ export default class ListingService {
       title,
       category: category._id,
       location,
-      owner,
+      postedBy,
       features,
       description,
       images,
@@ -54,7 +60,7 @@ export default class ListingService {
       price,
       attachedDocuments,
       year,
-      offerType,
+      forRent,
       noOfBathrooms,
       noOfBedrooms,
       carCondition,
@@ -63,8 +69,7 @@ export default class ListingService {
       model,
     });
 
-    user.totalListings += 1;
-    user.totalAvailableListings += 1;
+    user.totalListing += 1;
 
     await user.save();
 
@@ -75,8 +80,8 @@ export default class ListingService {
     page: number;
     limit: number;
   }): Promise<{ listings: IListing[]; count: number }> {
-    const count = await Listing.find({ isAvailable: true }).countDocuments();
-    const listings = await Listing.find({ isAvailable: true })
+    const count = await Listing.find({ available: true }).countDocuments();
+    const listings = await Listing.find({ available: true })
       .skip(data.page * data.limit)
       .limit(data.limit);
 
@@ -85,7 +90,10 @@ export default class ListingService {
 
   async getUserListings(userId: string): Promise<IListing[]> {
     // fetching only listings available for sale/rent
-    const listings = await Listing.find({ owner: userId, isAvailable: true });
+    const listings = await Listing.find({
+      postedBy: userId,
+      available: true,
+    });
 
     return listings;
   }
@@ -95,7 +103,7 @@ export default class ListingService {
 
     if (!listing) throw new NotFoundError("Listing does not exist");
 
-    listing.views += 1;
+    listing.views++;
 
     await listing.save();
 
@@ -115,7 +123,7 @@ export default class ListingService {
 
     // decrement the total listings by 1
     await User.findByIdAndUpdate(user, {
-      $inc: { totalAvailableListings: -1, totalListings: -1 },
+      $inc: { totalListing: -1 },
     });
   }
 
@@ -127,12 +135,12 @@ export default class ListingService {
       location,
       features,
       description,
+      forRent,
       images,
       videos,
       price,
       attachedDocuments,
       year,
-      offerType,
       noOfBathrooms,
       noOfBedrooms,
       carCondition,
@@ -145,7 +153,7 @@ export default class ListingService {
 
     if (!listing) throw new NotFoundError("Listing does not exist");
 
-    if (listing.owner.toString() != user.toString())
+    if (listing.postedBy?.toString() != user?.toString())
       throw new ForbiddenError("This listing does not belong to you");
 
     listing.title = title || listing.title;
@@ -158,7 +166,7 @@ export default class ListingService {
     listing.price = price || listing.price;
     listing.attachedDocuments = attachedDocuments || listing.attachedDocuments;
     listing.year = year || listing.year;
-    listing.offerType = offerType || listing.offerType;
+    listing.forRent = forRent || listing.forRent;
     listing.noOfBedrooms = noOfBedrooms || listing.noOfBedrooms;
     listing.noOfBathrooms = noOfBathrooms || listing.noOfBathrooms;
     listing.carCondition = carCondition || listing.carCondition;
@@ -172,18 +180,34 @@ export default class ListingService {
   }
 
   async saveListing(userId: string, listingId: string) {
-    let listing = await Listing.findById(listingId);
+    let listing = await Listing.findById(listingId).populate("category");
+    const user = await User.findById(userId);
+
+    if (!user) throw new NotFoundError("user does not exist");
 
     if (!listing) {
       throw new NotFoundError("listing does not exist");
     }
 
-    if (listing.savedBy.includes(userId.toString())) {
-      listing.savedBy = listing.savedBy.filter(
+    if (listing.thoseWhoSaved.includes(userId.toString())) {
+      listing.thoseWhoSaved = listing.thoseWhoSaved.filter(
         (user) => user.toString() != userId.toString()
       );
     } else {
-      listing.savedBy.push(userId);
+      listing.thoseWhoSaved.push(userId);
+
+      let notification = {
+        sender: user,
+        title: "Your Listing was saved",
+        message: `${
+          user?.firstName + " " + user?.lastName
+        } saved your listing, ${listing.title}`,
+        type: 1,
+        link: `/${(listing.category as IListingCategory).slug}/${listing._id}`,
+        receiver: user._id,
+      };
+
+      await this.notificationService.saveNotification(notification);
     }
 
     await listing.save();

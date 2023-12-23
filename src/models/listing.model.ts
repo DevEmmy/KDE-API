@@ -21,7 +21,7 @@ const ListingSchema = new mongoose.Schema<IListing>(
       type: String,
       required: true,
     },
-    owner: {
+    postedBy: {
       type: Types.ObjectId,
       ref: Collections.user,
       required: true,
@@ -43,7 +43,7 @@ const ListingSchema = new mongoose.Schema<IListing>(
       required: true,
       default: [],
     },
-    isAvailable: {
+    available: {
       type: Boolean,
       default: true,
     },
@@ -59,22 +59,21 @@ const ListingSchema = new mongoose.Schema<IListing>(
     },
 
     year: { type: Number, required: true },
-    offerType: {
-      type: String,
-      enum: [IListingType.rent, IListingType.sale],
-      required: true,
+    forRent: {
+      type: Boolean,
+      required: false,
     },
     views: {
       type: Number,
       default: 0,
     },
-    savedBy: {
-      type: [{ type: String, ref: Collections.user }],
+    thoseWhoSaved: {
+      type: [{ type: Types.ObjectId, ref: Collections.user }],
       default: [],
     },
     noOfBathrooms: { type: Number },
     noOfBedrooms: { type: Number },
-    rentedBy: { type: Types.ObjectId, ref: Collections.user },
+    rentedBy: { type: Types.ObjectId, ref: Collections.user, default: null },
     carCondition: {
       type: String,
       enum: [ICarConditions.new, ICarConditions.used],
