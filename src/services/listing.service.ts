@@ -103,8 +103,6 @@ export default class ListingService {
 
     if (!listing) throw new NotFoundError("Listing does not exist");
 
-    listing.views++;
-
     await listing.save();
 
     return listing;

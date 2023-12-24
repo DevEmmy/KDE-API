@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     city: { type: String },
     nationality: { type: String },
     sex: { type: String },
-    dob: { type: Date },
+    dob: { type: String },
     phoneNumber1: { type: Number },
     phoneNumber2: { type: Number },
     pageViews: {

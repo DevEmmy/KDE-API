@@ -64,8 +64,13 @@ const ListingSchema = new mongoose.Schema<IListing>(
       required: false,
     },
     views: {
-      type: Number,
-      default: 0,
+      type: [
+        {
+          type: Types.ObjectId,
+          ref: Collections.user,
+        },
+      ],
+      default: [],
     },
     thoseWhoSaved: {
       type: [{ type: Types.ObjectId, ref: Collections.user }],
@@ -76,7 +81,8 @@ const ListingSchema = new mongoose.Schema<IListing>(
     rentedBy: { type: Types.ObjectId, ref: Collections.user, default: null },
     carCondition: {
       type: String,
-      enum: [ICarConditions.new, ICarConditions.used],
+      enum: [ICarConditions.new, ICarConditions.used, ICarConditions.empty],
+      default: ICarConditions.empty,
     },
     engineType: { type: String },
     color: { type: String },

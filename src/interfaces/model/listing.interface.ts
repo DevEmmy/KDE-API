@@ -13,8 +13,9 @@ export enum IListingType {
 }
 
 export enum ICarConditions {
-  new = "new",
-  used = "used",
+  new = "New",
+  used = "Used",
+  empty = "",
 }
 
 export interface IListing {
@@ -32,7 +33,7 @@ export interface IListing {
   attachedDocuments: string[];
   year: number;
   forRent: boolean;
-  views: number;
+  views: Array<string | Types.ObjectId | IUser>;
   thoseWhoSaved: Array<string | Types.ObjectId | IUser>;
   noOfBedrooms: number;
   noOfBathrooms: number;
