@@ -20,7 +20,7 @@ const getAllListing = async (req, res) => {
     const length = (await Listing.find({ category: category?._id,forRent: forRent || false })).length
 
     if(category){
-        await Listing.find({ category: category?._id, forRent: forRent || false }).populate("postedBy").populate("category").skip(((page || 1) - 1) * limit).sort()
+        await Listing.find({ category: category?._id, forRent: forRent || false }).populate("postedBy").populate("category").skip(((page || 1) - 1) * limit).sort({createdAt: -1})
         .limit(limit)
         .then(resp => {
             // console.log(resp)
