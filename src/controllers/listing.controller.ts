@@ -107,8 +107,15 @@ class ListingController {
     try {
       const page = <number>parseInt(req.query?.page as string) || 0;
       const limit = <number>parseInt(req.query?.hitsPerPage as string) || 10;
+      const category = <string>req.query?.category;
+      const search = <string>req.query?.search;
 
-      const data = await this.listingService.getAllListings({ page, limit });
+      const data = await this.listingService.getAllListings({
+        page,
+        limit,
+        category,
+        search,
+      });
 
       res.status(200).json({
         message: "Listings fetched successfully",

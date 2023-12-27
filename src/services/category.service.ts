@@ -13,7 +13,11 @@ export default class CategoryService {
 
     const slug = slugify(title as string);
 
-    const category = await Category.create({ slug, title });
+    let category = await Category.findOne({ slug });
+
+    if (!category) {
+      category = await Category.create({ title, slug });
+    }
 
     return category;
   }

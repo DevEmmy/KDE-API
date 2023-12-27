@@ -1,3 +1,4 @@
+import { FilterQuery } from "mongoose";
 import { ForbiddenError, NotFoundError } from "../helpers/error-responses";
 import {
   IListing,
@@ -79,9 +80,24 @@ export default class ListingService {
   async getAllListings(data: {
     page: number;
     limit: number;
+    category: string;
+    search: string;
   }): Promise<{ listings: IListing[]; count: number }> {
-    const count = await Listing.find({ available: true }).countDocuments();
-    const listings = await Listing.find({ available: true })
+    const query: FilterQuery<IListing> = { available: true };
+
+    if (data.search) {
+      query.title = { $regex: data.search, $options: "i" };
+    }
+
+    if (data.category) {
+      const category = await this.categoryService.addCategory({
+        title: data.category,
+      });
+      query.category = category._id;
+    }
+
+    const count = await Listing.find(query).countDocuments();
+    const listings = await Listing.find(query)
       .skip(data.page * data.limit)
       .limit(data.limit);
 
