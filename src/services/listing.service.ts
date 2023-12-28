@@ -116,7 +116,7 @@ export default class ListingService {
   }
 
   async getSingleListing(listingId: string): Promise<IListing> {
-    const listing = await Listing.findById(listingId).populate("owner");
+    const listing = await Listing.findById(listingId).populate("postedBy");
 
     if (!listing) throw new NotFoundError("Listing does not exist");
 
