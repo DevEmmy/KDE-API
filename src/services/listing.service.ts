@@ -128,7 +128,7 @@ export default class ListingService {
   async deleteListing(user: string, listingId: string) {
     const listing = await Listing.findOneAndDelete({
       _id: listingId,
-      owner: user,
+      postedBy: user,
     });
 
     if (!listing)
