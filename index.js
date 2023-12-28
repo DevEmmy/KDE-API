@@ -128,22 +128,6 @@ app.use("/reports", reportRoute)
 app.use("/accounts", accountRoute)
 app.use("/verification", verificationRoute)
 // Middleware for tracking visits
-app.use((req, res, next) => {
-    const { ip, headers } = req;
-    const { 'user-agent': userAgent } = headers;
-  
-    const newVisit = new Visit({
-      ipAddress: ip,
-      userAgent: userAgent,
-    });
-  
-    newVisit.save((err) => {
-      if (err) {
-        console.error('Error saving visit:', err);
-      }
-      next();
-    });
-});
 
 
 let transactionStatus = {
@@ -178,6 +162,24 @@ app.post("/webhook", async (req, res, next) => {
         //do nothing()
     }
 })
+
+app.get("/visit", async (req, res, next) => {
+  const { ip, headers } = req;
+  const { 'user-agent': userAgent } = headers;
+
+  const newVisit =  new Visit({
+    ipAddress: ip,
+    userAgent: userAgent,
+  });
+
+  newVisit.save((err) => {
+    if (err) {
+      console.error('Error saving visit:', err);
+    }
+    next();
+  });
+});
+
 
 function getStartAndEndOfWeek() {
     const currentDate = new Date();
