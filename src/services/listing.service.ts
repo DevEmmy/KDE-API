@@ -98,6 +98,7 @@ export default class ListingService {
 
     const count = await Listing.find(query).countDocuments();
     const listings = await Listing.find(query)
+      .populate("postedBy")
       .skip(data.page * data.limit)
       .limit(data.limit);
 
