@@ -5,17 +5,26 @@ const { saveNotification } = require("./notificationsControllers");
 const Category = require("../models/categories.model");
 const {detector, upscalerFunction} = require("./imageQualityDetector.js")
 
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    // Swap array[i] and array[j]
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
 const getAllListing = async (req, res) => {
     let { page, category, forRent } = req.query;
-    const limit = 12
+    const limit = 30
     category = await Category.findOne({ slug: category })
     const length = (await Listing.find({ category: category?._id,forRent: forRent || false })).length
 
     if(category){
-        await Listing.find({ category: category?._id, forRent: forRent || false }).populate("postedBy").populate("category").skip(((page || 1) - 1) * limit)
+        await Listing.find({ category: category?._id, forRent: forRent || false }).populate("postedBy").populate("category").skip(((page || 1) - 1) * limit).sort({createdAt: -1})
         .limit(limit)
         .then(resp => {
             // console.log(resp)
+            shuffleArray(resp)
             res.json({
                 listings: resp,
                 noOfListings: length
