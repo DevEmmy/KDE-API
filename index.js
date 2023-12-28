@@ -163,22 +163,6 @@ app.post("/webhook", async (req, res, next) => {
     }
 })
 
-app.get("/visit", async (req, res, next) => {
-  const { ip, headers } = req;
-  const { 'user-agent': userAgent } = headers;
-
-  const newVisit =  new Visit({
-    ipAddress: ip,
-    userAgent: userAgent,
-  });
-
-  newVisit.save((err) => {
-    if (err) {
-      console.error('Error saving visit:', err);
-    }
-    next();
-  });
-});
 
 
 function getStartAndEndOfWeek() {
@@ -220,6 +204,26 @@ function getStartAndEndOfWeek() {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
+
+
+  app.get('/visit', async (req, res) => {
+    const { ip, headers } = req;
+    const { 'user-agent': userAgent } = headers;
+  
+    const newVisit =  new Visit({
+      ipAddress: ip,
+      userAgent: userAgent,
+    });
+  
+    newVisit.save((err) => {
+      if (err) {
+        console.error('Error saving visit:', err);
+      }
+    });
+
+    res.json({"message": "done"})
+  });
+  
 
 //run server
 server.listen(port, ()=>{
