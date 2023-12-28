@@ -319,7 +319,7 @@ const forgottenPassword = async (req, res)=>{
 const resetPassword = async (token, password, res) => {
     const user = await User.findOne({
       resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() },
+    //   resetPasswordExpires:     ,
     });
   
     if (!user) {
