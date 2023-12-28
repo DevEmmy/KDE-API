@@ -23,6 +23,7 @@ const { sendMail } = require('./controllers/nodemailer');
 const User = require('./models/users.model');
 const Transaction = require('./models/transaction.model');
 const Account = require('./models/account.model');
+const Visit = require("./models/visitor")
 
 //initiate express
 const app = express();
@@ -126,6 +127,24 @@ app.use("/carts", cartRoute)
 app.use("/reports", reportRoute)
 app.use("/accounts", accountRoute)
 app.use("/verification", verificationRoute)
+// Middleware for tracking visits
+app.use((req, res, next) => {
+    const { ip, headers } = req;
+    const { 'user-agent': userAgent } = headers;
+  
+    const newVisit = new Visit({
+      ipAddress: ip,
+      userAgent: userAgent,
+    });
+  
+    newVisit.save((err) => {
+      if (err) {
+        console.error('Error saving visit:', err);
+      }
+      next();
+    });
+});
+
 
 let transactionStatus = {
     "PENDING": "PENDING",
@@ -159,6 +178,46 @@ app.post("/webhook", async (req, res, next) => {
         //do nothing()
     }
 })
+
+function getStartAndEndOfWeek() {
+    const currentDate = new Date();
+    const currentDayOfWeek = currentDate.getDay();
+    const diff = currentDate.getDate() - currentDayOfWeek + (currentDayOfWeek === 0 ? -6 : 1);
+    const startOfWeek = new Date(currentDate.setDate(diff));
+    startOfWeek.setHours(0, 0, 0, 0);
+  
+    const endOfWeek = new Date(currentDate.setDate(diff + 6));
+    endOfWeek.setHours(23, 59, 59, 999);
+  
+    return { startOfWeek, endOfWeek };
+  }
+
+  app.get('/analytics/aggregated', async (req, res) => {
+    try {
+      const startDate = new Date();
+      startDate.setHours(0, 0, 0, 0);
+  
+      const endDate = new Date();
+      endDate.setHours(23, 59, 59, 999);
+  
+      const weeklyRange = getStartAndEndOfWeek();
+      const monthlyRange = {
+        startOfMonth: new Date(startDate.getFullYear(), startDate.getMonth(), 1),
+        endOfMonth: new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0, 23, 59, 59, 999),
+      };
+  
+      const [dailyVisits, weeklyVisits, monthlyVisits] = await Promise.all([
+        Visit.find({ timestamp: { $gte: startDate, $lte: endDate } }).countDocuments(),
+        Visit.find({ timestamp: { $gte: weeklyRange.startOfWeek, $lte: weeklyRange.endOfWeek } }).countDocuments(),
+        Visit.find({ timestamp: { $gte: monthlyRange.startOfMonth, $lte: monthlyRange.endOfMonth } }).countDocuments(),
+      ]);
+  
+      res.json({ dailyVisits, weeklyVisits, monthlyVisits });
+    } catch (error) {
+      console.error('Error fetching aggregated visits:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
 
 //run server
 server.listen(port, ()=>{
