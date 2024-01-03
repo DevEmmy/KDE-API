@@ -26,6 +26,7 @@ import Crypto from "crypto";
 import { UserService } from "./user.service";
 import bcrypt from "bcryptjs";
 import { CartService } from "./cart.service";
+import { hashPassword } from "../helpers/password.helper";
 
 export class AuthService {
   private async createToken(
@@ -83,7 +84,9 @@ export class AuthService {
         throw new BadRequestError("Passwords do not match");
       }
 
-      await Auth.create({ password, email });
+      const hashedPassword = await hashPassword(password as string);
+
+      await Auth.create({ password: hashedPassword, email });
 
       const user = await User.create({
         firstName,
@@ -244,10 +247,7 @@ export class AuthService {
     await Auth.findOneAndUpdate(
       { email: tokenInDb.email },
       {
-        password: await bcrypt.hash(
-          password as string,
-          await bcrypt.genSalt(10)
-        ),
+        password: await hashPassword(password as string),
       }
     );
 
@@ -283,11 +283,7 @@ export class AuthService {
       throw new ForbiddenError("Old password is incorrect");
     }
 
-    const newPasswordHash = await bcrypt.hash(
-      password as string,
-      await bcrypt.genSalt(10)
-    );
-
+    const newPasswordHash = await hashPassword(password as string);
     userAuth.password = newPasswordHash;
 
     await userAuth?.save();

@@ -12,13 +12,6 @@ const AuthSchema = new mongoose.Schema<IUserAuth>(
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-AuthSchema.pre("save", async function () {
-  if (!this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, await bcrypt.genSalt(10));
-  }
-  return;
-});
-
 AuthSchema.methods.verifyPassword = async function (
   password: string
 ): Promise<boolean> {

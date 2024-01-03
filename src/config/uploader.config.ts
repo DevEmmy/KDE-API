@@ -95,7 +95,6 @@ export const uploadListingMedia = async (
     if (media[i].base64) {
       await cloudinary.uploader.upload(media[i].base64, option).then((resp) => {
         ims.push(resp.secure_url);
-        console.log("done");
       });
     } else {
       ims.push(media[i]);
