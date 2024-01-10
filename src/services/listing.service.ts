@@ -100,7 +100,8 @@ export default class ListingService {
     const listings = await Listing.find(query)
       .populate("postedBy")
       .skip(data.page * data.limit)
-      .limit(data.limit);
+      .limit(data.limit)
+      .sort("createAt");
 
     return { listings, count };
   }

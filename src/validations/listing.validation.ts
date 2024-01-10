@@ -14,7 +14,6 @@ export const CreateListingInput = object({
     features: array().required(),
     description: string().required(),
     price: number().required(),
-    attachedDocuments: array().required(),
     year: number().required(),
     forRent: boolean().default(false),
     noOfBathrooms: number().notRequired(),

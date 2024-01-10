@@ -106,7 +106,7 @@ class ListingController {
     logger.info("Fetching listings");
     try {
       const page = <number>parseInt(req.query?.page as string) || 0;
-      const limit = <number>parseInt(req.query?.hitsPerPage as string) || 10;
+      const limit = <number>parseInt(req.query?.hitsPerPage as string) || 30;
       const category = <string>req.query?.category;
       const search = <string>req.query?.search;
 
