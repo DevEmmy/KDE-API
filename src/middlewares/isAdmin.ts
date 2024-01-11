@@ -1,7 +1,7 @@
 import { NextFunction, Response } from "express";
 import { IRequest } from "../interfaces/CustomExpressHandlers";
 import User from "../models/user.model";
-import { ForbiddenError } from "../helpers/error-responses";
+import { ForbiddenError, UnauthorizedError } from "../helpers/error-responses";
 
 const isAdmin = async (req: IRequest, res: Response, next: NextFunction) => {
   try {
@@ -10,7 +10,7 @@ const isAdmin = async (req: IRequest, res: Response, next: NextFunction) => {
     const user = await User.findById(userId);
 
     if (!user || !user.isAdmin) {
-      const error = new ForbiddenError(
+      const error = new UnauthorizedError(
         "You need admin access to access this route"
       );
       return next(error);

@@ -12,7 +12,9 @@ export default class NewsletterService {
     const subscriptionExist = await NewsletterSubscription.findOne({ email });
 
     if (subscriptionExist) {
-      throw new ForbiddenError("You are already suscribed to CREAM newsletter");
+      throw new BadRequestError(
+        "You are already suscribed to CREAM newsletter"
+      );
     } else {
       await NewsletterSubscription.create({ email });
     }
@@ -22,7 +24,7 @@ export default class NewsletterService {
     const subscriptionExist = await NewsletterSubscription.findOne({ email });
 
     if (!subscriptionExist) {
-      throw new ForbiddenError("You are not suscribed to CREAM newsletter");
+      throw new BadRequestError("You are not suscribed to CREAM newsletter");
     }
 
     await subscriptionExist.deleteOne();

@@ -1,9 +1,5 @@
 import { notFound } from "../config/errors.config";
-import {
-  BadRequestError,
-  ForbiddenError,
-  NotFoundError,
-} from "../helpers/error-responses";
+import { BadRequestError, NotFoundError } from "../helpers/error-responses";
 import slugify from "../helpers/slugify";
 import { IArticle } from "../interfaces/model/article.interface";
 import Article from "../models/article.model";
@@ -38,7 +34,7 @@ export default class ArticleServices {
     if (!article) throw new NotFoundError("Article does not exist");
 
     if (article.author.toString() != userId.toString())
-      throw new ForbiddenError("This article does not belong to you");
+      throw new BadRequestError("This article does not belong to you");
 
     await article.deleteOne();
   };

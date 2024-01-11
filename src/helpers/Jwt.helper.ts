@@ -21,12 +21,16 @@ class JWT {
   }
 
   async verifyAccessToken<T>(token: string): Promise<T> {
-    const decodedToken = await jwt.verify(
-      token,
-      await this.decodeSecret(settings.accessTokenSecret as string)
-    );
+    try {
+      const decodedToken = await jwt.verify(
+        token,
+        await this.decodeSecret(settings.accessTokenSecret as string)
+      );
 
-    return decodedToken as T;
+      return decodedToken as T;
+    } catch (error: any) {
+      return error;
+    }
   }
 }
 

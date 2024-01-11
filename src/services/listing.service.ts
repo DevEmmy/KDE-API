@@ -1,5 +1,5 @@
 import { FilterQuery } from "mongoose";
-import { ForbiddenError, NotFoundError } from "../helpers/error-responses";
+import { BadRequestError, NotFoundError } from "../helpers/error-responses";
 import {
   IListing,
   IListingCategory,
@@ -133,7 +133,7 @@ export default class ListingService {
     });
 
     if (!listing)
-      throw new ForbiddenError(
+      throw new BadRequestError(
         "Listing does not exist or does not belong to you"
       );
 
@@ -170,7 +170,7 @@ export default class ListingService {
     if (!listing) throw new NotFoundError("Listing does not exist");
 
     if (listing.postedBy?.toString() != user?.toString())
-      throw new ForbiddenError("This listing does not belong to you");
+      throw new BadRequestError("This listing does not belong to you");
 
     listing.title = title || listing.title;
     listing.category = category || listing.category;

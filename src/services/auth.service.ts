@@ -7,7 +7,6 @@ import {
 } from "../constants/mails";
 import {
   BadRequestError,
-  ForbiddenError,
   InternalServerError,
   NotFoundError,
 } from "../helpers/error-responses";
@@ -280,7 +279,7 @@ export class AuthService {
     );
 
     if (!isOldPasswordCorrect) {
-      throw new ForbiddenError("Old password is incorrect");
+      throw new BadRequestError("Old password is incorrect");
     }
 
     const newPasswordHash = await hashPassword(password as string);
