@@ -101,7 +101,7 @@ export default class ListingService {
       .populate("postedBy")
       .skip(data.page * data.limit)
       .limit(data.limit)
-      .sort("createAt");
+      .sort("-createdAt");
 
     return { listings, count };
   }
@@ -111,7 +111,7 @@ export default class ListingService {
     const listings = await Listing.find({
       postedBy: userId,
       available: true,
-    });
+    }).sort("-createdAt");
 
     return listings;
   }
