@@ -14,6 +14,21 @@ export default class ListingService {
   private readonly categoryService: CategoryService;
   private readonly notificationService: NotificationService;
 
+  private randomizeListing = (listings: IListing[]): IListing[] => {
+    let data: IListing[] = [];
+
+    if (listings.length <= 3) {
+      data = listings;
+    } else {
+      // let the first three listings follow
+      data = listings.slice(0, 3);
+      listings = listings.slice(3);
+      listings.forEach((listing) => data.push(listing));
+    }
+
+    return data;
+  };
+
   constructor() {
     this.categoryService = new CategoryService();
     this.notificationService = new NotificationService();
@@ -103,7 +118,7 @@ export default class ListingService {
       .limit(data.limit)
       .sort("-createdAt");
 
-    return { listings, count };
+    return { listings: this.randomizeListing(listings), count };
   }
 
   async getUserListings(userId: string): Promise<IListing[]> {
