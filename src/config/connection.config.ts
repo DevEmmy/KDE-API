@@ -12,7 +12,7 @@ const startServer = (app: Application) => {
         logger.info(`Server is listening on port ${settings.port}`);
       });
       await seedData();
-      newsletterCron();
+      await newsletterCron();
     })
     .catch((error: any) => {
       logger.error(`Unable to connect to mongoose server, ${error.toString()}`);

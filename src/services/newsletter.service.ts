@@ -1,5 +1,8 @@
+import sendMail from "../config/mailer.config";
+import { newsLetterHTML } from "../constants/mails";
 import { BadRequestError, ForbiddenError } from "../helpers/error-responses";
 import NewsletterSubscription from "../models/newsletter.subscription.model";
+import User from "../models/user.model";
 
 /**
  * Note: Whenever sending newsletter, attach the user email to the button for unsubscribing
@@ -17,6 +20,12 @@ export default class NewsletterService {
       );
     } else {
       await NewsletterSubscription.create({ email });
+      await User.findOneAndUpdate({ email }, { newsLetterDate: Date.now() });
+      await sendMail({
+        to: email,
+        subject: "CREAM WEEKLY NEWSLETTER",
+        html: newsLetterHTML,
+      });
     }
   }
 
