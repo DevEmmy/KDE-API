@@ -4,7 +4,7 @@ const jwt_token = require("jsonwebtoken");
 require("dotenv").config()
 const jwt_secret = process.env.JWT_SECRET;
 const requireLogin = require("../middlewares/requireLogin");
-const { getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile, forgottenPassword, reset_password, changeAccountType, selectSellerType } = require("../controllers/usersControllers");
+const { getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile, forgottenPassword, reset_password, changeAccountType, selectSellerType, getAdminDetails } = require("../controllers/usersControllers");
 
 router.get("/all-users", getAllUsers) // added
 router.get("/me", requireLogin, getSignedInUser) //added
@@ -21,5 +21,6 @@ router.post("/forgotten-password", forgottenPassword)//added
 router.post("/reset-password", reset_password) //added
 router.patch("/change-account-type",requireLogin, changeAccountType)
 router.patch("/select-seller-type", requireLogin, selectSellerType)
+router.get("/admin/details", getAdminDetails)
 
 module.exports = router

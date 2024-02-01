@@ -10,6 +10,7 @@ const { reset_html } = require("../html_templates/html");
 const { initiateCart } = require("./cartController");
 const Verification = require("../models/verification.model");
 const { createAccount, getAccountOnProbabtion } = require("./accountController");
+const Listing = require("../models/listings.model");
 const Account = "../models/account.model"
 
 const upload = async (data)=>{
@@ -375,6 +376,17 @@ const selectSellerType = async (req, res)=>{
          }
 }
 
+const getAdminDetails = async (req, res)=>{
+    try{
+        const users = (await User.find()).length;
+        const totalListings = (await Listing.find()).length;
+        let result = {users, totalListings, buyers: 0}
+        res.json(result)
+    }
+    catch(err){
+        res.status(err.status).json({message: err.message})
+    }
+}
 
 
-module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile, viewProfilePage, forgottenPassword, reset_password, changeAccountType, selectSellerType, getUserByIdFnc}
+module.exports = {getAllUsers, signIn, signUp, updateUserTypeToSeller, deleteAccount, updateProfile, addToSaved, getSignedInUser, getUserById, verifyUser, updateBankDetails, viewProfile, viewProfilePage, forgottenPassword, reset_password, changeAccountType, selectSellerType, getUserByIdFnc, getAdminDetails}
