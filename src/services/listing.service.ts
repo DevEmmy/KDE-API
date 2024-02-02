@@ -25,10 +25,16 @@ export default class ListingService {
     } else {
       // let the first three listings follow
       data = listings.slice(0, count);
-      listings = listings.slice(count);
-      listings
-        .sort((a, b) => Math.random() - Math.random())
-        .forEach((listing) => data.push(listing));
+
+      for (let i = listings.length - 1; i > count - 1; i--) {
+        const randomIndex = Math.floor(Math.random() * (i + 1));
+        [listings[i], listings[randomIndex]] = [
+          listings[randomIndex],
+          listings[i],
+        ];
+      }
+
+      data = data.concat(listings.slice(count));
     }
 
     return data;

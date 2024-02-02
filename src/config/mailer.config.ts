@@ -9,6 +9,7 @@ const transporter = nodemailer.createTransport({
     user: settings.nodemailer.email,
     pass: settings.nodemailer.password,
   },
+  from: settings.nodemailer.email,
 });
 
 const sendMail = async (mailOptions: Mail.Options) => {
