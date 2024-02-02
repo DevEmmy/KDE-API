@@ -26,7 +26,9 @@ export default class ListingService {
       // let the first three listings follow
       data = listings.slice(0, count);
       listings = listings.slice(count);
-      listings.forEach((listing) => data.push(listing));
+      listings
+        .sort((a, b) => Math.random() - Math.random())
+        .forEach((listing) => data.push(listing));
     }
 
     return data;
