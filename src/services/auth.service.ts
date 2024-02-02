@@ -26,6 +26,8 @@ import { UserService } from "./user.service";
 import bcrypt from "bcryptjs";
 import { CartService } from "./cart.service";
 import { hashPassword } from "../helpers/password.helper";
+import Subscription from "../models/subscription.model";
+import { SubscriptionType } from "../interfaces/model/subscription.interface";
 
 export class AuthService {
   private async createToken(
@@ -98,6 +100,12 @@ export class AuthService {
         email as string,
         ITokenTypes.accountVerificationToken
       );
+
+      await Subscription.create({
+        userId: user._id,
+        type: SubscriptionType.FREE,
+        price: 0,
+      });
 
       await sendMail({
         to: email,

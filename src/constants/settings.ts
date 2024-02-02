@@ -11,6 +11,8 @@ const settings = {
     apiKey: process.env.API_KEY,
     uri: process.env.BANK_URI,
     clientSecret: process.env.CLIENT_SECRET,
+    accountNumber: "0567154759",
+    bankCode: "000013",
   },
   frontendUrl: process.env.CLIENT_URL,
   cloudinary: {

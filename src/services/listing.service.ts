@@ -14,15 +14,18 @@ export default class ListingService {
   private readonly categoryService: CategoryService;
   private readonly notificationService: NotificationService;
 
-  private randomizeListing = (listings: IListing[]): IListing[] => {
+  private randomizeListing = (
+    listings: IListing[],
+    count: number = 3
+  ): IListing[] => {
     let data: IListing[] = [];
 
-    if (listings.length <= 3) {
+    if (listings.length <= count) {
       data = listings;
     } else {
       // let the first three listings follow
-      data = listings.slice(0, 3);
-      listings = listings.slice(3);
+      data = listings.slice(0, count);
+      listings = listings.slice(count);
       listings.forEach((listing) => data.push(listing));
     }
 
@@ -95,8 +98,8 @@ export default class ListingService {
   async getAllListings(data: {
     page: number;
     limit: number;
-    category: string;
-    search: string;
+    category?: string;
+    search?: string;
   }): Promise<{ listings: IListing[]; count: number }> {
     const query: FilterQuery<IListing> = { available: true };
 
@@ -114,11 +117,14 @@ export default class ListingService {
     const count = await Listing.find(query).countDocuments();
     const listings = await Listing.find(query)
       .populate("postedBy")
-      .skip(data.page * data.limit)
+      .skip((data.page - 1) * data.limit)
       .limit(data.limit)
       .sort("-createdAt");
 
-    return { listings: this.randomizeListing(listings), count };
+    return {
+      listings: this.randomizeListing(listings, 15),
+      count,
+    };
   }
 
   async getUserListings(userId: string): Promise<IListing[]> {

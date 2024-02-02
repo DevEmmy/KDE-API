@@ -13,4 +13,6 @@ export enum Collections {
   message = "message",
   cart = "cart",
   notification = "notification",
+  subscription = "subscription",
+  transaction = "transaction",
 }
