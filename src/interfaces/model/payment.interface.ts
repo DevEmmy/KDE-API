@@ -1,3 +1,4 @@
+import { TransactionStatus } from "./transaction.interface";
 import { IUser } from "./user.interface";
 
 export interface ITransfer {
@@ -40,4 +41,17 @@ export interface TransferDTO {
   request_ref: string;
   transaction_desc: string;
   amount: number;
+}
+
+export interface WebhookPayload {
+  details: {
+    data: {
+      amount: number;
+    };
+    transaction_desc: string;
+    transaction_ref: string;
+    transaction_type: string;
+    status: TransactionStatus;
+    customer_email: string;
+  };
 }

@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import helmet from "helmet";
@@ -8,6 +8,8 @@ import startServer from "./config/connection.config";
 import routes from "./routes/index.routes";
 import swagger from "swagger-ui-express";
 import loggerMiddleware from "./middlewares/logger";
+import { WebhookPayload } from "./interfaces/model/payment.interface";
+import { webhook } from "./helpers/payment";
 
 const documentation = require("../doc.config.json");
 
@@ -36,6 +38,19 @@ app.use("/api/v2/report", routes.report);
 app.use("/api/v2/chat", routes.chat);
 app.use("/api/v2/cart", routes.cart);
 app.use("/api/v2/notification", routes.notifications);
+app.use("/api/v2/subscription", routes.subscription);
+app.post(
+  "/api/v2/webhook",
+  async (req: Request<{}, {}, WebhookPayload>, res, next) => {
+    try {
+      await webhook(req.body);
+
+      res.status(200).json({ message: "success" });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 app.all("*", notFound);
 app.use(errorHandler);

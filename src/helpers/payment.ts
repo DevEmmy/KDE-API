@@ -1,10 +1,23 @@
 import crypto from "crypto";
-import { ITransfer, TransferDTO } from "../interfaces/model/payment.interface";
+import {
+  ITransfer,
+  TransferDTO,
+  WebhookPayload,
+} from "../interfaces/model/payment.interface";
 import settings from "../constants/settings";
 import md5 from "md5";
 import axios from "axios";
 import { paygateInstance } from "../config/axios.config";
 import { BadRequestError } from "./error-responses";
+import Transaction from "../models/transaction.model";
+import { TransactionStatus } from "../interfaces/model/transaction.interface";
+import User from "../models/user.model";
+import Subscription from "../models/subscription.model";
+import {
+  SubscriptionDuration,
+  SubscriptionPrices,
+  SubscriptionType,
+} from "../interfaces/model/subscription.interface";
 
 function encrypt(sharedKey: string, plainText: string) {
   const bufferedKey = Buffer.from(sharedKey, "utf16le");
@@ -16,7 +29,6 @@ function encrypt(sharedKey: string, plainText: string) {
     .setAutoPadding(true);
   let value =
     cipher.update(plainText, "utf8", "base64") + cipher.final("base64");
-  console.log(value);
   return value;
 }
 
@@ -35,7 +47,7 @@ export async function transfer(data: TransferDTO) {
         route_mode: null,
       },
       transaction: {
-        mock_mode: "Live",
+        mock_mode: "Test",
         transaction_ref: data.transaction_ref,
         transaction_desc: data.transaction_desc,
         transaction_ref_parent: null,
@@ -69,6 +81,38 @@ export async function transfer(data: TransferDTO) {
 
     return response?.data;
   } catch (error: any) {
+    console.log(error);
     throw new BadRequestError(error);
+  }
+}
+
+export async function webhook(payload: WebhookPayload) {
+  if (payload.details.status.toLowerCase() === TransactionStatus.SUCCESSFUL) {
+    const transaction = await Transaction.findOneAndUpdate(
+      {
+        transaction_ref: payload.details.transaction_ref,
+      },
+      { status: TransactionStatus.SUCCESSFUL }
+    );
+
+    if (transaction?.subscriptionType) {
+      const date = new Date();
+      await Subscription.findOneAndUpdate(
+        { userId: transaction?.userId },
+        {
+          type: transaction.subscriptionType,
+          price: SubscriptionPrices[transaction?.subscriptionType],
+          endDate:
+            transaction?.subscriptionType === SubscriptionType.FREE
+              ? null
+              : date.setMonth(
+                  date.getMonth() +
+                    SubscriptionDuration[transaction?.subscriptionType]
+                ),
+        }
+      );
+    }
+  } else {
+    //do nothing()
   }
 }

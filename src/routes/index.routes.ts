@@ -9,6 +9,7 @@ import report from "./report.routes";
 import chat from "./chat.routes";
 import cart from "./cart.routes";
 import notifications from "./notification.routes";
+import subscription from "./subscription.routes";
 
 const routes = {
   auth,
@@ -22,6 +23,7 @@ const routes = {
   chat,
   cart,
   notifications,
+  subscription,
 };
 
 export default routes;

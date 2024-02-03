@@ -14,6 +14,7 @@ import {
 import { transfer } from "../helpers/payment";
 import User from "../models/user.model";
 import { IUser } from "../interfaces/model/user.interface";
+import { BadRequestError } from "../helpers/error-responses";
 
 export default class SubscriptionService {
   public async subscribe(data: SubscribeDTO) {
@@ -33,12 +34,18 @@ export default class SubscriptionService {
       subscriptionType: data.type,
     });
 
-    await transfer({
+    const response = await transfer({
       user: user as IUser,
       transaction_desc: `Subscription for ${data.type} tier`,
       transaction_ref,
       request_ref,
       amount: SubscriptionPrices[data.type],
     });
+
+    if (response?.status === "Failed") {
+      throw new BadRequestError(response?.message);
+    }
+
+    return response;
   }
 }
