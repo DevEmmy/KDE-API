@@ -1,5 +1,5 @@
 import sendMail from "../config/mailer.config";
-import { newsLetterHTML } from "../constants/mails";
+// import { newsLetterHTML } from "../constants/mails";
 import { BadRequestError, ForbiddenError } from "../helpers/error-responses";
 import NewsletterSubscription from "../models/newsletter.subscription.model";
 import User from "../models/user.model";
@@ -24,7 +24,7 @@ export default class NewsletterService {
       await sendMail({
         to: email,
         subject: "CREAM WEEKLY NEWSLETTER",
-        html: newsLetterHTML,
+        html: "",
       });
     }
   }

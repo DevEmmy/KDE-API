@@ -10,8 +10,11 @@ import swagger from "swagger-ui-express";
 import loggerMiddleware from "./middlewares/logger";
 import { WebhookPayload } from "./interfaces/model/payment.interface";
 import { webhook } from "./helpers/payment";
+import settings from "./constants/settings";
 
-const documentation = require("../doc.config.json");
+const documentation = require(settings.nodeEnv === "development"
+  ? "./doc.config.json"
+  : "../doc.config.json");
 
 const app = express();
 

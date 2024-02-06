@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cream</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        height: fit-content;
+        margin: 8px 12px;
+        background-color: black;
+        color: white; /* Set default text color */
+      }
+      @media only screen and (max-width: 480px) {
+        body {
+          width: 90%;
+        }
+      }
+
+      /* For laptops (50% width) */
+      @media only screen and (min-width: 481px) and (max-width: 1200px) {
+        body {
+          width: 50%;
+          margin: 0 auto;
+        }
+      }
+
+      /* For mid-sized screens (80% width) */
+      @media only screen and (min-width: 1201px) {
+        body {
+          width: 50%;
+          margin: 0 auto;
+        }
+      }
+      #title {
+        color: yellow;
+        text-align: center;
+        font-weight: 900;
+        font-size: 48px;
+        margin: 0 12px; /* Remove top and bottom margin */
+      }
+      #title-container {
+        background-color: black;
+        padding: 0 48px; /* Shorter syntax for padding */
+        margin-top: 24px;
+      }
+      @media only screen and (min-width: 481px) and (max-width: 1200px) {
+        #title-container {
+          padding: 0 128px;
+        }
+      }
+      #listing-title {
+        font-size: 24px;
+        font-weight: 500;
+        margin-top: 10px; /* Add margin between title and image */
+      }
+      @media only screen and (max-width: 480px) {
+        #listing-title {
+          font-size: 16px;
+        }
+      }
+      .list {
+        display: flex;
+        width: 90%;
+        flex-direction: column;
+        align-items: center;
+      }
+      .list-item {
+        margin-bottom: 12%;
+      }
+      .list-item img {
+        width: 100%;
+        height: 30vw;
+        border-radius: 8px;
+      }
+      @media only screen and (max-width: 480px) {
+        .list-item img {
+          width: 100%;
+          height: 50vw;
+          border-radius: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="title-container">
+      <h1 id="title">Cream</h1>
+    </div>
+    <div style="text-align: end; width: 100%">
+      <div style="margin-right: 12px">January 31, 2024</div>
+    </div>
+    <div class="list-item">
+      <img
+        src="https://res.cloudinary.com/devemmy/image/upload/v1705054432/fobj793gifritzfjggyx.jpg"
+      />
+      <div style="font-size: 24px; margin: 24px 0">CREAM: THE NEW ERA</div>
+
+      <div style="margin-top: 12px">
+        In the not-so-distant past, the journey of finding the perfect home was
+        laden with challenges...
+      </div>
+
+      <button
+        style="
+          background-color: inherit;
+          border: 1px solid gray;
+          color: white;
+          margin: 12px 0;
+          padding: 12px 16px;
+        "
+      >
+        Read more
+      </button>
+    </div>
+    <div class="list-item">
+      <img
+        src="https://res.cloudinary.com/devemmy/image/upload/v1705054432/fobj793gifritzfjggyx.jpg"
+      />
+      <div style="font-size: 24px; margin: 24px 0">CREAM: THE NEW ERA</div>
+
+      <div style="margin-top: 12px">
+        In the not-so-distant past, the journey of finding the perfect home was
+        laden with challenges...
+      </div>
+
+      <button
+        style="
+          background-color: inherit;
+          border: 1px solid gray;
+          color: white;
+          margin: 12px 0;
+          padding: 12px 16px;
+        "
+      >
+        Read more
+      </button>
+    </div>
+    <div style="font-size: 24px; margin: 24px 0">
+      Curated by Cream: Top Listings
+    </div>
+    <div class="list">
+      <!-- Use <ul> for list -->
+
+      <% listings?.forEach(function (listing){ return (
+      <div class="list-item">
+        <img src="{listing?.images?.[0]}" />
+        <div id="listing-title">{listing?.title}</div>
+        <div style="margin-top: 12px">{listing?.location}</div>
+        <div>₦{listing?.price?.toLocaleString()}</div>
+        <a
+          href="https://cream.business"
+          style="
+            background-color: inherit;
+            border: 1px solid gray;
+            color: white;
+            margin: 12px 0;
+            padding: 12px 16px;
+          "
+        >
+          View Listing
+        </a>
+      </div>
+      ) }) %>
+    </div>
+  </body>
+</html>

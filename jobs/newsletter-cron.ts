@@ -1,5 +1,5 @@
 import sendMail from "../config/mailer.config";
-import { newsLetterHTML } from "../constants/mails";
+// import { newsLetterHTML } from "../constants/mails";
 import User from "../models/user.model";
 import cron from "node-cron";
 
@@ -24,7 +24,7 @@ export const newsletterCron = () =>
         await sendMail({
           to: user.email,
           subject: "CREAM WEEKLY NEWSLETTER",
-          html: newsLetterHTML,
+          html: "",
         });
 
         user.newsLetterDate = Date.now();

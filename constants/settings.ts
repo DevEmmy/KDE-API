@@ -30,6 +30,7 @@ const settings = {
     account: process.env.KDE_ACCOUNT,
     bank: process.env.KDE_BANK,
   },
+  nodeEnv: <string>process.env.NODE_ENV,
 };
 
 export default settings;
