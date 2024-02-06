@@ -1,40 +1,23 @@
-import { v4 } from "uuid";
-import sendMail from "../config/mailer.config";
-import {
-  resetPasswordHTML,
-  signUpCompleteHTML,
-  verifyEmailHTML,
-} from "../constants/mails";
-import {
-  BadRequestError,
-  InternalServerError,
-  NotFoundError,
-} from "../helpers/error-responses";
-import {
-  IToken,
-  ITokenTypes,
-  IUser,
-  IUserAuth,
-} from "../interfaces/model/user.interface";
-import Auth from "../models/user.auth.model";
-import User from "../models/user.model";
-import Token from "../models/user.token.model";
-import JWTHelper from "../helpers/Jwt.helper";
-import { ILoginRes } from "../interfaces/CustomResponses/auth.response";
-import Crypto from "crypto";
-import { UserService } from "./user.service";
-import bcrypt from "bcryptjs";
-import { CartService } from "./cart.service";
-import { hashPassword } from "../helpers/password.helper";
-import Subscription from "../models/subscription.model";
-import { SubscriptionType } from "../interfaces/model/subscription.interface";
+import { v4 } from 'uuid';
+import sendMail, { renderTemplate } from '../config/mailer.config';
+import { BadRequestError, InternalServerError, NotFoundError } from '../helpers/error-responses';
+import { IToken, ITokenTypes, IUser, IUserAuth } from '../interfaces/model/user.interface';
+import Auth from '../models/user.auth.model';
+import User from '../models/user.model';
+import Token from '../models/user.token.model';
+import JWTHelper from '../helpers/Jwt.helper';
+import { ILoginRes } from '../interfaces/CustomResponses/auth.response';
+import Crypto from 'crypto';
+import { UserService } from './user.service';
+import bcrypt from 'bcryptjs';
+import { CartService } from './cart.service';
+import { hashPassword } from '../helpers/password.helper';
+import Subscription from '../models/subscription.model';
+import { SubscriptionType } from '../interfaces/model/subscription.interface';
+import settings from '../constants/settings';
 
 export class AuthService {
-  private async createToken(
-    email: string,
-    type: ITokenTypes,
-    code?: string
-  ): Promise<IToken> {
+  private async createToken(email: string, type: ITokenTypes, code?: string): Promise<IToken> {
     const body: Partial<IToken> = { email, type };
     if (code) {
       body.token = code;
@@ -46,7 +29,7 @@ export class AuthService {
   }
 
   private async generateCryptoToken(): Promise<string> {
-    const token = Crypto.randomBytes(32).toString("hex");
+    const token = Crypto.randomBytes(32).toString('hex');
 
     return token;
   }
@@ -61,7 +44,7 @@ export class AuthService {
     const user = await Auth.findOne(param);
 
     if (!user) {
-      throw new NotFoundError("User does not exist");
+      throw new NotFoundError('User does not exist');
     }
 
     return user;
@@ -69,20 +52,13 @@ export class AuthService {
 
   public createAccount = async (body: Partial<IUser & IUserAuth>) => {
     try {
-      const {
-        firstName,
-        lastName,
-        email,
-        password,
-        confirmPassword,
-        phoneNumber1,
-      } = body;
+      const { firstName, lastName, email, password, confirmPassword, phoneNumber1 } = body;
       /**
        * Create Account, token and send email
        */
 
       if (password != confirmPassword) {
-        throw new BadRequestError("Passwords do not match");
+        throw new BadRequestError('Passwords do not match');
       }
 
       const hashedPassword = await hashPassword(password as string);
@@ -96,10 +72,7 @@ export class AuthService {
         phoneNumber1,
       });
 
-      const token = await this.createToken(
-        email as string,
-        ITokenTypes.accountVerificationToken
-      );
+      const token = await this.createToken(email as string, ITokenTypes.accountVerificationToken);
 
       await Subscription.create({
         userId: user._id,
@@ -107,15 +80,17 @@ export class AuthService {
         price: 0,
       });
 
+      const link = `${settings.frontendUrl}/verify-email/${token.token}`;
+
       await sendMail({
         to: email,
-        subject: "Verify your account",
-        html: verifyEmailHTML(user, token.token),
+        subject: 'Verify your account',
+        html: renderTemplate('verify-email.ejs', { link, user }),
       });
       await this.cartServices.initiateCart(user?._id);
     } catch (error: any) {
       if (error.code === 11000) {
-        throw new BadRequestError("A user with this email already exists");
+        throw new BadRequestError('A user with this email already exists');
       }
       throw new BadRequestError(error.message);
     }
@@ -134,7 +109,7 @@ export class AuthService {
     });
 
     if (!tokenInDb) {
-      throw new NotFoundError("Token does not exist or has expired");
+      throw new NotFoundError('Token does not exist or has expired');
     }
 
     const email = tokenInDb.email;
@@ -147,14 +122,12 @@ export class AuthService {
     const userAuth = await Auth.findOne({ email });
 
     if (!userAuth) {
-      throw new NotFoundError("User does not exist");
+      throw new NotFoundError('User does not exist');
     }
     const user = await User.findOne({ email });
 
     if (userAuth?.verified) {
-      throw new BadRequestError(
-        "Account is already verified, kinldy proceed to login"
-      );
+      throw new BadRequestError('Account is already verified, kinldy proceed to login');
     }
 
     userAuth.verified = true;
@@ -163,8 +136,8 @@ export class AuthService {
 
     await sendMail({
       to: email,
-      subject: "Verify your account",
-      html: signUpCompleteHTML(user?.firstName as string),
+      subject: 'Welcome To Cream',
+      html: renderTemplate('welcome-message.ejs', { firstName: user?.firstName }),
     });
   }
 
@@ -174,13 +147,13 @@ export class AuthService {
     const userAuth = await Auth.findOne({ email });
 
     if (!userAuth) {
-      throw new NotFoundError("User does not exist");
+      throw new NotFoundError('User does not exist');
     }
 
     const isPasswordCorrect = await userAuth.verifyPassword(password as string);
 
     if (!isPasswordCorrect) {
-      throw new BadRequestError("password is incorrect");
+      throw new BadRequestError('password is incorrect');
     }
 
     const user = await User.findOne<IUser>({ email });
@@ -192,20 +165,17 @@ export class AuthService {
         type: ITokenTypes.accountVerificationToken,
       });
 
-      const token = await this.createToken(
-        email as string,
-        ITokenTypes.accountVerificationToken
-      );
+      const token = await this.createToken(email as string, ITokenTypes.accountVerificationToken);
+
+      const link = `${settings.frontendUrl}/verify-email/${token.token}`;
 
       await sendMail({
         to: email,
-        subject: "Verify account",
-        html: verifyEmailHTML(user as IUser, token.token),
+        subject: 'Verify your account',
+        html: renderTemplate('verify-email.ejs', { link, user }),
       });
 
-      throw new BadRequestError(
-        "Your account is not verified, a new verification link has been sent to your email"
-      );
+      throw new BadRequestError('Your account is not verified, a new verification link has been sent to your email');
     } else {
       const accessToken = await JWTHelper.signAccessToken(userAuth._id);
 
@@ -217,21 +187,19 @@ export class AuthService {
     const user = await User.findOne<IUser>({ email });
 
     if (!user) {
-      throw new NotFoundError("User does not exist");
+      throw new NotFoundError('User does not exist');
     }
 
     const hex = await this.generateCryptoToken();
 
-    const token = await this.createToken(
-      email,
-      ITokenTypes.passwordResetToken,
-      hex
-    );
+    const token = await this.createToken(email, ITokenTypes.passwordResetToken, hex);
+
+    const link = `${settings.frontendUrl}/reset/${token.token}`;
 
     await sendMail({
       to: email,
-      subject: "Password reset link",
-      html: resetPasswordHTML(user, token.token),
+      subject: 'Password reset link',
+      html: renderTemplate('reset-password.ejs', { user, link }),
     });
   }
 
@@ -239,7 +207,7 @@ export class AuthService {
     const { password, confirmPassword } = body;
 
     if (password != confirmPassword) {
-      throw new BadRequestError("Passwords do not match");
+      throw new BadRequestError('Passwords do not match');
     }
 
     const tokenInDb = await Token.findOne({
@@ -248,7 +216,7 @@ export class AuthService {
     });
 
     if (!tokenInDb) {
-      throw new NotFoundError("Token does not exist or has expired");
+      throw new NotFoundError('Token does not exist or has expired');
     }
 
     await Auth.findOneAndUpdate(
@@ -265,13 +233,13 @@ export class AuthService {
     const { password, confirmPassword, _id, oldPassword } = body;
 
     if (password !== confirmPassword) {
-      throw new BadRequestError("Password and confirm password do not match");
+      throw new BadRequestError('Password and confirm password do not match');
     }
 
     const user = await User.findById(_id);
 
     if (!user) {
-      throw new NotFoundError("User does not exist");
+      throw new NotFoundError('User does not exist');
     }
 
     // check if the old password is correct
@@ -279,15 +247,13 @@ export class AuthService {
     const userAuth = await Auth.findOne({ email: user.email });
 
     if (!userAuth) {
-      throw new NotFoundError("User Auth does not exist");
+      throw new NotFoundError('User Auth does not exist');
     }
 
-    const isOldPasswordCorrect = await userAuth?.verifyPassword(
-      oldPassword as string
-    );
+    const isOldPasswordCorrect = await userAuth?.verifyPassword(oldPassword as string);
 
     if (!isOldPasswordCorrect) {
-      throw new BadRequestError("Old password is incorrect");
+      throw new BadRequestError('Old password is incorrect');
     }
 
     const newPasswordHash = await hashPassword(password as string);
