@@ -1,26 +1,26 @@
-import mongoose, { Collection } from "mongoose";
-import { INewsletterSubscription } from "../interfaces/model/newsletter.interface";
-import { Collections } from "../interfaces/collections";
+import mongoose, { Collection } from 'mongoose';
+import { INewsletterSubscription } from '../interfaces/model/newsletter.interface';
+import { Collections } from '../interfaces/collections';
 
-const NewsletterSubscriptionSchema =
-  new mongoose.Schema<INewsletterSubscription>(
-    {
-      email: {
-        type: String,
-        unique: true,
-        required: true,
-      },
+const NewsletterSubscriptionSchema = new mongoose.Schema<INewsletterSubscription>(
+  {
+    email: {
+      type: String,
+      unique: true,
+      required: true,
     },
-    {
-      timestamps: true,
-      toObject: { virtuals: true },
-      toJSON: { virtuals: true },
-    }
-  );
-
-const NewsletterSubscription = mongoose.model(
-  Collections.newsletter_subscription,
-  NewsletterSubscriptionSchema
+    lastReceived: {
+      type: Date,
+      default: Date.now(),
+    },
+  },
+  {
+    timestamps: true,
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+  }
 );
+
+const NewsletterSubscription = mongoose.model(Collections.newsletter_subscription, NewsletterSubscriptionSchema);
 
 export default NewsletterSubscription;

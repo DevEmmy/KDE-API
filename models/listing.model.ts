@@ -1,10 +1,6 @@
-import mongoose, { Types } from "mongoose";
-import {
-  ICarConditions,
-  IListing,
-  IListingType,
-} from "../interfaces/model/listing.interface";
-import { Collections } from "../interfaces/collections";
+import mongoose, { Types } from 'mongoose';
+import { ICarConditions, IListing, IListingType } from '../interfaces/model/listing.interface';
+import { Collections } from '../interfaces/collections';
 
 const ListingSchema = new mongoose.Schema<IListing>(
   {
@@ -12,6 +8,11 @@ const ListingSchema = new mongoose.Schema<IListing>(
       type: Types.ObjectId,
       ref: Collections.category,
       required: true,
+    },
+    subcategory: {
+      type: Types.ObjectId,
+      ref: Collections.subcategory,
+      required: false,
     },
     title: {
       type: String,

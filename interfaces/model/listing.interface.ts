@@ -1,5 +1,5 @@
-import { Types } from "mongoose";
-import { IUser } from "./user.interface";
+import { Types } from 'mongoose';
+import { IUser } from './user.interface';
 
 /**
  * Let the property have an owner
@@ -8,19 +8,20 @@ import { IUser } from "./user.interface";
  */
 
 export enum IListingType {
-  sale = "sale",
-  rent = "rent",
+  sale = 'sale',
+  rent = 'rent',
 }
 
 export enum ICarConditions {
-  new = "New",
-  used = "Used",
-  empty = "",
+  new = 'New',
+  used = 'Used',
+  empty = '',
 }
 
 export interface IListing {
   _id: string;
   category: Types.ObjectId | string | IListingCategory;
+  subcategory: Types.ObjectId | string | IListingSubCategory;
   title: string;
   location: string;
   postedBy: string | Types.ObjectId | IUser;
@@ -50,4 +51,12 @@ export interface IListingCategory {
   _id: string;
   title: string;
   slug: string;
+}
+
+export interface IListingSubCategory {
+  category: string | Types.ObjectId | IListingCategory;
+  name: string;
+  description: string;
+  slug: string;
+  image: string;
 }

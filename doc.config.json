@@ -635,6 +635,125 @@
       }
     },
 
+    "/api/v2/subcategory": {
+      "post": {
+        "security": { "bearer": [] },
+        "tags": ["Subcategory"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "category": {
+                    "type": "string",
+                    "example": "categoryId"
+                  },
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "image": { "type": "base64 string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingSubcategory"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/v2/subcategory/category/{id}": {
+      "get": {
+        "tags": ["Subcategory"],
+        "security": [{ "bearer": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListingSubcategory"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/v2/subcategory/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "tags": ["Subcategory"],
+        "security": [{ "bearer": [] }],
+
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingSubcategory"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Subcategory"],
+        "security": [{ "bearer": [] }],
+
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
     "/api/v2/listing/": {
       "post": {
         "description": "create listing (must be a seller)",
@@ -687,6 +806,22 @@
             "required": true,
             "schema": {
               "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "subcategory",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -1704,6 +1839,9 @@
           "category": {
             "type": "string"
           },
+          "subcategory": {
+            "type": "string"
+          },
           "title": { "type": "string" },
           "location": { "type": "string" },
           "features": { "type": "array", "items": { "type": "string" } },
@@ -1969,6 +2107,16 @@
             "type": "string",
             "example": "date"
           }
+        }
+      },
+
+      "ListingSubcategory": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "image": { "type": "string" },
+          "category": { "type": "string" }
         }
       }
     },

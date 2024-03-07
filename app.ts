@@ -32,6 +32,7 @@ app.use('/api/v2/auth', routes.auth);
 app.use('/api/v2/user', routes.user);
 app.use('/api/v2/newsletter', routes.newsletter);
 app.use('/api/v2/category', routes.category);
+app.use('/api/v2/subcategory', routes.subcategory);
 app.use('/api/v2/listing', routes.listing);
 app.use('/api/v2/article', routes.article);
 app.use('/api/v2/property-request', routes.property_request);

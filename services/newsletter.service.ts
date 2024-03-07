@@ -18,7 +18,6 @@ export default class NewsletterService {
       throw new BadRequestError('You are already suscribed to CREAM newsletter');
     } else {
       await NewsletterSubscription.create({ email });
-      await User.findOneAndUpdate({ email }, { newsLetterDate: Date.now() });
       const listings = await Listing.find({ available: true }).sort('-createdAt').limit(5);
       await sendMail({
         to: email,

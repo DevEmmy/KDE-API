@@ -1,24 +1,24 @@
-import mongoose, { Collection, Types } from "mongoose";
-import { IUser } from "../interfaces/model/user.interface";
-import { Collections } from "../interfaces/collections";
+import mongoose, { Collection, Types } from 'mongoose';
+import { IUser } from '../interfaces/model/user.interface';
+import { Collections } from '../interfaces/collections';
 
 const UserSchema = new mongoose.Schema<IUser>(
   {
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: { type: String, required: true, trim: true, unique: true },
-    otherNames: { type: String, default: "" },
+    otherNames: { type: String, default: '' },
     about: {
       type: String,
-      default: "Hello there, I am using King David Elites.",
+      default: 'Hello there, I am using King David Elites.',
     },
     profilePicture: {
       type: String,
-      default: "https://avatarfiles.alphacoders.com/865/86518.png",
+      default: 'https://avatarfiles.alphacoders.com/865/86518.png',
     },
     cover: {
       type: String,
-      default: "https://avatarfiles.alphacoders.com/865/86518.png",
+      default: 'https://avatarfiles.alphacoders.com/865/86518.png',
     },
     facebookUrl: { type: String },
     instagramUrl: { type: String },
@@ -46,7 +46,6 @@ const UserSchema = new mongoose.Schema<IUser>(
       type: [{ type: Types.ObjectId, ref: Collections.listing }],
       default: [],
     },
-    subscribedToNewsletter: { type: Boolean, default: false },
     totalSaved: {
       value: { type: Number, default: 0 },
       users: {
@@ -71,8 +70,6 @@ const UserSchema = new mongoose.Schema<IUser>(
     subscribed: { type: Boolean, default: false },
     noOfSubscription: { type: Number, default: 0 },
     sellerType: { type: Number, default: 0 },
-
-    newsLetterDate: { type: Number, default: Date.now() },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

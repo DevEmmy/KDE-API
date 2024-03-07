@@ -1,13 +1,13 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
 export enum IUserTypes {
-  buyer = "buyer",
-  seller = "seller",
+  buyer = 'buyer',
+  seller = 'seller',
 }
 
 export enum ITokenTypes {
-  passwordResetToken = "passwordResetToken",
-  accountVerificationToken = "accountVerificationToken",
+  passwordResetToken = 'passwordResetToken',
+  accountVerificationToken = 'accountVerificationToken',
 }
 
 export type UserPageViews = {
@@ -43,7 +43,6 @@ export interface IUser {
   savedListing: string[] | Types.ObjectId[] | IUser[];
   totalSaved: { value: number; users: string | Types.ObjectId | IUser };
   gender: string;
-  subscribedToNewsletter: boolean;
   createdAt: Date;
   updatedAt: Date;
 
@@ -64,9 +63,6 @@ export interface IUser {
   totalListing: number;
 
   locationISO: string;
-
-  // update it any time a news letter is sent
-  newsLetterDate: number;
 }
 export interface IUserAuth {
   _id: string;
