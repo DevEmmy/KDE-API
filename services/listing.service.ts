@@ -118,6 +118,8 @@ export default class ListingService {
 
     if (data.subcategory) {
       query.subcategory = data.subcategory;
+    } else {
+      query.subcategory = null;
     }
 
     const count = await Listing.find(query).countDocuments();
