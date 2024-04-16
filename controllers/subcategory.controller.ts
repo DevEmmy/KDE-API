@@ -24,6 +24,27 @@ class SubCategoryController {
     }
   };
 
+  public editSubcategory = async (
+    req: Request<{ id: string }, {}, Partial<IListingSubCategory>>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      let image = req.body.image;
+      const id = req.params.id;
+
+      if (image) {
+        image = (await uploadListingMedia([{ base64: image }]))[0];
+      }
+
+      const data = await this.subcategoryService.editSubcategory(id, { ...req.body, image });
+
+      res.status(200).json({ message: 'edited', data });
+    } catch (error) {
+      return next(error);
+    }
+  };
+
   public getSingleSubcategory = async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     try {
       const data = await this.subcategoryService.getSingleSubcategory(req.params.id);

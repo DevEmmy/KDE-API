@@ -715,6 +715,41 @@
           }
         }
       ],
+      "put": {
+        "tags": ["Subcategory"],
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "category": {
+                    "type": "string",
+                    "example": "categoryId"
+                  },
+                  "name": { "type": "string" },
+                  "description": { "type": "string" },
+                  "image": { "type": "base64 string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingSubcategory"
+                }
+              }
+            }
+          }
+        }
+      },
       "get": {
         "tags": ["Subcategory"],
         "security": [{ "bearer": [] }],
