@@ -10,10 +10,10 @@ export const SignupInput = object({
       .email("Provide a valid email"),
     password: string()
       .required("Password is required")
-      .min(8, "Password must not be less than 8 characters"),
+      .min(6, "Password must not be less than 8 characters"),
     confirmPassword: string()
       .required("confirmPassword is required")
-      .min(8, "Confirm password must not be less than 8 charcters"),
+      .min(6, "Confirm password must not be less than 8 charcters"),
   }),
 });
 
@@ -24,7 +24,7 @@ export const LoginInput = object({
       .email("Provide a valid email"),
     password: string()
       .required("Password is required")
-      .min(8, "Password must not be less than 8 characters"),
+      .min(6, "Password must not be less than 8 characters"),
   }),
 });
 
