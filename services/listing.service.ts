@@ -128,7 +128,7 @@ export default class ListingService {
       .sort('-createdAt');
 
     return {
-      listings: this.randomizeListing(listings, 15),
+      listings: this.randomizeListing(listings, 5),
       count,
     };
   }
